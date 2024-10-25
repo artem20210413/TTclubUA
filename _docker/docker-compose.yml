@@ -42,6 +42,14 @@ services:
         command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
         container_name: mysql
 
+    node:
+        image: node:latest  # Используй последнюю версию Node.js
+        working_dir: ${APP_CODE_PATH_CONTAINER}
+        volumes:
+            - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}/
+        command: [ "tail", "-f", "/dev/null" ]  # Держит контейнер активным
+        container_name: app-node
+
 #    ### SERVICE CONTAINER #################################################
 #
 #    # docker-compose run --rm artisan

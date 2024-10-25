@@ -6,3 +6,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+
+//->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
+//->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).
+//->middleware('verified') Проверяет, что пользователь подтвердил свой email.
+//->middleware('role:admin') Проверяет, что пользователь обладает определенной ролью, используя Spatie Permissions.
+//->middleware('permission:view-dashboard') Проверяет, что у пользователя есть конкретное разрешение для действия.
+//Route::group(['middleware' => ['permission:edit articles|publish articles']], function () {}); // маршруты для пользователей, у которых есть либо "edit articles", либо "publish articles"
+

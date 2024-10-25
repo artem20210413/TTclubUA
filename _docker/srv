@@ -58,6 +58,7 @@ function show_help() {
     echo -e "  ${GREEN}php${NC} ${WHITE}[command]${NC}             ${WHITE}Виконати команду php${NC}"
     echo -e "  ${GREEN}composer${NC} ${WHITE}[command]${NC}        ${WHITE}Виконати команду композера${NC}"
     echo -e "  ${GREEN}artisan${NC} ${WHITE}[command]${NC}         ${WHITE}Виконати команду Artisan від імені www-data${NC}"
+    echo -e "  ${GREEN}npm${NC} ${WHITE}[command]${NC}         ${WHITE}Виконати команду npm від імені www-data${NC}"
     echo
     echo -e "  ${GREEN}docker-compose${NC} ${WHITE}[command]${NC}  ${WHITE}Запускаємо команду самого docker-compose${NC}"
 }
@@ -102,6 +103,12 @@ if [ $# -gt 0 ]; then
         shift 1
 
         docker-compose exec php-fpm composer "$@" --working-dir=/var/www
+
+    # Виконати команду композера
+    elif [ "$1" == "npm" ]; then
+        shift 1
+
+        docker-compose exec node npm "$@"
 
     # Виконати команду Artisan
     elif [ "$1" == "artisan" ] || [ "$1" == 'art' ]; then

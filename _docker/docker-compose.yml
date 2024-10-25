@@ -1,0 +1,71 @@
+services:
+
+#docker-compose up nginx -d
+
+    nginx:
+        image: nginx:stable-alpine
+        volumes:
+            - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}/
+            - ./nginx/conf.d/:/etc/nginx/conf.d/
+        ports:
+            - '${NGINX_PORT}:80'
+        depends_on:
+            - php-fpm
+            - mysql
+        container_name: app-nginx
+
+    php-fpm:
+        build:
+            context: ${APP_CODE_PATH_HOST}
+            dockerfile: ./_docker/php/Dockerfile
+            args:
+                PHP_VERSION: ${PHP_VERSION}
+                APP_CODE_PATH_CONTAINER: ${APP_CODE_PATH_CONTAINER}
+        volumes:
+            - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}/
+        depends_on:
+            - mysql
+        container_name: php-fpm
+
+    mysql:
+        image: mysql:${MYSQL_VERSION}
+        restart: always
+        volumes:
+            - ./mysql/db:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        ports:
+            - ${MYSQL_PORT}:3306
+        command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+        container_name: mysql
+
+#    ### SERVICE CONTAINER #################################################
+#
+#    # docker-compose run --rm artisan
+#    composer:
+#        build:
+#            context: ${APP_CODE_PATH_HOST}
+#            dockerfile: ./_docker/composer/Dockerfile
+#            args:
+#                APP_CODE_PATH_CONTAINER: ${APP_CODE_PATH_CONTAINER}
+#        volumes:
+#            - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}/
+##        container_name: composer
+#
+#
+#    artisan:
+#        build:
+#            context: ${APP_CODE_PATH_HOST}
+#            dockerfile: ./_docker/php/Dockerfile
+#            args:
+#                PHP_VERSION: ${PHP_VERSION}
+#                APP_CODE_PATH_CONTAINER: ${APP_CODE_PATH_CONTAINER}
+#        volumes:
+#            - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}/
+#        entrypoint: ['php', "${APP_CODE_PATH_CONTAINER}/artisan"]
+##        container_name: artisan
+#
+#    ### END SERVICE CONTAINER #################################################

@@ -3,15 +3,35 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+
+/**
+ * Class User
+ * @package App\Models
+ * @property int id
+ * @property string name
+ * @property string email
+ * @property Carbon|null email_verified_at
+ * @property string|null phone
+ * @property Carbon|null phone_verified_at
+ * @property Carbon|null approve_verified_at
+ * @property bool active
+ * @property string password
+ * //...
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ *
+ */
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -68,5 +88,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = Hash::make($password);
+    }
+
+    public function setPhone(string $phone): void
+    {
+        $this->phone = formatPhoneNumber($phone);
     }
 }

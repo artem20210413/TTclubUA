@@ -9,10 +9,16 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+//        $this->middleware('permission:create post', ['only' => ['create', 'store']]);
+//        $this->middleware('permission:edit post', ['only' => ['edit', 'update']]);
+//        $this->middleware('permission:delete post', ['only' => ['destroy']]);
+    }
+
     public function user(Request $request)
     {
         return success(data: ['user' => new UserResource($request->user())]);

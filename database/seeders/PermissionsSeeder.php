@@ -5,9 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
-class RoleSeeder extends Seeder
+class PermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,22 +14,15 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
-            ['name' => 'admin', 'guard_name' => 'web'],
-            ['name' => 'editor', 'guard_name' => 'web'],
-            ['name' => 'user', 'guard_name' => 'web']
+            ['name' => 'create_user', 'guard_name' => 'web'],
         ];
 
         foreach ($roles as $role) {
             // Создаем роль только если она не существует
-            $role = Role::firstOrCreate(
+            Permission::firstOrCreate(
                 ['name' => $role['name']], // ищем роль по имени
                 ['guard_name' => $role['guard_name']] // если не нашли, создаем с указанным guard_name
             );
-
-            if ($role->name === 'admin') {
-                $role->givePermissionTo(Permission::all());
-//                $editor->givePermissionTo('create post', 'edit post');
-            }
         }
     }
 }

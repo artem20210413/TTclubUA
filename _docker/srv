@@ -59,6 +59,7 @@ function show_help() {
     echo -e "  ${GREEN}composer${NC} ${WHITE}[command]${NC}        ${WHITE}Виконати команду композера${NC}"
     echo -e "  ${GREEN}artisan${NC} ${WHITE}[command]${NC}         ${WHITE}Виконати команду Artisan від імені www-data${NC}"
     echo -e "  ${GREEN}npm${NC} ${WHITE}[command]${NC}         ${WHITE}Виконати команду npm від імені www-data${NC}"
+    echo -e "  ${GREEN}shell{NC} ${WHITE}[command]${NC}         ${WHITE}Войти в контейнер PHP в интерактивном режиме${NC}"
     echo
     echo -e "  ${GREEN}docker-compose${NC} ${WHITE}[command]${NC}  ${WHITE}Запускаємо команду самого docker-compose${NC}"
 }
@@ -97,6 +98,11 @@ if [ $# -gt 0 ]; then
         shift 1
 
         docker-compose exec php-fpm php "$@"
+
+    elif [ "$1" == "shell" ]; then
+        # Войти в контейнер PHP в интерактивном режиме
+        docker-compose exec php-fpm bash
+
 
     # Виконати команду композера
     elif [ "$1" == "composer" ]; then

@@ -25,10 +25,6 @@ class AuthController extends Controller
 //        $this->middleware('permission:delete post', ['only' => ['destroy']]);
     }
 
-    public function user(Request $request)
-    {
-        return success(data: ['user' => new UserResource($request->user())]);
-    }
 
     public function logout(Request $request)
     {
@@ -91,16 +87,16 @@ class AuthController extends Controller
 
     public function changePasswordByUser(int $id, ChangePasswordByUserRequest $request)
     {
-        $user = User::find($id);
+        try {
+            $user = User::findOrFail($id);
 
-        if (!$user)
-            return error(new ApiException('Користувача не існує', 0, 400));
+            $user->setPassword($request->new_password);
+            $user->save();
 
-
-        $user->setPassword($request->new_password);
-        $user->save();
-
-        return success('Пароль успішно оновлено', new UserResource($user));
+            return success('Пароль успішно оновлено', new UserResource($user));
+        } catch (ApiException $e) {
+            return error($e);
+        }
     }
 
 }

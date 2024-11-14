@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\ApiException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -125,5 +126,21 @@ class User extends Authenticatable
     public function setPhone(string $phone): void
     {
         $this->phone = formatPhoneNumber($phone);
+    }
+
+    /**
+     * @param int $id
+     * @return User
+     * @throws ApiException
+     */
+    static function findOrFail(int $id): User
+    {
+        $user = User::find($id);
+
+        if (!$user)
+            throw  new ApiException('Користувача не існує', 0, 400);
+
+
+        return $user;
     }
 }

@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Http\Controllers\Api\ApiException;
+use App\Http\Controllers\UserController;
+use App\Http\Requests\UpdateUserRequest;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -142,5 +145,22 @@ class User extends Authenticatable
 
 
         return $user;
+    }
+
+    public function updateCustom(UpdateUserRequest $request): User
+    {
+
+        $this->name = $request->input('name', $this->name); // Если поле пустое, сохраняем старое значение
+        $this->email = $request->input('email', $this->email); // Аналогично для других полей
+        $this->phone = $request->input('phone', $this->phone);
+        $this->telegram_nickname = $request->input('telegram_nickname', $this->telegram_nickname);
+        $this->instagram_nickname = $request->input('instagram_nickname', $this->instagram_nickname);
+        $this->birth_date = Carbon::parse($request->input('birth_date', $this->birth_date));
+        $this->club_entry_date = Carbon::parse($request->input('club_entry_date', $this->club_entry_date));
+        $this->occupation_description = $request->input('occupation_description', $this->occupation_description);
+
+        $this->save();
+
+        return $this;
     }
 }

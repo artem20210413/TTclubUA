@@ -13,11 +13,12 @@ Route::get('/user', [UserController::class, 'user'])->middleware('auth:sanctum')
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
+Route::post('user', [UserController::class, 'update'])->middleware(['auth:sanctum', 'role:admin']);
 
 
 Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('user/{id}/change-password', [AuthController::class, 'changePasswordByUser'])->middleware(['auth:sanctum', 'role:admin']);
-Route::post('user/{id}', [UserController::class, 'update'])->middleware(['auth:sanctum', 'role:admin']);
+Route::post('user/{id}', [UserController::class, 'updateById'])->middleware(['auth:sanctum', 'role:admin']);
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
 //->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).

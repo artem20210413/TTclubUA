@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\ApiException;
+use App\Http\Requests\ChangePasswordByUserRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -86,6 +87,20 @@ class AuthController extends Controller
         $user->save();
 
         return success('Пароль успішно оновлено');
+    }
+
+    public function changePasswordByUser(int $id, ChangePasswordByUserRequest $request)
+    {
+        $user = User::find($id);
+
+        if (!$user)
+            return error(new ApiException('Користувача не існує', 0, 400));
+
+
+        $user->setPassword($request->new_password);
+        $user->save();
+
+        return success('Пароль успішно оновлено', new UserResource($user));
     }
 
 }

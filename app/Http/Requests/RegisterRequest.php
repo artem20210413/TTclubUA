@@ -25,6 +25,11 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|string|unique:users',
+            'telegram_nickname' => 'nullable|string|unique:users',
+            'instagram_nickname' => 'nullable|string|unique:users',
+            'birth_date' => 'nullable|date_format:d-m-Y', // если дата не null, то должна быть в формате Y-m-d
+            'club_entry_date' => 'nullable|date_format:d-m-Y', // если дата обязательна, то тоже проверка на формат
+            'occupation_description' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
         ];
     }

@@ -13,12 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->validateCsrfTokens(except: [
-//            '/*', в web/
-        ]);
+//        $middleware->validateCsrfTokens(except: [
+////            '/*', в web/
+//        ]);
 
         $middleware->alias(['role' => RoleMiddleware::class]);
-        $middleware->alias(['permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class]);
+//        $middleware->alias(['permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

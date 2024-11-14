@@ -24,6 +24,13 @@ class AuthController extends Controller
         return success(data: ['user' => new UserResource($request->user())]);
     }
 
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return success('Successfully logged out');
+    }
+
     public function register(RegisterRequest $request)
     {
         $user = new User();
@@ -45,7 +52,7 @@ class AuthController extends Controller
         $credentials[$fieldType] = $login;
 
         if (!Auth::attempt($credentials)) {
-            return error(new ApiException('Invalid login details', 401, 0));
+            return error(new ApiException('Invalid login details', 0, 401));
         }
 
         $user = Auth::user();

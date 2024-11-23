@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\EnumImageQuality;
+use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
-use App\Http\Requests\ChangePasswordByUserRequest;
-use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ProfilePictureRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Services\Image\ImageWebpService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+
+//use Intervention\Image\ImageManager;
+//use Intervention\Image\Drivers\Gd\Driver;
+
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 
 class UserController extends Controller
 {
@@ -28,7 +31,6 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request)
     {
         try {
-
             /** @var User $user */
             $user = $request->user();
 

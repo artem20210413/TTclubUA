@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
-use App\Http\Controllers\UserController;
 use App\Http\Requests\UpdateUserRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +13,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 
@@ -42,10 +44,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \Illuminate\Database\Eloquent\Collection|Session[] $sessions
  * @property-read \Illuminate\Database\Eloquent\Collection|Car[] $cars
  */
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens;
     use HasRoles;
+    use InteractsWithMedia;
 
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -162,5 +165,12 @@ class User extends Authenticatable
         $this->save();
 
         return $this;
+    }
+
+    public function dropProfileImages(): void
+    {
+        if ($this->hasMedia(EnumTypeMedia::PROFILE_PICTURE->value)) {
+            $this->getMedia(EnumTypeMedia::PROFILE_PICTURE->value)->each->delete();
+        }
     }
 }

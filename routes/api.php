@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,11 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth:sanctum');
 
 Route::get('/user', [UserController::class, 'user'])->middleware('auth:sanctum');
+Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
+Route::delete('/user/profile-picture', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
+//Route::post('/user/profile-collection/add', [MediaController::class, 'addProfileCollection'])->middleware('auth:sanctum');
+//Route::delete('/user/profile-collection/{id}', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
+
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');

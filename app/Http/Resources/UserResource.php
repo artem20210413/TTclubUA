@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enum\EnumTypeMedia;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -20,6 +21,15 @@ class UserResource extends JsonResource
 //        return parent::toArray($request);
         $birthDate = $this->birth_date ? Carbon::parse($this->birth_date) : null;
         $clubEntryDate = $this->club_entry_date ? Carbon::parse($this->club_entry_date) : null;
+
+
+        $default = asset( "storage/default/" . EnumTypeMedia::PROFILE_PICTURE->value . ".webp");
+        $profileImage = $this->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value) ?: $default;
+
+//        $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->map(function ($media) {
+//            return $media->getUrl();
+//        });
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -30,7 +40,10 @@ class UserResource extends JsonResource
             'occupation_description' => $this->occupation_description,
             'email' => $this->email,
             'phone' => $this->phone,
+            'roles' => $this->getRoleNames(),
             'active' => (bool)$this->active,
+            'profile_image' => $profileImage,
+//            'imageUrls' => $imageUrls,
             'updated_at' => $this->created_at->diffForHumans(),
             'created_at' => $this->created_at->diffForHumans(),
         ];

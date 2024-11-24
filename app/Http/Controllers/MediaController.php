@@ -24,7 +24,7 @@ class MediaController extends Controller
         if (!$image) return error(new ApiException('Фото відсутнє.', 0, 400));
 
         $imageWebp = new ImageWebpService($image);
-        $imageWebp->convert(EnumImageQuality::FULL_HD);
+        $imageWebp->convert(EnumImageQuality::LOW);
 
         $user->dropProfileImages();
 

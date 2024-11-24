@@ -17,7 +17,7 @@ class ImageWebpService
     public function __construct(array|UploadedFile ...$images)
     {
         foreach ($images as $image) {
-            $this->images[] = \Intervention\Image\Facades\Image::make($image)->encode('webp', 90);
+            $this->images[] = \Intervention\Image\Facades\Image::make($image)->orientate()->encode('webp', 90);
         }
     }
 

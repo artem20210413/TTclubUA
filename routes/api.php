@@ -17,6 +17,7 @@ Route::post('/register', [AuthController::class, 'register'])->middleware(['auth
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
 
 Route::get('/user', [UserController::class, 'user'])->middleware('auth:sanctum');
+Route::get('/user/my-cars', [UserController::class, 'myCars'])->middleware('auth:sanctum');
 Route::get('/user/all', [UserController::class, 'all'])->middleware('auth:sanctum');
 Route::post('/user', [UserController::class, 'update'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswordByUser'])->middleware(['auth:sanctum', 'role:admin']);

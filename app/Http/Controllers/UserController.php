@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\CarResource;
 use App\Http\Resources\CityResource;
 use App\Http\Resources\UserResource;
 use App\Models\City;
@@ -24,10 +25,15 @@ class UserController extends Controller
         return success(data: ['users' => UserResource::collection(User::all())]);
     }
 
-    public function cities()
+    public function myCars(Request $request)
     {
-        return success(data: ['cities' => CityResource::collection(City::all())]);
+        /** @var User $user */
+        $user = $request->user();
+
+
+        return success(data: ['cars' => CarResource::collection($user->cars)]);
     }
+
 
     public function update(UpdateUserRequest $request)
     {

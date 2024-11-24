@@ -8,6 +8,7 @@ use App\Http\Requests\User\UpdateUserRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -123,6 +124,10 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsToMany(City::class);
     }
 
+    public function cars(): HasMany
+    {
+        return $this->hasMany(Car::class, 'user_id', 'id');
+    }
 
     public function setPassword(string $password): void
     {

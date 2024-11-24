@@ -43,14 +43,14 @@ class UserController extends Controller
 
             $user->updateCustom($request);
 
-            return success(massage: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
+            return success(massage: 'Користувача успішно оновлено', data: ['user' => new UserResource($user->refresh())]);
 
         } catch (ApiException $e) {
             return error($e);
         }
     }
 
-    public function updateById(UpdateUserRequest $request, int $id)
+    public function updateById(int $id, UpdateUserRequest $request)
     {
         try {
 

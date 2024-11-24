@@ -5,19 +5,11 @@ namespace App\Http\Controllers;
 use App\Enum\EnumImageQuality;
 use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
-use App\Http\Requests\ProfilePictureRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\User\ProfilePictureRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
+use App\Models\Media;
 use App\Services\Image\ImageWebpService;
 use Illuminate\Http\Request;
-
-//use Intervention\Image\ImageManager;
-//use Intervention\Image\Drivers\Gd\Driver;
-
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 
 class MediaController extends Controller
@@ -71,37 +63,15 @@ class MediaController extends Controller
 
     public function deleteMediaById($mediaId)
     {
-        // Ищем медиа-файл по ID
-        $media = Media::find($mediaId);
+        try {
+            $media = Media::findOrFail($mediaId);
+            $media->delete();
 
-        if (!$media) {
-            return error(new ApiException('Медиа-файл не найден.', 0, 404));
+            return success('Медиа-файл успешно удалён.');
+
+        } catch (ApiException $e) {
+            return error($e);
         }
-
-        $media->delete();
-
-        return success('Медиа-файл успешно удалён.');
-    }
-
-    public function addProfileCollection(Request $request)
-    {
-        $user = auth()->user();
-
-        $images = $request->file('images'); // Массив изображений, переданных через запрос
-
-        if (!$images || !is_array($images)) {
-            return error(new ApiException('Фото відсутні.', 0, 400));
-        }
-        $imageWebp = new ImageWebpService(...$images);
-        $images = $imageWebp->convert(EnumImageQuality::HD);
-        // Для каждой картинки обрабатываем и сохраняем её
-        foreach ($images as $image) {
-            $user->addMediaFromStream($image->stream())
-                ->usingFileName('collection_image_' . time() . '.webp')
-                ->toMediaCollection(EnumTypeMedia::PHOTO_COLLECTION->value);
-        }
-
-        return success('Колекція профілю успішно оновлено.', new UserResource($request->user()));
     }
 
 

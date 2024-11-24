@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -152,7 +152,6 @@ class User extends Authenticatable implements HasMedia
 
     public function updateCustom(UpdateUserRequest $request): User
     {
-
         $this->name = $request->input('name', $this->name); // Если поле пустое, сохраняем старое значение
         $this->email = $request->input('email', $this->email); // Аналогично для других полей
         $this->phone = $request->input('phone', $this->phone);
@@ -163,6 +162,10 @@ class User extends Authenticatable implements HasMedia
         $this->occupation_description = $request->input('occupation_description', $this->occupation_description);
 
         $this->save();
+
+        if ($request->filled('cities')) {
+            $this->cities()->sync($request->cities);
+        }
 
         return $this;
     }

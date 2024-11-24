@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -27,6 +27,8 @@ class RegisterRequest extends FormRequest
             'phone' => 'required|string|unique:users',
             'telegram_nickname' => 'nullable|string|unique:users',
             'instagram_nickname' => 'nullable|string|unique:users',
+            'cities' => 'nullable|array',
+            'cities.*' => 'integer|exists:cities,id',
             'birth_date' => 'nullable|date_format:d-m-Y', // если дата не null, то должна быть в формате Y-m-d
             'club_entry_date' => 'nullable|date_format:d-m-Y', // если дата обязательна, то тоже проверка на формат
             'occupation_description' => 'nullable|string',

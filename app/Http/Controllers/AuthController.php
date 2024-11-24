@@ -3,18 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\ApiException;
-use App\Http\Requests\ChangePasswordByUserRequest;
-use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\User\ChangePasswordByUserRequest;
+use App\Http\Requests\User\ChangePasswordRequest;
+use App\Http\Requests\User\LoginRequest;
+use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -46,6 +44,10 @@ class AuthController extends Controller
         $user->club_entry_date = Carbon::parse($request->club_entry_date);
         $user->occupation_description = $request->occupation_description;
         $user->save();
+
+        if ($request->filled('cities')) {
+            $user->cities()->sync($request->cities);
+        }
 
         return success('User registered successfully', ['user' => new UserResource($user->fresh())]);
     }
@@ -93,7 +95,7 @@ class AuthController extends Controller
             $user->setPassword($request->new_password);
             $user->save();
 
-            return success('Пароль успішно оновлено', new UserResource($user));
+            return success('Пароль успішно оновлено', new UserResource($user->refresh()));
         } catch (ApiException $e) {
             return error($e);
         }

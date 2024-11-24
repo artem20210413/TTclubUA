@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Api\ApiException;
+use App\Http\Requests\Car\UpdateCarRequest;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Jetstream\HasProfilePhoto;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Car
@@ -13,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $gene_id
  * @property int $model_id
  * @property string|null $name
+ * @property string|null $vin_code
  * @property string $license_plate
  * @property string|null $personalized_license_plate
  * @property string|null $photo_path
@@ -23,9 +30,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property \App\Models\CarGene $gene
  * @property \App\Models\CarModel $model
  */
-class Car extends Model
+class Car extends Model implements HasMedia
 {
     use HasFactory;
+
+    use HasProfilePhoto;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'user_id',
@@ -51,4 +61,36 @@ class Car extends Model
     {
         return $this->belongsTo(CarModel::class, 'model_id');
     }
+
+    public function updateCustom(UpdateCarRequest $request): Car
+    {
+        $this->user_id = $request->input('user_id', $this->user_id); // Аналогично для других полей
+        $this->gene_id = $request->input('gene_id', $this->gene_id); // Аналогично для других полей
+        $this->model_id = $request->input('model_id', $this->model_id); // Аналогично для других полей
+        $this->name = $request->input('name', $this->name); // Если поле пустое, сохраняем старое значение
+        $this->vin_code = $request->input('vin_code', $this->vin_code); // Аналогично для других полей
+        $this->license_plate = $request->input('license_plate', $this->license_plate); // Аналогично для других полей
+        $this->personalized_license_plate = $request->input('personalized_license_plate', $this->personalized_license_plate); // Аналогично для других полей
+
+        $this->save();
+
+        return $this;
+    }
+
+    /**
+     * @param int $id
+     * @return Car
+     * @throws ApiException
+     */
+    static function findOrFail(int $id): Car
+    {
+        $car = Car::find($id);
+
+        if (!$car)
+            throw  new ApiException('Авто не існує', 0, 400);
+
+
+        return $car;
+    }
+
 }

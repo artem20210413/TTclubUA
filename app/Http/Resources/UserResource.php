@@ -23,7 +23,7 @@ class UserResource extends JsonResource
         $clubEntryDate = $this->club_entry_date ? Carbon::parse($this->club_entry_date) : null;
 
 
-        $default = asset( "storage/default/" . EnumTypeMedia::PROFILE_PICTURE->value . ".webp");
+        $default = asset("storage/default/" . EnumTypeMedia::PROFILE_PICTURE->value . ".webp");
         $profileImage = $this->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value) ?: $default;
 
 //        $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->map(function ($media) {
@@ -43,8 +43,9 @@ class UserResource extends JsonResource
             'roles' => $this->getRoleNames(),
             'active' => (bool)$this->active,
             'profile_image' => $profileImage,
+            'cities' => CityResource::collection($this->cities),
 //            'imageUrls' => $imageUrls,
-            'updated_at' => $this->created_at->diffForHumans(),
+            'updated_at' => $this->updated_at->diffForHumans(),
             'created_at' => $this->created_at->diffForHumans(),
         ];
     }

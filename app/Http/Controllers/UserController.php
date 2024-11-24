@@ -2,22 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\EnumImageQuality;
-use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
-use App\Http\Requests\ProfilePictureRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\CityResource;
 use App\Http\Resources\UserResource;
+use App\Models\City;
 use App\Models\User;
-use App\Services\Image\ImageWebpService;
 use Illuminate\Http\Request;
-
-//use Intervention\Image\ImageManager;
-//use Intervention\Image\Drivers\Gd\Driver;
-
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 
 class UserController extends Controller
@@ -26,6 +17,16 @@ class UserController extends Controller
     public function user(Request $request)
     {
         return success(data: ['user' => new UserResource($request->user())]);
+    }
+
+    public function all(Request $request)
+    {
+        return success(data: ['users' => UserResource::collection(User::all())]);
+    }
+
+    public function cities()
+    {
+        return success(data: ['cities' => CityResource::collection(City::all())]);
     }
 
     public function update(UpdateUserRequest $request)

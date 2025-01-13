@@ -20,7 +20,7 @@ class MediaController extends Controller
         $user = auth()->user();
 
         $image = $request->file('profile_image');
-
+//dd($image);
         if (!$image) return error(new ApiException('Фото відсутнє.', 0, 400));
 
         $imageWebp = new ImageWebpService($image);

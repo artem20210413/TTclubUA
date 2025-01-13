@@ -5,6 +5,8 @@ namespace App\Services\Image;
 use App\Enum\EnumImageQuality;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Image;
+use Intervention\Image\ImageManager;
+use Maestroerror\HeicToJpg;
 
 
 class ImageWebpService
@@ -17,6 +19,10 @@ class ImageWebpService
     public function __construct(array|UploadedFile ...$images)
     {
         foreach ($images as $image) {
+
+            if (HeicToJpg::isHeic($image))
+                $image = HeicToJpg::convert($image)->get();
+
             $this->images[] = \Intervention\Image\Facades\Image::make($image)->orientate()->encode('webp', 90);
         }
     }

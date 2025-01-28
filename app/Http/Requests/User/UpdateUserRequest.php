@@ -31,8 +31,8 @@ class UpdateUserRequest extends FormRequest
             'cities.*' => 'integer|exists:cities,id',
             'telegram_nickname' => 'nullable|string|unique:users,telegram_nickname,' . $userId,
             'instagram_nickname' => 'nullable|string|unique:users,instagram_nickname,' . $userId,
-            'birth_date' => 'nullable|date_format:d-m-Y',
-            'club_entry_date' => 'nullable|date_format:d-m-Y',
+//            'birth_date' => 'nullable|date_format:d-m-Y',
+//            'club_entry_date' => 'nullable|date_format:d-m-Y',
             'occupation_description' => 'nullable|string',
         ];
     }

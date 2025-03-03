@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             CarGenesSeeder::class,
             CarModelsSeeder::class,
+            ColorSeeder::class,
         ]);
     }
 }

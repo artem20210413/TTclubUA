@@ -32,6 +32,7 @@ class CarController extends Controller
         $car->user_id = $request->user_id;
         $car->gene_id = $request->gene_id;
         $car->model_id = $request->model_id;
+        $car->color_id = $request->color_id;
         $car->name = $request->name;
         $car->vin_code = $request->vin_code;
         $car->license_plate = $request->license_plate;

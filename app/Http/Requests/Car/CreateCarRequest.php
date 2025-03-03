@@ -25,6 +25,7 @@ class CreateCarRequest extends FormRequest
             'user_id' => 'nullable|exists:users,id',
             'gene_id' => 'required|exists:car_genes,id',
             'model_id' => 'required|exists:car_models,id',
+            'color_id' => 'required|exists:colors,id',
             'name' => 'nullable|string|max:255',
             'vin_code' => 'nullable|string|max:64|unique:cars,vin_code',
             'license_plate' => 'required|string|max:15|unique:cars,license_plate',

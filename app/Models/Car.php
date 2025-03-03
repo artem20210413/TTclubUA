@@ -18,6 +18,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int|null $user_id
  * @property int $gene_id
  * @property int $model_id
+ * @property int $color_id
  * @property string|null $name
  * @property string|null $vin_code
  * @property string $license_plate
@@ -67,6 +68,7 @@ class Car extends Model implements HasMedia
         $this->user_id = $request->input('user_id', $this->user_id); // Аналогично для других полей
         $this->gene_id = $request->input('gene_id', $this->gene_id); // Аналогично для других полей
         $this->model_id = $request->input('model_id', $this->model_id); // Аналогично для других полей
+        $this->color_id = $request->input('color_id', $this->color_id); // Аналогично для других полей
         $this->name = $request->input('name', $this->name); // Если поле пустое, сохраняем старое значение
         $this->vin_code = $request->input('vin_code', $this->vin_code); // Аналогично для других полей
         $this->license_plate = $request->input('license_plate', $this->license_plate); // Аналогично для других полей

@@ -22,11 +22,12 @@ class ColorSeeder extends Seeder
             ['id' => 4, 'name' => 'Бежевий', 'hex' => '#F5F5DC'],
             ['id' => 5, 'name' => 'Червоний', 'hex' => '#FF0000'],
             ['id' => 6, 'name' => 'Фіолетовий', 'hex' => '#800080'],
-            ['id' => 7, 'name' => 'Оранжевий', 'hex' => '#FFA500'],
+            ['id' => 7, 'name' => 'Помаранчевий', 'hex' => '#FFA500'],
             ['id' => 8, 'name' => 'Жовтий', 'hex' => '#FFFF00'],
             ['id' => 9, 'name' => 'Білий', 'hex' => '#FFFFFF'],
             ['id' => 10, 'name' => 'Коричневий', 'hex' => '#A52A2A'],
             ['id' => 11, 'name' => 'Сірий', 'hex' => '#808080'],
+            ['id' => 12, 'name' => 'Комбінований', 'hex' => '#000000'],
         ];
 
         foreach ($colors as $color) {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanct
 
 Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum']);
 
+Route::post('/import', [ImportController::class, 'importMain'])->middleware(['auth:sanctum', 'role:admin']);
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
 //->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             CarGenesSeeder::class,
             CarModelsSeeder::class,
             ColorSeeder::class,
+            CitySeeder::class,
         ]);
     }
 }

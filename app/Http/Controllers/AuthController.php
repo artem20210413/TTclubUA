@@ -7,7 +7,7 @@ use App\Http\Requests\User\ChangePasswordByUserRequest;
 use App\Http\Requests\User\ChangePasswordRequest;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

@@ -6,7 +6,7 @@ use App\Enum\EnumImageQuality;
 use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\ProfilePictureRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\Media;
 use App\Services\Image\ImageWebpService;
 use Illuminate\Http\Request;

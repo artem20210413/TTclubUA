@@ -5,6 +5,7 @@ use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,7 @@ Route::post('/register', [AuthController::class, 'register'])->middleware(['auth
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
 
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
+Route::get('/user/search/{search}', [UserController::class, 'search'])->middleware('auth:sanctum');
 Route::delete('/user/profile-picture', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
 Route::get('/user/my-cars', [UserController::class, 'myCars'])->middleware('auth:sanctum');
 Route::get('/user/all', [UserController::class, 'all'])->middleware('auth:sanctum');
@@ -41,6 +43,9 @@ Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanct
 Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum']);
 
 Route::post('/import', [ImportController::class, 'importMain'])->middleware(['auth:sanctum', 'role:admin']);
+
+Route::get('/test/fa-fa', [TestController::class, 'fafa']);//->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/test/getT', [TestController::class, 'get']);//->middleware(['auth:sanctum', 'role:admin']);
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
 //->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).

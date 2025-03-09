@@ -151,7 +151,6 @@ class User extends Authenticatable implements HasMedia
         if (!$user)
             throw  new ApiException('Користувача не існує', 0, 400);
 
-
         return $user;
     }
 

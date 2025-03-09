@@ -2,71 +2,111 @@
 
 namespace App\Imports;
 
+use App\Models\Car;
 use App\Models\City;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+
 class UsersImport implements ToModel
 {
+    public function chunkSize(): int
+    {
+        return 100; // Обрабатываем по 100 строк за раз
+    }
+
     /** @var Collection|City[] */
     private Collection $allCityModel;
+    private array $processedData = [];
 
     public function __construct()
     {
         $this->allCityModel = City::all();
     }
 
-    /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
+
     public function model(array $row)
     {
-        $userArray['cities'] = $this->searchCities($row[8] ?? null);//TODO
-        $userArray['birth_date'] = Date::excelToDateTimeObject($row[7] ?? 0);
-        $userArray['telegram_nickname'] = $row[6] ?? null;
-        $userArray['instagram_nickname'] = $row[10] ?? null;
-        $userArray['occupation_description'] = $row[11] ?? null;
-        $userArray['name'] = $row[5] ?? null;
-        $userArray['phone'] = $row[9] ?? null;
-        $userArray['email'] = $userArray['phone'] . '@gmail.com';
+        $d = $row[7] ?? 0;
+        $d = is_numeric($d) ? $d : 0;
+        $array['user']['cities'] = $this->searchCities($row[8] ?? null);
+        $array['user']['birth_date'] = Date::excelToDateTimeObject($d);
+        $array['user']['telegram_nickname'] = $row[6] ?? null; //TODO сохранять только с собачкой при это убирать собачку
+        $array['user']['instagram_nickname'] = $row[10] ?? null;
+        $array['user']['occupation_description'] = $row[11] ?? null;
+        $array['user']['name'] = $row[5] ?? null;
+        $array['user']['phone'] = $row[9] ?? null;
+        $array['user']['email'] = $array['user']['phone'] . '@gmail.com';
 
-        $carArray['madel_id'] = $this->searchCarModel($row[0] ?? null);
-        $carArray['gene_id'] = $this->searchCarGen($row[1] ?? null);
-        $carArray['color_id'] = $this->searchCarColor($row[2] ?? null);
-        $carArray['license_plate'] = $this->generationLicensePlate($row[3] ?? null); //TODO ПРОДАВ
-        $carArray['personalized_license_plate'] = $this->generationLicensePlate($row[4] ?? null); //TODO
+        $array['car']['model_id'] = $this->searchCarModel($row[0] ?? null);
+        $array['car']['gene_id'] = $this->searchCarGen($row[1] ?? null);
+        $array['car']['color_id'] = $this->searchCarColor($row[2] ?? null);
+        $array['car']['license_plate'] = $this->generationLicensePlate($row[3] ?? null);
+        $array['car']['personalized_license_plate'] = $this->generationLicensePlate($row[4] ?? null);
 
-
-        $user = $this->createUser($userArray);
-        dd($user, $row, $userArray);
-
+        $this->processedData[] = $array;
     }
 
-    private function createUser(array $userData): ?User
+    public function createUserAndCar(array $data)
+    {
+        $user = $this->createUser($data['user']);
+        $car = $this->crateCar($user, $data['car']);
+    }
+
+    public function createUser(array $userData): ?User
     {
         if (!isset($userData['phone'])) return null;
 
         $user = User::where('phone', formatPhoneNumber($userData['phone']))->first();
 
         if ($user) {
-            $user->update($userData);
+            $user->fill($userData);
+            $user->setPhone($userData['phone']);
         } else {
             $user = new User();
             $user->fill($userData);
-            $user->setPassword($userData['phone'] . '!');
             $user->setPhone($userData['phone']);
+            $user->setPassword($userData['phone'] . '!');
             $user->save();
         }
 
-        if (!empty($userArray['cities'])) {
-            $user->cities()->sync($userArray['cities']);
+        if (!empty($userData['cities'])) {
+            $user->cities()->sync($userData['cities']);
         }
 
         return $user;
+    }
+
+    public function crateCar(?User $user, array $carData): ?Car
+    {
+//        if (!isset($carData['license_plate'])) return null;
+        if (str_contains($carData['license_plate'], 'ПРОДАВ')) return null;
+
+        $carData['user_id'] = $user?->id;
+
+        $car = Car::where('license_plate', $carData['license_plate'])->where('personalized_license_plate', $carData['personalized_license_plate'])->first();
+//        dd($car, $carData);
+        if ($car) {
+            $car->fill($carData);
+        } else {
+            $car = new Car();
+            $car->fill($carData);
+        }
+
+//        dd($carData);
+        $car->save();
+
+        return $car;
+    }
+
+
+    public function getProcessedData(): array
+    {
+        return $this->processedData;
     }
 
     private function createCar()
@@ -77,6 +117,7 @@ class UsersImport implements ToModel
     private function searchCities(?string $txt): array
     {
         $res = [];
+
         foreach ($this->allCityModel as $city) {
             if (strpos($txt, $city->name) !== false)
                 $res[] = $city->id;
@@ -110,17 +151,18 @@ class UsersImport implements ToModel
         };
     }
 
-    private function generationLicensePlate(?string $txt): string
+    private function generationLicensePlate(?string $txt): ?string
     {
         $txt = trim($txt);
 
         return match ($txt) {
             'ПРОДАВ' => $txt,
+            '' => null,
             default => $txt,  //TODO convert LicensePlate in latin characters
         };
     }
 
-    private function searchCarColor(?string $txt): int
+    private function searchCarColor(?string $txt): ?int
     {
         $txt = trim($txt);
         return match ($txt) {

@@ -11,12 +11,13 @@ class UserEloquent
     public static function search(Builder $query, string $search): Builder
     {
         $query->where(function ($q) use ($search) {
+            $searchLicense = formatNormalizePlateNumber($search);
             $q->where('phone', 'like', "%{$search}%") // Поиск по номеру телефона
             ->orWhere('name', 'like', "%{$search}%") // Поиск по имени
             ->orWhere('telegram_nickname', 'like', "%{$search}%") // Поиск по нику в ТГ
-            ->orWhereHas('cars', function ($carQuery) use ($search) { // Поиск по авто
-                $carQuery->where('license_plate', 'like', "%{$search}%")
-                    ->orWhere('personalized_license_plate', 'like', "%{$search}%");
+            ->orWhereHas('cars', function ($carQuery) use ($searchLicense) { // Поиск по авто
+                $carQuery->where('license_plate', 'like', "%{$searchLicense}%")
+                    ->orWhere('personalized_license_plate', 'like', "%{$searchLicense}%");
             });
         });
 

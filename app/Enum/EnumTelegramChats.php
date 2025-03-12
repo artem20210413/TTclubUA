@@ -20,7 +20,7 @@ enum EnumTelegramChats
     public function getIds(): array
     {
         return match ($this) {
-            self::NOTIFICATION => [-4635035669,],
+            self::NOTIFICATION => [-1002693142471],
         };
     }
 

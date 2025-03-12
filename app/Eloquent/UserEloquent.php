@@ -48,4 +48,8 @@ class UserEloquent
         return $users;
     }
 
+    public static function getBirthdayPeopleToDay()
+    {
+    }
+
 }

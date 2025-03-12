@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Eloquent\UserEloquent;
 use App\Enum\EnumTelegramChats;
 use App\Http\Resources\User\UserResource;
 use App\Services\Command\ListOfBirthdays;
@@ -47,7 +48,8 @@ class TestController extends Controller
 
     public function get(Request $request)
     {
-
+        $people = UserEloquent::getBirthdayPeople(0);
+        dd($people->count());
 //        dd($s->getBirthdayPeople()->count());
 //        return success(null, UserResource::collection($users));
 //        $updates = $this->telegram->getUpdates();

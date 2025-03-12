@@ -21,7 +21,7 @@ class ListOfBirthdays
     }
 
 
-    public function getFormatStringBirthdayPeople()
+    public function getFormatStringBirthdayPeople(): string
     {
         $count = $this->birthdayPeople->count();
 
@@ -29,7 +29,22 @@ class ListOfBirthdays
 
         /** @var User $user */
         foreach ($this->birthdayPeople as $user) {
-            $text .= "{$user->birth_date} {$user->name} - {$user->telegram_nickname}\n"; // Исправлено добавление текста
+            $text .= "{$user->getShortInfo()}\n";
+        }
+
+        return $text;
+    }
+
+
+    public function getFormatStringBirthdayPeopleToday(): ?string
+    {
+        $count = $this->birthdayPeople->count();
+        if ($count === 0) return null;
+        $text = "Сьогодні день народження у $count іменинників: \n";
+
+        /** @var User $user */
+        foreach ($this->birthdayPeople as $user) {
+            $text .= "{$user->getShortInfo()}\n"; // Исправлено добавление текста
         }
 
         return $text;

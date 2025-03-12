@@ -21,8 +21,9 @@ class TelegramBot
     }
 
 
-    public function sendMessage(string $message)
+    public function sendMessage(?string $message)
     {
+        if (!$message) return;
         foreach ($this->enumTelegramChats->getIds() as $chatId) {
             try {
                 $this->telegram->sendMessage([

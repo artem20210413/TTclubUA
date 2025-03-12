@@ -188,4 +188,10 @@ class User extends Authenticatable implements HasMedia
             ? $this->birth_date->format('d.m.Y')
             : '---';  // Возвращаем '---', если birth_date не является объектом Carbon
     }
+
+    public function getShortInfo(): string
+    {
+        return "{$this->birth_date} {$this->name} - {$this->telegram_nickname}";
+
+    }
 }

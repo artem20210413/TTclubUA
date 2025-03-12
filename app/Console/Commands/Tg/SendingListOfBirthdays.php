@@ -2,10 +2,13 @@
 
 namespace App\Console\Commands\Tg;
 
+use App\Eloquent\UserEloquent;
 use App\Enum\EnumTelegramChats;
+use App\Models\User;
 use App\Services\Command\ListOfBirthdays;
 use App\Services\Telegram\TelegramBot;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class SendingListOfBirthdays extends Command
@@ -31,9 +34,30 @@ class SendingListOfBirthdays extends Command
     {
         $nextDays = (int)$this->argument('nextDays');
         Log::info('search ListOfBirthdays nextDays: ' . $nextDays);
-        $s = new ListOfBirthdays($nextDays);
+
+        $birthdayPeople = UserEloquent::getBirthdayPeople($nextDays);
         $botT = new TelegramBot(EnumTelegramChats::NOTIFICATION);
-        $botT->sendMessage($s->getFormatStringBirthdayPeople());
-        Log::info('finish ListOfBirthdays Count:' . $s->getBirthdayPeople()->count());
+        $botT->sendMessage($this->getFormatStringBirthdayPeople($birthdayPeople, $nextDays));
+
+        Log::info('finish ListOfBirthdays Count:' . $birthdayPeople->count());
+    }
+
+
+    public function getFormatStringBirthdayPeople(Collection $birthdayPeople, int $nextDays): ?string
+    {
+        $isToday = $nextDays === 0;
+        $count = $birthdayPeople->count();
+        if ($count === 0 && $isToday) return null;
+
+        $text = $isToday
+            ? "Сьогодні день народження у $count іменинників: \n"
+            : "Наступного тижня маємо $count іменинників: \n";
+
+        /** @var User $user */
+        foreach ($birthdayPeople as $user) {
+            $text .= "{$user->getShortInfo()}\n";
+        }
+
+        return $text;
     }
 }

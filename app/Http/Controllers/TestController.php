@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Eloquent\UserEloquent;
 use App\Enum\EnumTelegramChats;
 use App\Http\Resources\User\UserResource;
-use App\Services\Command\ListOfBirthdays;
 use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
 use Telegram\Bot\Api;
@@ -32,24 +31,22 @@ class TestController extends Controller
 
     public function fafa(Request $request)
     {
-        $userId = '407600221';
-        $username = 'olha_mo';
-        $message = "<a href='tg://user?id={$userId}'>@$username</a> fa-fa"; // Упоминание
-//        $message = "[@$username](tg://user?id={$userId}) fa-fa";
-//        $message = "<a href='https://t.me/{$username}'>@$username</a> fa-fa";
-
-        return $this->telegram->sendMessage([
-            'chat_id' => $request->chatId,
-            'text' => $message,
-//            'parse_mode' => 'MarkdownV2',
-            'parse_mode' => 'HTML',
-        ]);
+//        $userId = '407600221';
+//        $username = 'olha_mo';
+//        $message = "<a href='tg://user?id={$userId}'>@$username</a> fa-fa"; // Упоминание
+////        $message = "[@$username](tg://user?id={$userId}) fa-fa";
+////        $message = "<a href='https://t.me/{$username}'>@$username</a> fa-fa";
+//
+//        return $this->telegram->sendMessage([
+//            'chat_id' => $request->chatId,
+//            'text' => $message,
+////            'parse_mode' => 'MarkdownV2',
+//            'parse_mode' => 'HTML',
+//        ]);
     }
 
     public function get(Request $request)
     {
-        $people = UserEloquent::getBirthdayPeople(0);
-        dd($people->count());
 //        dd($s->getBirthdayPeople()->count());
 //        return success(null, UserResource::collection($users));
 //        $updates = $this->telegram->getUpdates();

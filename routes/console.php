@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->weeklyOn(0, '15:00');
-app(Schedule::class)->command('tg:sending-list-of-birthdays-today')->dailyAt('09:00');
+app(Schedule::class)->command('tg:sending-list-of-birthdays 0')->dailyAt('09:00');
 //app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->everyMinute();
 
 //test

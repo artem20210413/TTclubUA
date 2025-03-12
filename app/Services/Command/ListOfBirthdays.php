@@ -12,21 +12,20 @@ class ListOfBirthdays
 
     public function __construct(readonly int $nextDays)
     {
-        $this->getBirthdayPeople();
+        $this->birthdayPeople = UserEloquent::getBirthdayPeople($this->nextDays);
     }
 
     public function getBirthdayPeople(): Collection
     {
-        $this->birthdayPeople = UserEloquent::getBirthdayPeople($this->nextDays);
-
         return $this->birthdayPeople;
     }
+
 
     public function getFormatStringBirthdayPeople()
     {
         $count = $this->birthdayPeople->count();
 
-        $text = "Цього тижня маємо $count іменинників: \n";
+        $text = "Наступного тижня маємо $count іменинників: \n";
 
         /** @var User $user */
         foreach ($this->birthdayPeople as $user) {

@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 
 app(Schedule::class)->command('app:sending-birthday-information-command 9')->everyMinute();
 app(Schedule::class)->command('app:sending-birthday-information-command 10')->hourly();
+
+//test

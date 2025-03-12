@@ -180,4 +180,12 @@ class User extends Authenticatable implements HasMedia
             $this->getMedia(EnumTypeMedia::PROFILE_PICTURE->value)->each->delete();
         }
     }
+
+    // Если вам нужно отображать день рождения в стандартном формате
+    public function getBirthDateFormattedAttribute(): string
+    {
+        return $this->birth_date instanceof Carbon
+            ? $this->birth_date->format('d.m.Y')
+            : '---';  // Возвращаем '---', если birth_date не является объектом Carbon
+    }
 }

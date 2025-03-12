@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\EnumTelegramChats;
+use App\Http\Resources\User\UserResource;
+use App\Services\Command\ListOfBirthdays;
+use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
 use Telegram\Bot\Api;
 
@@ -30,34 +34,39 @@ class TestController extends Controller
         $userId = '407600221';
         $username = 'olha_mo';
         $message = "<a href='tg://user?id={$userId}'>@$username</a> fa-fa"; // Упоминание
+//        $message = "[@$username](tg://user?id={$userId}) fa-fa";
 //        $message = "<a href='https://t.me/{$username}'>@$username</a> fa-fa";
 
         return $this->telegram->sendMessage([
             'chat_id' => $request->chatId,
             'text' => $message,
+//            'parse_mode' => 'MarkdownV2',
             'parse_mode' => 'HTML',
         ]);
     }
 
     public function get(Request $request)
     {
-        $updates = $this->telegram->getUpdates();
-        foreach ($updates as $update) {
-            if (!$update->getMessage()->isEmpty()) {
-                // Извлекаем сообщение
-                $message = $update->getMessage();
 
-                // Получаем информацию о пользователе
-                $user = $message->getFrom();
-                $userId = $user->getId();
-                $username = $user->getUsername();
-                // Теперь у тебя есть ID пользователя
-                dump("User ID: $userId, Username: $username");
-            } else {
-                dump('---');
-            }
-
-        }
+//        dd($s->getBirthdayPeople()->count());
+//        return success(null, UserResource::collection($users));
+//        $updates = $this->telegram->getUpdates();
+//        foreach ($updates as $update) {
+//            if (!$update->getMessage()->isEmpty()) {
+//                // Извлекаем сообщение
+//                $message = $update->getMessage();
+//
+//                // Получаем информацию о пользователе
+//                $user = $message->getFrom();
+//                $userId = $user->getId();
+//                $username = $user->getUsername();
+//                // Теперь у тебя есть ID пользователя
+//                dump("User ID: $userId, Username: $username");
+//            } else {
+//                dump('---');
+//            }
+//
+//        }
     }
 
 }

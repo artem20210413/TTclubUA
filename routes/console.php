@@ -8,7 +8,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-app(Schedule::class)->command('app:sending-birthday-information-command 9')->everyMinute();
-app(Schedule::class)->command('app:sending-birthday-information-command 10')->hourly();
+app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->weeklyOn(0, '15:00');
+//app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->everyMinute();
 
 //test

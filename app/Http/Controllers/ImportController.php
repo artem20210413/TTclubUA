@@ -13,7 +13,7 @@ class ImportController extends Controller
 
     public function importMain(Request $request)
     {
-
+        set_time_limit(300); // Увеличивает лимит до 5 минут
 //        Excel::import(new UsersImport, $request->file('file'));
         $import = new UsersImport();
         Excel::import($import, request()->file('file'));

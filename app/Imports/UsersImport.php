@@ -14,10 +14,11 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class UsersImport implements ToModel
 {
-    public function chunkSize(): int
-    {
-        return 100; // Обрабатываем по 100 строк за раз
-    }
+
+//    public function chunkSize(): int
+//    {
+//        return 100; // Обрабатываем по 100 строк за раз
+//    }
 
     /** @var Collection|City[] */
     private Collection $allCityModel;
@@ -31,22 +32,36 @@ class UsersImport implements ToModel
 
     public function model(array $row)
     {
-        $d = $row[7] ?? 0;
+        if ($row[0] === null || $row[0] === 'Модель') return;
+
+
+        $l = $row[3] ?? null;
+        if ($l) {
+            $l = str_replace(")", "", $l);
+            $ls = explode("(", $l);
+
+            $licensePlate = $ls[0] ?? null;
+            $personalizedLicensePlate = $ls[1] ?? null;
+        } else {
+            $licensePlate = null;
+            $personalizedLicensePlate = null;
+        }
+        $d = $row[6] ?? 0;
         $d = is_numeric($d) ? $d : 0;
-        $array['user']['cities'] = $this->searchCities($row[8] ?? null);
+        $array['user']['cities'] = $this->searchCities($row[4] ?? null);
         $array['user']['birth_date'] = Date::excelToDateTimeObject($d);
-        $array['user']['telegram_nickname'] = $row[6] ?? null; //TODO сохранять только с собачкой при это убирать собачку
-        $array['user']['instagram_nickname'] = $row[10] ?? null;
-        $array['user']['occupation_description'] = $row[11] ?? null;
-        $array['user']['name'] = $row[5] ?? null;
-        $array['user']['phone'] = $row[9] ?? null;
+        $array['user']['telegram_nickname'] = $this->filterTelegram($row[5] ?? null); //TODO сохранять только с собачкой при это убирать собачку
+        $array['user']['instagram_nickname'] = $row[9] ?? null;
+        $array['user']['occupation_description'] = $row[10] ?? null;
+        $array['user']['name'] = $row[4] ?? null;
+        $array['user']['phone'] = $row[8] ?? null;
         $array['user']['email'] = $array['user']['phone'] . '@gmail.com';
 
         $array['car']['model_id'] = $this->searchCarModel($row[0] ?? null);
         $array['car']['gene_id'] = $this->searchCarGen($row[1] ?? null);
         $array['car']['color_id'] = $this->searchCarColor($row[2] ?? null);
-        $array['car']['license_plate'] = $this->generationLicensePlate($row[3] ?? null);
-        $array['car']['personalized_license_plate'] = $this->generationLicensePlate($row[4] ?? null);
+        $array['car']['license_plate'] = $this->generationLicensePlate($licensePlate);
+        $array['car']['personalized_license_plate'] = $this->generationLicensePlate($personalizedLicensePlate);
 
         $this->processedData[] = $array;
     }
@@ -84,7 +99,7 @@ class UsersImport implements ToModel
     public function crateCar(?User $user, array $carData): ?Car
     {
 //        if (!isset($carData['license_plate'])) return null;
-        if (str_contains($carData['license_plate'], 'ПРОДАВ')) return null;
+//        if (str_contains($carData['license_plate'], 'ПРОДАВ')) return null;
 
         $carData['user_id'] = $user?->id;
 
@@ -156,9 +171,10 @@ class UsersImport implements ToModel
         $txt = trim($txt);
 
         return match ($txt) {
-            'ПРОДАВ' => $txt,
+            'ПРОДАВ' => null,
+            'ТРЕБА НОМЕР' => null,
             '' => null,
-            default => $txt,  //TODO convert LicensePlate in latin characters
+            default => formatNormalizePlateNumber($txt),
         };
     }
 
@@ -179,5 +195,16 @@ class UsersImport implements ToModel
             default => null,
         };
 
+    }
+
+    private function filterTelegram(?string $tg): ?string
+    {
+        if (!$tg) return null;
+
+        $list = explode('@', $tg);
+
+        if (count($list) < 2) return null;
+
+        return $list[1];
     }
 }

@@ -19,7 +19,8 @@ if (!function_exists('formatPhoneNumber')) {
 
 }
 if (!function_exists('formatNormalizePlateNumber')) {
-    function formatNormalizePlateNumber(string $plate): string {
+    function formatNormalizePlateNumber(string $plate): string
+    {
         // Словарь замены кириллических букв на латинские
         $replaceMap = [
             'А' => 'A', 'В' => 'B', 'С' => 'C', 'Е' => 'E', 'Н' => 'H',
@@ -32,7 +33,7 @@ if (!function_exists('formatNormalizePlateNumber')) {
 
         // Удаляем все спецсимволы, оставляя только буквы и цифры
         $plate = preg_replace('/[^A-ZА-ЯІЇЄ0-9]/u', '', $plate);
-
+        $plate = str_replace(" ", "", $plate);
         // Если в номере есть кириллические буквы — заменяем их
         return strtr($plate, $replaceMap);
     }

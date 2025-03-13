@@ -191,7 +191,7 @@ class User extends Authenticatable implements HasMedia
 
     public function getShortInfo(): string
     {
-        return "{$this->birth_date} {$this->name} - {$this->telegram_nickname}";
+        return "{$this->birth_date} {$this->name} - @{$this->telegram_nickname}";
 
     }
 }

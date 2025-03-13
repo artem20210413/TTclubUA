@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Eloquent\UserEloquent;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\UpdateUserRequest;
-use App\Http\Resources\CarResource;
+use App\Http\Resources\Car\CarResource;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserWithCarsResource;
 use App\Models\User;

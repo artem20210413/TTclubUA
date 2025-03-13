@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Car;
 
+use App\Eloquent\CarEloquent;
 use App\Enum\EnumImageQuality;
 use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
@@ -9,9 +10,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Car\AddCollectionsCarRequest;
 use App\Http\Requests\Car\CreateCarRequest;
 use App\Http\Requests\Car\UpdateCarRequest;
-use App\Http\Resources\CarResource;
-use App\Http\Resources\GenesResource;
-use App\Http\Resources\ModelResource;
+use App\Http\Resources\Car\CarResource;
+use App\Http\Resources\Car\CarWithUserResource;
+use App\Http\Resources\Car\GenesResource;
+use App\Http\Resources\Car\ModelResource;
 use App\Models\Car;
 use App\Models\CarGene;
 use App\Models\CarModel;
@@ -22,7 +24,6 @@ use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
-
 
     public function create(CreateCarRequest $request)
     {
@@ -42,7 +43,15 @@ class CarController extends Controller
 
     public function all()
     {
-        return success(data: ['cars' => CarResource::collection(Car::all())]);
+        return success(data: CarResource::collection(Car::all()));
+    }
+
+    public function search(string $search, Request $request)
+    {
+        $q = Car::query();
+        $cars = CarEloquent::search($q, $search)->paginate($request->perPage ?? 10);
+
+        return success(data: CarWithUserResource::collection($cars));
     }
 
     public function find(int $id)
@@ -50,7 +59,7 @@ class CarController extends Controller
         try {
             $car = Car::findOrFail($id);
 
-            return success(data: ['car' => new CarResource($car)]);
+            return success(data: new CarResource($car));
 
         } catch (ApiException $e) {
             return error($e);

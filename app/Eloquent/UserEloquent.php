@@ -18,9 +18,8 @@ class UserEloquent
             $q->where('phone', 'like', "%{$search}%") // Поиск по номеру телефона
             ->orWhere('name', 'like', "%{$search}%") // Поиск по имени
             ->orWhere('telegram_nickname', 'like', "%{$search}%") // Поиск по нику в ТГ
-            ->orWhereHas('cars', function ($carQuery) use ($searchLicense) { // Поиск по авто
-                $carQuery->where('license_plate', 'like', "%{$searchLicense}%")
-                    ->orWhere('personalized_license_plate', 'like', "%{$searchLicense}%");
+            ->orWhereHas('cars', function ($carQuery) use ($search) { // Поиск по авто
+                $carQuery = CarEloquent::search($carQuery, $search);
             });
         });
 

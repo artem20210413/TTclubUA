@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Car;
 
 use App\Enum\EnumTypeMedia;
 use App\Models\Car;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -33,6 +31,7 @@ class CarResource extends JsonResource
             'vin_code' => $this->vin_code,
             'license_plate' => $this->license_plate,
             'personalized_license_plate' => $this->personalized_license_plate,
+            'general_license_plate' => $this->getGeneralLicensePlate(),
             'gene' => new GenesResource($this->gene),
             'model' => new ModelResource($this->model),
             'imageUrls' => $imageUrls,

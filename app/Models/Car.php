@@ -95,4 +95,9 @@ class Car extends Model implements HasMedia
         return $car;
     }
 
+    public function getGeneralLicensePlate(): ?string
+    {
+        return $this->personalized_license_plate ?? $this->license_plate;
+    }
+
 }

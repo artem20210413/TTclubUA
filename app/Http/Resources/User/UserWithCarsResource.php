@@ -3,7 +3,7 @@
 namespace App\Http\Resources\User;
 
 use App\Enum\EnumTypeMedia;
-use App\Http\Resources\CarResource;
+use App\Http\Resources\Car\CarResource;
 use App\Http\Resources\CityResource;
 use App\Models\User;
 use Carbon\Carbon;

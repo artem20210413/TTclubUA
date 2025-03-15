@@ -100,4 +100,12 @@ class Car extends Model implements HasMedia
         return $this->personalized_license_plate ?? $this->license_plate;
     }
 
+    public function getGeneralShortInfo(): string
+    {
+        $gen = $this?->gene->name ?? '-';
+        $model = $this?->model->name ?? '-';
+        $l = $this->getGeneralLicensePlate() ?? '-';
+        return "$model $gen ($l)";
+    }
+
 }

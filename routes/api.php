@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Car\CarController;
+use App\Http\Controllers\Car\MentionController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
@@ -38,6 +39,8 @@ Route::get('/car/{id}', [CarController::class, 'find'])->middleware(['auth:sanct
 Route::post('/car/{id}/collections', [CarController::class, 'addCollections'])->middleware(['auth:sanctum']);
 Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteCollections'])->middleware(['auth:sanctum']);
 
+Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
+
 Route::get('/genes', [CarController::class, 'genes'])->middleware(['auth:sanctum']);
 Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanctum']);
 
@@ -45,7 +48,7 @@ Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum
 
 Route::post('/import', [ImportController::class, 'importMain'])->middleware(['auth:sanctum', 'role:admin']);
 
-Route::get('/test/fa-fa', [TestController::class, 'fafa']);//->middleware(['auth:sanctum', 'role:admin']);
+Route::post('/test/fa-fa', [TestController::class, 'fafa'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/test/getT', [TestController::class, 'get']);//->middleware(['auth:sanctum', 'role:admin']);
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.

@@ -6,11 +6,13 @@ enum EnumTelegramChats
 {
 
     case NOTIFICATION;
+    case MENTION;
 
     public function getName(): string
     {
         return match ($this) {
             self::NOTIFICATION => 'Notification TT_club',
+            self::MENTION => 'fa-fa',
         };
     }
 
@@ -21,6 +23,7 @@ enum EnumTelegramChats
     {
         return match ($this) {
             self::NOTIFICATION => [-1002693142471],
+            self::MENTION => [-4706815074],
         };
     }
 

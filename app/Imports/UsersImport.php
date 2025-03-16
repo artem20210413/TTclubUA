@@ -48,7 +48,7 @@ class UsersImport implements ToModel
         }
         $d = $row[6] ?? 0;
         $d = is_numeric($d) ? $d : 0;
-        $array['user']['cities'] = $this->searchCities($row[4] ?? null);
+        $array['user']['cities'] = $this->searchCities($row[7] ?? null);
         $array['user']['birth_date'] = Date::excelToDateTimeObject($d);
         $array['user']['telegram_nickname'] = $this->filterTelegram($row[5] ?? null); //TODO сохранять только с собачкой при это убирать собачку
         $array['user']['instagram_nickname'] = $row[9] ?? null;

@@ -43,7 +43,8 @@ class MentionController extends Controller
         } else {
             $bot->sendMessage($text);
         }
-//        dd($imageUrl);
-        dd('succses');
+
+        return success();
+
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Eloquent;
 
+use App\Models\Car;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,5 +21,8 @@ class CarEloquent
         return $query;
     }
 
-
+    public static function countCarsWithUsers(): int
+    {
+        return Car::whereHas('user')->count();
+    }
 }

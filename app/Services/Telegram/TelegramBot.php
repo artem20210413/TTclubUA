@@ -41,7 +41,7 @@ class TelegramBot
     public function sendPhotoAndDescription(string $imgPath, ?string $description)
     {
         foreach ($this->enumTelegramChats->getIds() as $chatId) {
-//            try {
+            try {
 
             $this->telegram->sendPhoto([
                 'chat_id' => $chatId,
@@ -51,10 +51,16 @@ class TelegramBot
                 'caption' => $description ?? '',
                 'parse_mode' => 'HTML',
             ]);
-//            } catch (\Exception $e) {
-//                Log::error($e->getMessage());
-//            }
+            } catch (\Exception $e) {
+                Log::error($e->getMessage());
+            }
         }
+    }
+
+    public function test()
+    {
+//        $response = $this->telegram->getMe();
+//        dd($response);
     }
 
 

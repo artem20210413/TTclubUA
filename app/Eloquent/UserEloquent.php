@@ -47,5 +47,19 @@ class UserEloquent
         return $users;
     }
 
+    public static function getNewMembersLastNDays(int $days): Collection
+    {
+        $fromDate = Carbon::today()->subDays($days);
+
+        return User::query()
+            ->where('created_at', '>=', $fromDate)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+    public static function countUsersWithCars(): int
+    {
+        return User::whereHas('cars')->count();
+    }
+
 
 }

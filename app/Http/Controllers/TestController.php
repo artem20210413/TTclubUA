@@ -70,6 +70,9 @@ class TestController extends Controller
 
     public function get(Request $request)
     {
+        $bot = new TelegramBot(EnumTelegramChats::MENTION);
+        $bot->test();
+        dd(1);
 //        dd($s->getBirthdayPeople()->count());
 //        return success(null, UserResource::collection($users));
 //        $updates = $this->telegram->getUpdates();

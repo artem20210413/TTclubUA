@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\Car\MentionController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\TestController;
@@ -18,6 +19,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
+
+Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
 
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
 Route::get('/user/search/{search}', [UserController::class, 'search'])->middleware('auth:sanctum');

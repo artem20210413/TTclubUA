@@ -21,7 +21,6 @@ class HomePageController extends Controller
 {
     public function homepageData()
     {
-
         $birthdaysNextWeek = UserEloquent::getBirthdayPeople(7);
         $newMembersLastNDays = UserEloquent::getNewMembersLastNDays(30);//30
         $totalMembers = UserEloquent::countUsersWithCars();

@@ -7,6 +7,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,16 @@ Route::post('/car/{id}/collections', [CarController::class, 'addCollections'])->
 Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteCollections'])->middleware(['auth:sanctum']);
 
 Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
+
+
+Route::get('/publication-type', [PublicationController::class, 'allType'])->middleware(['auth:sanctum']);
+Route::post('/publication-type/image/{publicationTypeId}', [PublicationController::class, 'addImgType'])->middleware(['auth:sanctum', 'role:admin']);
+Route::delete('/publication-type/image/{publicationTypeId}', [PublicationController::class, 'deleteAllImagesType'])->middleware(['auth:sanctum', 'role:admin']);
+
+Route::get('/publication/type/{typeId}', [PublicationController::class, 'publication'])->middleware(['auth:sanctum']);
+Route::post('/publication', [PublicationController::class, 'create'])->middleware(['auth:sanctum', 'role:admin']);
+Route::post('/publication/image/{publicationId}', [PublicationController::class, 'addImg'])->middleware(['auth:sanctum', 'role:admin']);
+Route::delete('/publication/image/{publicationId}', [PublicationController::class, 'deleteAllImages'])->middleware(['auth:sanctum', 'role:admin']);
 
 Route::get('/genes', [CarController::class, 'genes'])->middleware(['auth:sanctum']);
 Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanctum']);

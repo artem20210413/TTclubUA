@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CarModelsSeeder::class,
             ColorSeeder::class,
             CitySeeder::class,
+            PublicationTypesSeeder::class,
         ]);
     }
 }

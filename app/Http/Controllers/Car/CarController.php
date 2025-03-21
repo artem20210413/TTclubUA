@@ -71,7 +71,7 @@ class CarController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        return success(data: ['cars' => CarResource::collection($user->car)]);
+        return success(data: CarResource::collection($user->cars ?? []));
     }
 
     public function update(int $id, UpdateCarRequest $request)
@@ -85,7 +85,7 @@ class CarController extends Controller
             $car = Car::findOrFail($id);
             $car->updateCustom($request);
 
-            return success(massage: 'Авто успішно оновлено', data: ['car' => new CarResource($car->refresh())]);
+            return success(massage: 'Авто успішно оновлено', data: new CarResource($car->refresh()));
 
         } catch (ApiException $e) {
             return error($e);
@@ -110,7 +110,7 @@ class CarController extends Controller
                     ->toMediaCollection(EnumTypeMedia::PHOTO_COLLECTION->value);
             }
 
-            return success(massage: 'Колекція успішно оновлено.', data: ['car' => new CarResource($car->refresh())]);
+            return success(massage: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
 
         } catch (ApiException $e) {
             return error($e);
@@ -131,7 +131,7 @@ class CarController extends Controller
 
             $media->delete();
 
-            return success(massage: 'Колекція успішно оновлено.', data: ['car' => new CarResource($car->refresh())]);
+            return success(massage: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
 
         } catch (ApiException $e) {
             return error($e);
@@ -146,5 +146,18 @@ class CarController extends Controller
     public function models()
     {
         return success(data: ['genes' => ModelResource::collection(CarModel::all())]);
+    }
+
+    public function changeActive(Car $car)
+    {
+        try {
+            $car->active = !$car->active;
+            $car->save();
+
+            return success(massage: 'Авто успішно оновлено', data: new CarResource($car));
+
+        } catch (ApiException $e) {
+            return error($e);
+        }
     }
 }

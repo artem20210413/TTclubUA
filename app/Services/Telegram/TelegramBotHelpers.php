@@ -7,10 +7,10 @@ use App\Models\User;
 
 class TelegramBotHelpers
 {
-    public static function MentionPerson(User $user)
+    public static function MentionPerson(?User $user): string
     {
-
-//        $message = "<a href='tg://user?id={$userId}'>@$username</a>"; // Упоминание
+        $name = $user?->telegram_nickname ?? $user?->name;
+        return "<a href='tg://user?id={$user?->telegram_id}'>$name</a>"; // Упоминание
     }
 
     public static function LinkToPerson(?User $user): string
@@ -18,14 +18,21 @@ class TelegramBotHelpers
         return "<a href='https://t.me/{$user?->telegram_nickname}'>$user?->name</a>";
     }
 
+    public static function TryMentionPerson(?User $user): string
+    {
+        if ($user?->telegram_id)
+            return self::MentionPerson($user);
+        return self::LinkToPerson($user);
+
+    }
+
     public static function generationTextMention(User $owner, Car $car, ?string $description)
     {
-//        $text = "<b> ФА-ФА </b> \nУчасник клубу {owner} знайшов {car}. Власник: {employee}\n";
         $text = "<b>Фа-фа</b>, {employee} - {car}! Лови привітання від {owner}!";
 
-        $text = str_replace("{owner}", self::LinkToPerson($owner), $text);
+        $text = str_replace("{owner}", self::TryMentionPerson($owner), $text);
         $text = str_replace("{car}", $car->getGeneralShortInfo(), $text);
-        $text = str_replace("{employee}", self::LinkToPerson($car?->user), $text);
+        $text = str_replace("{employee}", self::TryMentionPerson($car?->user), $text);
 
 //        dd($description);
         if ($description) {

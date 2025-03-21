@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,
             CitySeeder::class,
             PublicationTypesSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

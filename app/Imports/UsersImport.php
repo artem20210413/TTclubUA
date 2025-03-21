@@ -98,21 +98,14 @@ class UsersImport implements ToModel
 
     public function crateCar(?User $user, array $carData): ?Car
     {
-//        if (!isset($carData['license_plate'])) return null;
+        if (!isset($carData['license_plate']) && !isset($carData['personalized_license_plate'])) return null;
 //        if (str_contains($carData['license_plate'], 'ПРОДАВ')) return null;
 
         $carData['user_id'] = $user?->id;
 
-        $car = Car::where('license_plate', $carData['license_plate'])->where('personalized_license_plate', $carData['personalized_license_plate'])->first();
-//        dd($car, $carData);
-        if ($car) {
-            $car->fill($carData);
-        } else {
-            $car = new Car();
-            $car->fill($carData);
-        }
+        $car = Car::where('license_plate', $carData['license_plate'])->where('personalized_license_plate', $carData['personalized_license_plate'])->first() ?? new Car();
 
-//        dd($carData);
+        $car->fill($carData);
         $car->save();
 
         return $car;
@@ -180,20 +173,43 @@ class UsersImport implements ToModel
 
     private function searchCarColor(?string $txt): ?int
     {
-        $txt = trim($txt);
-        return match ($txt) {
-            'Чорна Ч' => 1,
-            'Синя С' => 2,
-            'Голуба Г' => 2,
-            'Зелена З' => 3,
-            'Червона Ч' => 5,
-            'Рожева Р' => 6,
-            'Помаранчева П' => 7,
-            'Жовта Ж ' => 8,
-            'Білий Б' => 9,
-            'Сіра С' => 11,
-            default => null,
-        };
+
+        $text = trim($txt);
+        $keywords = [
+            'Білий' => 9,
+            'Чорна' => 1,
+            'Сіра' => 11,
+            'Жовта' => 8,
+            'Помаранчева' => 7,
+            'Синя' => 2,
+            'Червона' => 5,
+            'Зелена' => 3,
+            'Рожева' => 6,
+            'Голуба' => 2,
+            'Золота' => 8,
+            'Коричнева' => 10,
+        ];
+
+        foreach ($keywords as $word => $code) {
+            if (mb_stripos($text, $word) !== false) {
+                return $code;
+            }
+        }
+
+        return null;
+//        return match ($txt) {
+//            'Чорна Ч' => 1,
+//            'Синя С' => 2,
+//            'Голуба Г' => 2,
+//            'Зелена З' => 3,
+//            'Червона Ч' => 5,
+//            'Рожева Р' => 6,
+//            'Помаранчева П' => 7,
+//            'Жовта Ж ' => 8,
+//            'Білий Б' => 9,
+//            'Сіра С' => 11,
+//            default => null,
+//        };
 
     }
 

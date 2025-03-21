@@ -26,7 +26,7 @@ class UserEloquent
         return $query;
     }
 
-    public static function getBirthdayPeople(int $nextDays = 8): Collection
+    public static function getBirthdayPeople(int $nextDays = 8, ?bool $isActive = null): Collection
     {
         $today = Carbon::today();  // Текущая дата
         $birthdayNext8Days = Carbon::today()->addDays($nextDays);  // Дата через 8 дней
@@ -39,10 +39,15 @@ class UserEloquent
         $users = User::whereRaw('DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?', [
             $todayFormatted,
             $birthdayNext8DaysFormatted,
-        ])
-            ->get()->sortBy(function ($user) {
-                return Carbon::parse($user->birth_date)->format('m-d');// Получаем месяц и день из даты рождения, игнорируя год
-            });
+        ]);
+
+        if ($isActive !== null) {
+            $users = $users->where('active', $isActive);
+        }
+
+        $users->get()->sortBy(function ($user) {
+            return Carbon::parse($user->birth_date)->format('m-d');// Получаем месяц и день из даты рождения, игнорируя год
+        });
 
         return $users;
     }
@@ -52,10 +57,11 @@ class UserEloquent
         $fromDate = Carbon::today()->subDays($days);
 
         return User::query()
-            ->where('created_at', '>=', $fromDate)
+            ->where('created_at', '>=', $fromDate)->where('active', 1)
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
     public static function countUsersWithCars(): int
     {
         return User::whereHas('cars')->count();

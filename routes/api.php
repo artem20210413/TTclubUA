@@ -30,6 +30,7 @@ Route::get('/user/my-cars', [UserController::class, 'myCars'])->middleware('auth
 Route::get('/user/all', [UserController::class, 'all'])->middleware('auth:sanctum');
 Route::post('/user', [UserController::class, 'update'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/user', [UserController::class, 'user'])->middleware('auth:sanctum');
+Route::post('/user/{user}/change-active', [UserController::class, 'userChangeActive'])->middleware(['auth:sanctum', 'role:admin']); //TODO при деактивации пользователя деактивировать все авто, при активации не активировать авто
 Route::post('/user/{id}', [UserController::class, 'updateById'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswordByUser'])->middleware(['auth:sanctum', 'role:admin']);
 //Route::post('/user/profile-collection/add', [MediaController::class, 'addProfileCollection'])->middleware('auth:sanctum');
@@ -39,12 +40,13 @@ Route::post('/car/create', [CarController::class, 'create'])->middleware(['auth:
 Route::post('/car/{id}', [CarController::class, 'update'])->middleware(['auth:sanctum']);
 Route::get('/car', [CarController::class, 'all'])->middleware(['auth:sanctum']);
 Route::get('/car/search/{search}', [CarController::class, 'search'])->middleware(['auth:sanctum']);
+Route::get('/car/my', [CarController::class, 'myCars'])->middleware(['auth:sanctum']);
 Route::get('/car/{id}', [CarController::class, 'find'])->middleware(['auth:sanctum']);
 Route::post('/car/{id}/collections', [CarController::class, 'addCollections'])->middleware(['auth:sanctum']);
+Route::post('/car/{car}/change-active', [CarController::class, 'changeActive'])->middleware(['auth:sanctum'])->middleware(['auth:sanctum', 'role:admin']);
 Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteCollections'])->middleware(['auth:sanctum']);
 
 Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
-
 
 Route::get('/publication-type', [PublicationController::class, 'allType'])->middleware(['auth:sanctum']);
 Route::post('/publication-type/image/{publicationTypeId}', [PublicationController::class, 'addImgType'])->middleware(['auth:sanctum', 'role:admin']);

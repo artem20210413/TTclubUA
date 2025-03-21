@@ -24,6 +24,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string $license_plate
  * @property string|null $personalized_license_plate
  * @property string|null $photo_path
+ * @property bool|null $active
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  *
@@ -42,6 +43,7 @@ class Car extends Model implements HasMedia
         'user_id',
         'gene_id',
         'model_id',
+        'color_id',
         'name',
         'license_plate',
         'personalized_license_plate',

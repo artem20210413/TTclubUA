@@ -25,6 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int $id
  * @property string $name
  * @property string|null $telegram_nickname
+ * @property int|null $telegram_id
  * @property string|null $instagram_nickname
  * @property string $phone
  * @property string $email

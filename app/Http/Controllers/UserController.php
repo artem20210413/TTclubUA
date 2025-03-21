@@ -76,4 +76,20 @@ class UserController extends Controller
         }
     }
 
+    public function userChangeActive(User $user, UpdateUserRequest $request)
+    {
+        try {
+            if ($request->user()->id === $user->id) throw new ApiException('Власний статус міняти заборонено', 1, 403);
+
+            $user->active = !$user->active;
+            $user->save();
+
+            return success(massage: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
+
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
+
+
 }

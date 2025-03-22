@@ -40,16 +40,21 @@ class UserEloquent
             $todayFormatted,
             $birthdayNext8DaysFormatted,
         ]);
-
         if ($isActive !== null) {
             $users = $users->where('active', $isActive);
         }
 
-        $users->get()->sortBy(function ($user) {
-            return Carbon::parse($user->birth_date)->format('m-d');// Получаем месяц и день из даты рождения, игнорируя год
-        });
+        $users = $users->get();
 
-        return $users;
+        // Тут сортируем уже коллекцию по месяцу и дню рождения
+        return $users->sortBy(function ($user) {
+            return Carbon::parse($user->birth_date)->format('m-d');
+        })->values();
+//        $users->get()->sortBy(function ($user) {
+//            return Carbon::parse($user->birth_date)->format('m-d');// Получаем месяц и день из даты рождения, игнорируя год
+//        });
+//
+//        return $users;
     }
 
     public static function getNewMembersLastNDays(int $days): Collection

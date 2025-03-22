@@ -59,9 +59,10 @@ class PublicationController extends Controller
         if ($file) {
             $imageWebp = new ImageWebpService($file);
             $imageWebp->convert(EnumImageQuality::HD);
-            $p->addMediaFromStream($imageWebp->first()->stream())
-                ->usingFileName(EnumTypeMedia::PHOTO_PUBLICATION->value . '.webp')
-                ->toMediaCollection(EnumTypeMedia::PHOTO_PUBLICATION->value);
+            $imageWebp->save($p, EnumTypeMedia::PHOTO_PUBLICATION);
+//            $p->addMediaFromStream($imageWebp->first()->stream())
+//                ->usingFileName(EnumTypeMedia::PHOTO_PUBLICATION->value . '.webp')
+//                ->toMediaCollection(EnumTypeMedia::PHOTO_PUBLICATION->value);
         }
 
         return success(data: new PublicationResource($p));
@@ -85,9 +86,10 @@ class PublicationController extends Controller
             $imageWebp = new ImageWebpService($file);
             $imageWebp->convert(EnumImageQuality::HD);
             $p->clearMediaCollection(EnumTypeMedia::PHOTO_PUBLICATION->value);
-            $p->addMediaFromStream($imageWebp->first()->stream())
-                ->usingFileName(EnumTypeMedia::PHOTO_PUBLICATION->value . '.webp')
-                ->toMediaCollection(EnumTypeMedia::PHOTO_PUBLICATION->value);
+            $imageWebp->save($p, EnumTypeMedia::PHOTO_PUBLICATION);
+//            $p->addMediaFromStream($imageWebp->first()->stream())
+//                ->usingFileName(EnumTypeMedia::PHOTO_PUBLICATION->value . '.webp')
+//                ->toMediaCollection(EnumTypeMedia::PHOTO_PUBLICATION->value);
         }
 
 

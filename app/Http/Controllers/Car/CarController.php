@@ -38,7 +38,7 @@ class CarController extends Controller
         $car->personalized_license_plate = $request->personalized_license_plate;
         $car->save();
 
-        return success('Авто створено', ['car' => new CarResource($car->fresh())]);
+        return success('Авто створено', new CarResource($car->fresh()));
     }
 
     public function all()
@@ -97,18 +97,19 @@ class CarController extends Controller
         try {
             $car = Car::findOrFail($id);
 
-            $images = $request->file('images'); // Массив изображений, переданных через запрос
+            $file = $request->file('file'); // Массив изображений, переданных через запрос
 
-            if (!$images || !is_array($images)) throw new ApiException('Фото відсутні.', 0, 400);
+            if (!$file) throw new ApiException('Фото відсутні.', 0, 400);
 
-            $imageWebp = new ImageWebpService(...$images);
+            $imageWebp = new ImageWebpService($file);
             $images = $imageWebp->convert(EnumImageQuality::HD);
+            $imageWebp->save($car, EnumTypeMedia::PHOTO_COLLECTION, 'collection_image_' . time());
 
-            foreach ($images as $image) {
-                $car->addMediaFromStream($image->stream())
-                    ->usingFileName('collection_image_' . time() . '.webp')
-                    ->toMediaCollection(EnumTypeMedia::PHOTO_COLLECTION->value);
-            }
+//            foreach ($images as $image) {
+//                $car->addMediaFromStream($image->stream())
+//                    ->usingFileName('collection_image_' . time() . '.webp')
+//                    ->toMediaCollection(EnumTypeMedia::PHOTO_COLLECTION->value);
+//            }
 
             return success(massage: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
 
@@ -121,14 +122,8 @@ class CarController extends Controller
     {
         try {
             $car = Car::findOrFail($id);
-
-
             $media = $car->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->firstWhere('id', $mediaId);
-
-            if (!$media) {
-                throw new ApiException('Фото не знайдено.', 0, 400);
-            }
-
+            if (!$media) throw new ApiException('Фото не знайдено.', 0, 400);
             $media->delete();
 
             return success(massage: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
@@ -140,12 +135,12 @@ class CarController extends Controller
 
     public function genes()
     {
-        return success(data: ['genes' => GenesResource::collection(CarGene::all())]);
+        return success(data: GenesResource::collection(CarGene::all()));
     }
 
     public function models()
     {
-        return success(data: ['genes' => ModelResource::collection(CarModel::all())]);
+        return success(data: ModelResource::collection(CarModel::all()));
     }
 
     public function changeActive(Car $car)

@@ -3,10 +3,13 @@
 namespace App\Services\Image;
 
 use App\Enum\EnumImageQuality;
+use App\Enum\EnumTypeMedia;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Image;
-use Intervention\Image\ImageManager;
 use Maestroerror\HeicToJpg;
+use Spatie\MediaLibrary\HasMedia;
 
 
 class ImageWebpService
@@ -54,5 +57,17 @@ class ImageWebpService
     public function first(): Image
     {
         return $this->images[0];
+    }
+
+    public function save(HasMedia $p, EnumTypeMedia $typeMedia, ?string $name = null): void
+    {
+        $name = $name ?? $typeMedia->value;
+
+        foreach ($this->getImages() as $image) {
+            $p->addMediaFromStream($image->stream())
+                ->usingFileName($name . '.webp')
+                ->toMediaCollection($typeMedia->value);
+        }
+
     }
 }

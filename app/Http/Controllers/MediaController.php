@@ -25,12 +25,11 @@ class MediaController extends Controller
 
         $imageWebp = new ImageWebpService($image);
         $imageWebp->convert(EnumImageQuality::LOW);
-
         $user->dropProfileImages();
-
-        $user->addMediaFromStream($imageWebp->first()->stream())
-            ->usingFileName('profile_image.webp')
-            ->toMediaCollection(EnumTypeMedia::PROFILE_PICTURE->value);
+        $imageWebp->save($user, EnumTypeMedia::PROFILE_PICTURE);
+//        $user->addMediaFromStream($imageWebp->first()->stream())
+//            ->usingFileName('profile_image.webp')
+//            ->toMediaCollection(EnumTypeMedia::PROFILE_PICTURE->value);
 
         return success('Фото профілю успішно оновлено.', new UserResource($request->user()->refresh()));
     }

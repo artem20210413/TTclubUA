@@ -37,9 +37,10 @@ class MentionEloquent
         if ($file) {
             $imageWebp = new ImageWebpService($file);
             $imageWebp->convert(EnumImageQuality::HD);
-            $mention->addMediaFromStream($imageWebp->first()->stream())
-                ->usingFileName(EnumTypeMedia::PHOTO_MENTION->value . '.webp')
-                ->toMediaCollection(EnumTypeMedia::PHOTO_MENTION->value);
+            $imageWebp->save($mention, EnumTypeMedia::PHOTO_MENTION);
+//            $mention->addMediaFromStream($imageWebp->first()->stream())
+//                ->usingFileName(EnumTypeMedia::PHOTO_MENTION->value . '.webp')
+//                ->toMediaCollection(EnumTypeMedia::PHOTO_MENTION->value);
         }
 
         return $mention;

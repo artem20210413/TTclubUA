@@ -22,8 +22,7 @@ class AddCollectionsCarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'images' => 'required|array', // Макс. 20 MB |mimes:jpeg,png,jpg
-            'images.*' => 'required|max:20480', // Макс. 20 MB |mimes:jpeg,png,jpg
+            'file' => 'required|max:20480', // Макс. 20 MB |mimes:jpeg,png,jpg
         ];
     }
 }

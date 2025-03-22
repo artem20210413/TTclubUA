@@ -41,7 +41,7 @@ class UserController extends Controller
         $user = $request->user();
 
 
-        return success(data: ['cars' => CarResource::collection($user->cars)]);
+        return success(data: CarResource::collection($user->cars));
     }
 
 
@@ -63,7 +63,6 @@ class UserController extends Controller
     public function updateById(int $id, UpdateUserRequest $request)
     {
         try {
-
             /** @var User $user */
             $user = User::findOrFail($id);
 

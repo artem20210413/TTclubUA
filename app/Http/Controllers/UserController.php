@@ -20,6 +20,11 @@ class UserController extends Controller
         return success(data: ['user' => new UserResource($request->user())]);
     }
 
+    public function getUser(User $user, Request $request)
+    {
+        return success(data: new UserWithCarsResource($user));
+    }
+
     public function search(string $search, Request $request)
     {
         $search = str_replace(' ', '%', trim($search));

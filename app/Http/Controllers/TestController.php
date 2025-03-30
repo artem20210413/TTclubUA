@@ -73,6 +73,12 @@ class TestController extends Controller
         $bot = new TelegramBot(EnumTelegramChats::MENTION);
         $bot->test();
         dd(1);
+
+//    use Illuminate\Support\Str;
+
+//$lorem = Str::random(100); // 100 випадкових символів
+
+
 //        dd($s->getBirthdayPeople()->count());
 //        return success(null, UserResource::collection($users));
 //        $updates = $this->telegram->getUpdates();

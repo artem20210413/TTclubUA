@@ -2,29 +2,19 @@
 
 namespace App\Http\Controllers\Car;
 
-use App\Eloquent\CarEloquent;
 use App\Eloquent\MentionEloquent;
-use App\Enum\EnumImageQuality;
 use App\Enum\EnumTelegramChats;
 use App\Enum\EnumTypeMedia;
-use App\Http\Controllers\Api\ApiException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Car\AddCollectionsCarRequest;
-use App\Http\Requests\Car\CreateCarRequest;
-use App\Http\Requests\Car\UpdateCarRequest;
 use App\Http\Requests\MentionRequest;
-use App\Http\Resources\Car\CarResource;
-use App\Http\Resources\Car\CarWithUserResource;
-use App\Http\Resources\Car\GenesResource;
-use App\Http\Resources\Car\ModelResource;
+use App\Jobs\SandMention;
 use App\Models\Car;
-use App\Models\CarGene;
-use App\Models\CarModel;
-use App\Models\User;
-use App\Services\Image\ImageWebpService;
 use App\Services\Telegram\TelegramBot;
 use App\Services\Telegram\TelegramBotHelpers;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use SebastianBergmann\Timer\Timer;
 
 
 class MentionController extends Controller
@@ -32,10 +22,40 @@ class MentionController extends Controller
 
     public function mention(Car $car, MentionRequest $request)
     {
-        $mention = MentionEloquent::create($car, $request);
+        $path = Storage::put('temporary-files/mentions', $request->file('file'));
 
+        SandMention::dispatch($car, $path, $request->description, $request->user(), Carbon::now());
+
+//        $description = $request->description;
+//        $user = $request->user();
+//        $time  = Carbon::now();
+//        $storagePath = storage_path('app/private/' . $path);
+//        $file = new UploadedFile($storagePath, basename($storagePath), mime_content_type($storagePath), null, true);
+//
+//        $mention = MentionEloquent::create($car, $user, $description, $file);
+//
+//        Storage::delete($path);
+//
+//        $imageUrl = $mention->getFirstMedia(EnumTypeMedia::PHOTO_MENTION->value)?->getPath();
+//        $text = TelegramBotHelpers::generationTextMention($user, $car, $description, $time);
+//        $bot = new TelegramBot(EnumTelegramChats::MENTION);
+//
+//        if ($imageUrl) {
+//            $bot->sendPhotoAndDescription($imageUrl, $text);
+//        } else {
+//            $bot->sendMessage($text);
+//        }
+
+        return success();
+    }
+
+
+    public function mentionOld(Car $car, MentionRequest $request)
+    {
+        $mention = MentionEloquent::create($car, $request->user(), $request->description, $request->file('file'));
         $imageUrl = $mention->getFirstMedia(EnumTypeMedia::PHOTO_MENTION->value)?->getPath();
-        $text = TelegramBotHelpers::generationTextMention($request->user(), $car, $request->description);
+
+        $text = TelegramBotHelpers::generationTextMention($request->user(), $car, $request->description, Carbon::now());
         $bot = new TelegramBot(EnumTelegramChats::MENTION);
 
         if ($imageUrl) {
@@ -44,7 +64,31 @@ class MentionController extends Controller
             $bot->sendMessage($text);
         }
 
+
         return success();
 
     }
+}
+
+class SimpleTimer
+{
+    protected float $start;
+    protected array $marks = [];
+
+    public function start(): void
+    {
+        $this->start = microtime(true);
+    }
+
+    public function mark(string $label): void
+    {
+        $now = microtime(true);
+        $elapsed = round($now - $this->start, 4);
+        dump("{$label}. Elapsed: {$elapsed}s");
+        $this->start = $now;
+    }
+
+    //$timer = new SimpleTimer();
+    //$timer->start();
+    //        $timer->mark('Create TelegramBot');
 }

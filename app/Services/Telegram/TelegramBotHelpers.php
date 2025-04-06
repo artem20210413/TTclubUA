@@ -4,6 +4,7 @@ namespace App\Services\Telegram;
 
 use App\Models\Car;
 use App\Models\User;
+use Carbon\Carbon;
 
 class TelegramBotHelpers
 {
@@ -26,7 +27,7 @@ class TelegramBotHelpers
 
     }
 
-    public static function generationTextMention(User $owner, Car $car, ?string $description)
+    public static function generationTextMention(User $owner, Car $car, ?string $description, ?Carbon $time = null): string
     {
         $text = "<b>Фа-фа</b>, {employee} - {car}! Лови привітання від {owner}!";
 
@@ -34,7 +35,9 @@ class TelegramBotHelpers
         $text = str_replace("{car}", $car->getGeneralShortInfo(), $text);
         $text = str_replace("{employee}", self::TryMentionPerson($car?->user), $text);
 
-//        dd($description);
+        if ($time) {
+            $text = $text . "\nДата: " . $time->toDateTimeString();
+        }
         if ($description) {
             $text = $text . "\n\nПовідомлення: $description";
         }

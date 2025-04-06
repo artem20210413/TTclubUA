@@ -37,7 +37,7 @@ class CarResource extends JsonResource
             'imageUrls' => $imageUrls,
             'active' => $this->active,
             'updated_at' => $this->updated_at->diffForHumans(),
-            'created_at' => $this->created_at->diffForHumans(),
+            'created_at' => $this->created_at?->diffForHumans(),
         ];
     }
 }

@@ -38,8 +38,8 @@ class CarWithUserResource extends JsonResource
             'model' => new ModelResource($this->model),
             'user' => new UserResource($this->user),
             'imageUrls' => $imageUrls,
-            'updated_at' => $this->updated_at->diffForHumans(),
-            'created_at' => $this->created_at->diffForHumans(),
+            'updated_at' => $this->updated_at?->diffForHumans(),
+            'created_at' => $this->created_at?->diffForHumans(),
         ];
     }
 }

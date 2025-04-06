@@ -46,8 +46,8 @@ class UserResource extends JsonResource
             'profile_image' => $profileImage,
             'cities' => CityResource::collection($this->cities),
 //            'imageUrls' => $imageUrls,
-            'updated_at' => $this->updated_at->diffForHumans(),
-            'created_at' => $this->created_at->diffForHumans(),
+            'updated_at' => $this->updated_at?->diffForHumans(),
+            'created_at' => $this->created_at?->diffForHumans(),
         ];
     }
 }

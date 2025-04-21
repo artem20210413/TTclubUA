@@ -28,6 +28,7 @@ class CarResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'user_id' => $this->user_id,
             'vin_code' => $this->vin_code,
             'license_plate' => $this->license_plate,
             'personalized_license_plate' => $this->personalized_license_plate,

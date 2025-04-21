@@ -7,6 +7,7 @@ use App\Http\Requests\Car\UpdateCarRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -31,6 +32,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property \App\Models\User $user
  * @property \App\Models\CarGene $gene
  * @property \App\Models\CarModel $model
+ * @property \App\Models\Color $color
  */
 class Car extends Model implements HasMedia
 {
@@ -50,19 +52,24 @@ class Car extends Model implements HasMedia
         'photo_path',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function gene()
+    public function gene(): BelongsTo
     {
         return $this->belongsTo(CarGene::class, 'gene_id');
     }
 
-    public function model()
+    public function model(): BelongsTo
     {
         return $this->belongsTo(CarModel::class, 'model_id');
+    }
+
+    public function color(): BelongsTo
+    {
+        return $this->belongsTo(Color::class, 'color_id');
     }
 
     public function updateCustom(UpdateCarRequest $request): Car

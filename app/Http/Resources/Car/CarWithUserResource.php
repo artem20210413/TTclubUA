@@ -36,6 +36,7 @@ class CarWithUserResource extends JsonResource
             'general_license_plate' => $this->getGeneralLicensePlate(),
             'gene' => new GenesResource($this->gene),
             'model' => new ModelResource($this->model),
+            'color' => new ColorResource($this->color),
             'user' => new UserResource($this->user),
             'imageUrls' => $imageUrls,
             'updated_at' => $this->updated_at->diffForHumans(),

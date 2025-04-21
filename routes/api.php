@@ -60,6 +60,7 @@ Route::delete('/publication/image/{publicationId}', [PublicationController::clas
 
 Route::get('/genes', [CarController::class, 'genes'])->middleware(['auth:sanctum']);
 Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanctum']);
+Route::get('/colors', [CarController::class, 'colors'])->middleware(['auth:sanctum']);
 
 Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum']);
 

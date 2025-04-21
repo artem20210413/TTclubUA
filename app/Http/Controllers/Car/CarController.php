@@ -12,11 +12,13 @@ use App\Http\Requests\Car\CreateCarRequest;
 use App\Http\Requests\Car\UpdateCarRequest;
 use App\Http\Resources\Car\CarResource;
 use App\Http\Resources\Car\CarWithUserResource;
+use App\Http\Resources\Car\ColorResource;
 use App\Http\Resources\Car\GenesResource;
 use App\Http\Resources\Car\ModelResource;
 use App\Models\Car;
 use App\Models\CarGene;
 use App\Models\CarModel;
+use App\Models\Color;
 use App\Models\User;
 use App\Services\Image\ImageWebpService;
 use Illuminate\Http\Request;
@@ -141,6 +143,10 @@ class CarController extends Controller
     public function models()
     {
         return success(data: ModelResource::collection(CarModel::all()));
+    }
+    public function colors()
+    {
+        return success(data: ColorResource::collection(Color::all()));
     }
 
     public function changeActive(Car $car)

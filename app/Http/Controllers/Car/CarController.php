@@ -100,18 +100,14 @@ class CarController extends Controller
             $car = Car::findOrFail($id);
 
             $file = $request->file('file'); // Массив изображений, переданных через запрос
-
             if (!$file) throw new ApiException('Фото відсутні.', 0, 400);
+
+            if ($car->hasMedia(EnumTypeMedia::PHOTO_COLLECTION->value))
+                $car->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->each->delete();
 
             $imageWebp = new ImageWebpService($file);
             $images = $imageWebp->convert(EnumImageQuality::HD);
             $imageWebp->save($car, EnumTypeMedia::PHOTO_COLLECTION, 'collection_image_' . time());
-
-//            foreach ($images as $image) {
-//                $car->addMediaFromStream($image->stream())
-//                    ->usingFileName('collection_image_' . time() . '.webp')
-//                    ->toMediaCollection(EnumTypeMedia::PHOTO_COLLECTION->value);
-//            }
 
             return success(massage: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
 
@@ -144,6 +140,7 @@ class CarController extends Controller
     {
         return success(data: ModelResource::collection(CarModel::all()));
     }
+
     public function colors()
     {
         return success(data: ColorResource::collection(Color::all()));

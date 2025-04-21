@@ -63,6 +63,7 @@ class ImageWebpService
     {
         $name = $name ?? $typeMedia->value;
 
+
         foreach ($this->getImages() as $image) {
             $p->addMediaFromStream($image->stream())
                 ->usingFileName($name . '.webp')

@@ -37,8 +37,8 @@ class CarResource extends JsonResource
             'color' => new ColorResource($this->color),
             'imageUrls' => $imageUrls,
             'active' => $this->active,
-            'updated_at' => $this->updated_at->diffForHumans(),
-            'created_at' => $this->created_at->diffForHumans(),
+            'updated_at' => $this->updated_at?->diffForHumans(),
+            'created_at' => $this->created_at?->diffForHumans(),
         ];
     }
 }

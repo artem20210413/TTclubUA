@@ -97,7 +97,7 @@ class CarController extends Controller
     public function addCollections(int $id, AddCollectionsCarRequest $request)
     {
         try {
-            $car = Car::findOrFail($id);
+            $car = Car::find($id);
 
             $file = $request->file('file'); // Массив изображений, переданных через запрос
             if (!$file) throw new ApiException('Фото відсутні.', 0, 400);

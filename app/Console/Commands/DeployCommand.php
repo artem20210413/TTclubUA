@@ -32,7 +32,7 @@ class DeployCommand extends Command
             'composer install',
             'php artisan migrate',
             'php artisan optimize',
-            'npm install && npm run build',
+//            'npm install && npm run build',
         ];
 
         foreach ($commands as $command) {

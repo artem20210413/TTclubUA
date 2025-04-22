@@ -31,7 +31,8 @@ class DeployCommand extends Command
             'git pull origin main', // Change "main" to your branch if needed
             'composer install',
             'php artisan migrate',
-            'php artisan optimize'
+            'php artisan optimize',
+            'npm install && npm run build',
         ];
 
         foreach ($commands as $command) {

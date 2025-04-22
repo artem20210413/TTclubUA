@@ -7,8 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
 {{--    @vite(['resources/css/app.css', 'resources/css/bootstrap/bootstrap.min.css', 'resources/js/app.js'])--}}
-    <link rel="stylesheet" href="{{ asset('build/assets/app-DdHod6mR.css') }}">
-    <script src="{{ asset('build/assets/app-eMHK6VFw.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ asset('media/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('media/export/bootstrap/bootstrap.min.css') }}">
+{{--    <script src="{{ asset('build/assets/app-eMHK6VFw.js') }}" defer></script>--}}
 
     <title>@yield('title')</title>
 

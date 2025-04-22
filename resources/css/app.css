@@ -5,3 +5,26 @@
 [x-cloak] {
     display: none;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    height: 80px;
+    background-color: yellow;
+    flex-shrink: 0;
+}
+
+main {
+    /*background-color: blue;*/
+    flex-grow: 1;
+}
+
+footer {
+    height: 100px;
+    background-color: green;
+    flex-shrink: 0;
+}

@@ -24,10 +24,11 @@ class OnlyFromUkraine
         }
 
         $position = Location::get($ip);
-        dump($ip, $position);
+//        dump($ip, $position);
         if (app()->environment('local')) {
             return $next($request);
         }
+
         if ($position && $position->countryCode === 'UA') {
             return $next($request);
         }

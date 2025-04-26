@@ -27,6 +27,15 @@ class Registration extends Model implements HasMedia
     use HasProfilePhoto;
     use InteractsWithMedia;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (self $registration) {
+            $registration->ip = Request::ip(); // <-- здесь автоматически берём IP при создании
+        });
+    }
+
     public function generationJsom(RegiserFormRequest $request): void
     {
         $json = $request->all();

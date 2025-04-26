@@ -25,7 +25,6 @@ class RegistrationsController extends Controller
 
         $r = new Registration();
         $r->name = $request->get('name');
-        $r->ip = $request->ip();
         $r->setPhone($request->get('phone'));
         $r->setPassword($request->get('password'));
         $r->generationJsom($request);

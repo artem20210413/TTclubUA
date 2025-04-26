@@ -97,7 +97,7 @@
     </div>
 
     <div class="mb-4">
-        <label class="form-label">Фото користувача (опціонально)</label>
+        <label class="form-label">Фото користувача</label>
         <input type="file" class="form-control" name="file" accept="image/*">
     </div>
 

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Http\Requests\RegiserFormRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\MediaLibrary\HasMedia;

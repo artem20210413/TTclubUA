@@ -1,9 +1,21 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style>
+    label.required::after {
+        content: " *";
+        color: red;
+    }
+</style>
+
 @php
     $cities = \App\Models\City::all();
     $genes = \App\Models\CarGene::all();
     $models = \App\Models\CarModel::all();
     $colors = \App\Models\Color::all();
+
+    $countOldCars = count(old('cars')??[]);
+    $countOldCars = $countOldCars === 0 ? 1 : $countOldCars ;
+    dump($countOldCars);
 @endphp
 
 <form method="POST" action="{{ route('web.post.registration') }}" enctype="multipart/form-data">
@@ -22,17 +34,17 @@
     <h4 class="mb-3">👤 Інформація про користувача</h4>
 
     <div class="mb-3">
-        <label for="name" class="form-label">Ім'я</label>
+        <label for="name" class="form-label required">Ім'я</label>
         <input type="text" class="form-control" name="name" value="{{ old('name') }}" required>
     </div>
 
     <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
+        <label for="email" class="form-label required">Email</label>
         <input type="email" class="form-control" name="email" value="{{ old('email') }}" required>
     </div>
 
     <div class="mb-3">
-        <label for="phone" class="form-label">Телефон</label>
+        <label for="phone" class="form-label required">Телефон</label>
         <input type="text" class="form-control" name="phone" value="{{ old('phone') }}" required>
     </div>
 
@@ -50,28 +62,31 @@
         <label class="form-label">Міста (можна кілька)</label>
         <select class="form-select" name="cities[]" multiple>
             @foreach($cities as $city)
-                <option value="{{ $city->id }}" @selected(collect(old('cities'))->contains($city->id))>{{ $city->name }}</option>
+                <option
+                    value="{{ $city->id }}" @selected(collect(old('cities'))->contains($city->id))>{{ $city->name }}</option>
             @endforeach
         </select>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Дата народження</label>
-        <input type="text" class="form-control" name="birth_date" id="birth_date_picker" placeholder="дд-мм-рррр" value="{{ old('birth_date') }}">
+        <label class="form-label required">Дата народження</label>
+        <input type="text" class="form-control" name="birth_date" id="birth_date_picker" placeholder="дд-мм-рррр"
+               value="{{ old('birth_date') }}">
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Опис занять</label>
-        <textarea class="form-control" name="occupation_description" rows="3">{{ old('occupation_description') }}</textarea>
+        <label class="form-label required">Опис занять</label>
+        <textarea class="form-control" name="occupation_description"
+                  rows="3">{{ old('occupation_description') }}</textarea>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Пароль</label>
+        <label class="form-label required">Пароль</label>
         <input type="password" class="form-control" name="password" required>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Підтвердження паролю</label>
+        <label class="form-label required">Підтвердження паролю</label>
         <input type="password" class="form-control" name="password_confirmation" required>
     </div>
 
@@ -85,59 +100,69 @@
     <h4 class="mb-3">🚗 Автомобілі</h4>
 
     <div id="cars-wrapper">
-        <div class="car-item border p-3 mb-4 rounded">
-            <div class="mb-3">
-                <label class="form-label">Покоління</label>
-                <select name="cars[0][gene_id]" class="form-select" required>
-                    @foreach($genes as $gene)
-                        <option value="{{ $gene->id }}" @selected(old('cars.0.gene_id') == $gene->id)>{{ $gene->name }}</option>
-                    @endforeach
-                </select>
-            </div>
 
-            <div class="mb-3">
-                <label class="form-label">Модель</label>
-                <select name="cars[0][model_id]" class="form-select" required>
-                    @foreach($models as $model)
-                        <option value="{{ $model->id }}" @selected(old('cars.0.model_id') == $model->id)>{{ $model->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+        @for($i = 0; $i < $countOldCars; $i++)
+            <div class="car-item border p-3 mb-4 rounded">
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label class="form-label required">Модель</label>
+                        <select name="cars[{{$i}}][model_id]" class="form-select" required>
+                            @foreach($models as $model)
+                                <option
+                                    value="{{ $model->id }}" @selected(old("cars.$i.model_id") == $model->id)>{{ $model->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-            <div class="mb-3">
-                <label class="form-label">Колір</label>
-                <select name="cars[0][color_id]" class="form-select" required>
-                    @foreach($colors as $color)
-                        <option value="{{ $color->id }}" @selected(old('cars.0.color_id') == $color->id)>{{ $color->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+                    <label class="form-label required">Покоління</label>
+                    <select name="cars[{{$i}}][gene_id]" class="form-select" required>
+                        @foreach($genes as $gene)
+                            <option
+                                value="{{ $gene->id }}" @selected(old("cars.$i.gene_id") == $gene->id)>{{ $gene->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Назва авто (опціонально)</label>
-                <input type="text" class="form-control" name="cars[0][name]" value="{{ old('cars.0.name') }}">
-            </div>
+                <div class="mb-3">
+                    <label class="form-label required">Колір</label>
+                    <select name="cars[{{$i}}][color_id]" class="form-select" required>
+                        @foreach($colors as $color)
+                            <option
+                                value="{{ $color->id }}" @selected(old("cars.$i.color_id") == $color->id)>{{ $color->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">VIN-код (опціонально)</label>
-                <input type="text" class="form-control" name="cars[0][vin_code]" value="{{ old('cars.0.vin_code') }}">
-            </div>
+                {{--            <div class="mb-3">--}}
+                {{--                <label class="form-label">Назва авто (опціонально)</label>--}}
+                {{--                <input type="text" class="form-control" name="cars[{{$i}}][name]" value="{{ old("cars.$i.name") }}">--}}
+                {{--            </div>--}}
 
-            <div class="mb-3">
-                <label class="form-label">Держ. номер</label>
-                <input type="text" class="form-control" name="cars[0][license_plate]" value="{{ old('cars.0.license_plate') }}" required>
-            </div>
 
-            <div class="mb-3">
-                <label class="form-label">Індивідуальний номер (опціонально)</label>
-                <input type="text" class="form-control" name="cars[0][personalized_license_plate]" value="{{ old('cars.0.personalized_license_plate') }}">
-            </div>
+                <div class="mb-3">
+                    <label class="form-label required">Держ. номер </label>
+                    <input type="text" class="form-control" name="cars[{{$i}}][license_plate]"
+                           value="{{ old("cars.$i.license_plate") }}" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Фото авто (опціонально)</label>
-                <input type="file" class="form-control" name="cars[0][file]" accept="image/*">
+                <div class="mb-3">
+                    <label class="form-label">Індивідуальний номер</label>
+                    <input type="text" class="form-control" name="cars[{{$i}}][personalized_license_plate]"
+                           value="{{ old("cars.$i.personalized_license_plate") }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">VIN-код</label>
+                    <input type="text" class="form-control" name="cars[{{$i}}][vin_code]"
+                           value="{{ old("cars.$i.vin_code") }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Фото авто</label>
+                    <input type="file" class="form-control" name="cars[{{$i}}][file]" accept="image/*">
+                </div>
             </div>
-        </div>
+        @endfor
     </div>
 
     <div class="mb-4 text-left">

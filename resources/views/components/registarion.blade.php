@@ -15,7 +15,6 @@
 
     $countOldCars = count(old('cars')??[]);
     $countOldCars = $countOldCars === 0 ? 1 : $countOldCars ;
-    dump($countOldCars);
 @endphp
 
 <form method="POST" action="{{ route('web.post.registration') }}" enctype="multipart/form-data">

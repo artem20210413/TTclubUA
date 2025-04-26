@@ -29,6 +29,13 @@
             </ul>
         </div>
     @endif
+    @if (session('massage'))
+        <div class="alert alert-success">
+            <ul class="mb-0">
+                <li>{{ session('massage') }}</li>
+            </ul>
+        </div>
+    @endif
 
     <h4 class="mb-3">👤 Інформація про користувача</h4>
 
@@ -37,10 +44,10 @@
         <input type="text" class="form-control" name="name" value="{{ old('name') }}" required>
     </div>
 
-    <div class="mb-3">
-        <label for="email" class="form-label required">Email</label>
-        <input type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-    </div>
+    {{--    <div class="mb-3">--}}
+    {{--        <label for="email" class="form-label required">Email</label>--}}
+    {{--        <input type="email" class="form-control" name="email" value="{{ old('email') }}" required>--}}
+    {{--    </div>--}}
 
     <div class="mb-3">
         <label for="phone" class="form-label required">Телефон</label>

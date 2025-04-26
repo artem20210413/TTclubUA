@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Requests\RegiserFormRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -13,8 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $id
  * @property string name
  * @property string phone
- * @property string license_plate
- * @property string short_name_car
+ * @property string ip
  * @property string password
  * @property string json
  * @property \Illuminate\Support\Carbon $created_at
@@ -25,14 +27,32 @@ class Registration extends Model implements HasMedia
     use HasProfilePhoto;
     use InteractsWithMedia;
 
-    public function setJson(array $data): void
+    public function generationJsom(RegiserFormRequest $request): void
     {
-        $this->json = json_encode($data);
+        $json = $request->all();
+        $json['cities_model'] = City::query()->whereIn('id', $json['cities'])->get()->toArray();
+        foreach ($json['cars'] as $key => &$car) {
+            $car['model'] = CarModel::query()->select(['id', 'name'])->where('id', $car['model_id'])->first()->toArray();
+            $car['gene'] = CarGene::query()->select(['id', 'name'])->where('id', $car['gene_id'])->first()->toArray();
+            $car['color'] = Color::query()->where('id', $car['color_id'])->first()->toArray();
+        }
+
+        $this->json = json_encode($json);
     }
 
     public function getJson()
     {
         return json_decode($this->json);
+    }
+
+    public function setPhone(string $phone): void
+    {
+        $this->phone = formatPhoneNumber($phone);
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = Hash::make($password);
     }
 
 }

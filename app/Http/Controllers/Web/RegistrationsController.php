@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enum\EnumImageQuality;
+use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegiserFormRequest;
 use App\Http\Requests\User\RegisterRequest;
+use App\Models\Registration;
+use App\Services\Image\ImageWebpService;
+use Illuminate\Support\Facades\Redirect;
 
 
 class RegistrationsController extends Controller
@@ -13,9 +18,33 @@ class RegistrationsController extends Controller
     {
         return view('welcome.welcomeForm');
     }
+
     public function registration(RegiserFormRequest $request)
     {
-dd($request->all());
+//        dd($request->all());
 
+        $r = new Registration();
+        $r->name = $request->get('name');
+        $r->ip = $request->ip();
+        $r->setPhone($request->get('phone'));
+        $r->setPassword($request->get('password'));
+        $r->generationJsom($request);
+        $r->save();
+
+        if ($image = $request->file('file')) {
+            $imageWebp = new ImageWebpService($image);
+            $imageWebp->convert(EnumImageQuality::LOW);
+            $imageWebp->save($r, EnumTypeMedia::PROFILE_PICTURE);
+        }
+
+        foreach ($request->cars as $key => $car) {
+            $carFile = $request->file('cars[' . $key . '][file]');
+            if (!isset($carFile)) continue;
+            $imageWebp = new ImageWebpService($carFile);
+            $imageWebp->convert(EnumImageQuality::LOW);
+            $imageWebp->save($r, EnumTypeMedia::PHOTO_COLLECTION);
+        }
+
+        return Redirect::route('web.home')->with(['massage' => 'Заявка успішно створено, чекайте на підтвердження']);
     }
 }

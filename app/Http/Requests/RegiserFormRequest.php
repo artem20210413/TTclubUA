@@ -23,7 +23,7 @@ class RegiserFormRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+//            'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|string|unique:users',
             'telegram_nickname' => 'nullable|string|unique:users',
             'instagram_nickname' => 'nullable|string|unique:users',

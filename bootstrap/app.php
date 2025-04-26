@@ -17,7 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
 ////            '/*', в web/
 //        ]);
 
-        $middleware->alias(['role' => RoleMiddleware::class]);
+        $middleware->alias([
+            'role' => RoleMiddleware::class,
+            'only.ua' => \App\Http\Middleware\OnlyFromUkraine::class,
+        ]);
 //        $middleware->alias(['permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

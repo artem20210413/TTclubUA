@@ -39,7 +39,7 @@ class Registration extends Model implements HasMedia
     public function generationJsom(RegiserFormRequest $request): void
     {
         $json = $request->all();
-        $json['cities_model'] = City::query()->whereIn('id', $json['cities'])->get()->toArray();
+        $json['cities_model'] = City::query()->whereIn('id', $json['cities'] ?? [])->get()->toArray();
         foreach ($json['cars'] as $key => &$car) {
             $car['model'] = CarModel::query()->select(['id', 'name'])->where('id', $car['model_id'])->first()->toArray();
             $car['gene'] = CarGene::query()->select(['id', 'name'])->where('id', $car['gene_id'])->first()->toArray();

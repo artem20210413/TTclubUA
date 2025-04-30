@@ -6,8 +6,10 @@ use App\Eloquent\UserEloquent;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\Car\CarResource;
+use App\Http\Resources\User\UserRegistrationResource;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserWithCarsResource;
+use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -90,6 +92,16 @@ class UserController extends Controller
 
             return success(massage: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
 
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
+
+    public function registrationList(Request $request)
+    {
+        try {
+            $r = Registration::query()->paginate($request->perPage);
+            return success(data: UserRegistrationResource::collection($r));
         } catch (ApiException $e) {
             return error($e);
         }

@@ -34,6 +34,7 @@ Route::post('/user/{user}/change-active', [UserController::class, 'userChangeAct
 Route::post('/user/{id}/update', [UserController::class, 'updateById'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/user/{user}', [UserController::class, 'getUser'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswordByUser'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/user/registration/list', [UserController::class, 'registrationList'])->middleware(['auth:sanctum', 'role:admin']);
 //Route::post('/user/profile-collection/add', [MediaController::class, 'addProfileCollection'])->middleware('auth:sanctum');
 //Route::delete('/user/profile-collection/{id}', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
 

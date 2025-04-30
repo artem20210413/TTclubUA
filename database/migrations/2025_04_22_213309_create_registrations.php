@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('password');
             $table->string('ip')->nullable();
             $table->json('json');
+            $table->tinyInteger('active')->default(1);
             $table->timestamps();
         });
     }

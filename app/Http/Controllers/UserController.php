@@ -100,7 +100,7 @@ class UserController extends Controller
     public function registrationList(Request $request)
     {
         try {
-            $r = Registration::query()->where('active', true)->paginate($request->perPage);
+            $r = Registration::query()->where('active', true)->where('approve', false)->paginate($request->perPage);
             return success(data: UserRegistrationResource::collection($r));
         } catch (ApiException $e) {
             return error($e);

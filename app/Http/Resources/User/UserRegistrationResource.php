@@ -25,6 +25,8 @@ class UserRegistrationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'phone' => $this->phone,
+            'active' => (bool)$this->active,
+            'approve' => (bool)$this->approve,
             'json' => json_decode($this->json),
         ];
     }

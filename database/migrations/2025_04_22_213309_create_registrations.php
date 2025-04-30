@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('ip')->nullable();
             $table->json('json');
             $table->tinyInteger('active')->default(1);
+            $table->tinyInteger('approve')->default(0);
             $table->timestamps();
         });
     }

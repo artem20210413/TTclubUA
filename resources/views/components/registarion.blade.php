@@ -50,7 +50,7 @@
     {{--    </div>--}}
 
     <div class="mb-3">
-        <label for="phone" class="form-label required">Телефон</label>
+        <label for="phone" class="form-label required">Телефон (380...)</label>
         <input type="text" class="form-control" name="phone" pattern="^\+?[0-9]{12,15}$"
                title="Введите корректный номер телефона: от 12 до 15 цифр" placeholder="380987654321">
         value="{{ old('phone') }}" required>

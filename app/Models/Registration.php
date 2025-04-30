@@ -20,6 +20,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string password
  * @property string json
  * @property bool active
+ * @property bool approve
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */

@@ -19,7 +19,8 @@ class RegistrationController extends Controller
     public function list(Request $request)
     {
         try {
-            $r = Registration::query()->where('active', true)->paginate($request->perPage);
+            $r = Registration::query()->where('active', true)
+                ->orderBy('created_at', 'desc')->paginate($request->perPage);
 
             return success(data: UserRegistrationResource::collection($r));
         } catch (ApiException $e) {

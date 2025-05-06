@@ -36,8 +36,9 @@ class RegistrationsController extends Controller
             $imageWebp->save($r, EnumTypeMedia::PROFILE_PICTURE);
         }
 
+        $carFiles = $request->file('car_files');
         foreach ($request->cars as $key => $car) {
-            $carFile = $request->file('cars[' . $key . '][file]');
+            $carFile = $carFiles[$key];
             if (!isset($carFile)) continue;
             $imageWebp = new ImageWebpService($carFile);
             $imageWebp->convert(EnumImageQuality::LOW);

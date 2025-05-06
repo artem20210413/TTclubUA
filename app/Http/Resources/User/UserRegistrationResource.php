@@ -21,11 +21,21 @@ class UserRegistrationResource extends JsonResource
     {
         /** @var Registration $this */
 
+        $profileImage = $this->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value);
+        $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->map(function ($media) {
+            return [
+                'id' => $media->id,
+                'url' => $media->getUrl(),
+            ];
+        });
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'phone' => $this->phone,
             'active' => (bool)$this->active,
+            'profile_image' => $profileImage == null ? null : $profileImage,
+            'car_images' => $imageUrls,
             'approve' => (bool)$this->approve,
             'json' => json_decode($this->json),
         ];

@@ -167,7 +167,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Фото авто</label>
-                    <input type="file" class="form-control" name="cars[{{$i}}][file]" accept="image/*">
+                    <input type="file" class="form-control" name="car_files[{{$i}}]" accept="image/*">
                 </div>
             </div>
         @endfor

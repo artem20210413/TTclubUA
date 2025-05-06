@@ -59,6 +59,7 @@ class CitySeeder extends Seeder
             ['id' => 40, 'name' => 'Кіпр', 'country' => 'Кіпр', 'latitude' => 35.1264, 'longitude' => 33.4299],
             ['id' => 41, 'name' => 'Чорногорія', 'country' => 'Чорногорія', 'latitude' => 42.7087, 'longitude' => 19.3744],
             ['id' => 42, 'name' => 'Миргород', 'country' => 'Україна', 'latitude' => 49.9649, 'longitude' => 33.6074],
+            ['id' => 43, 'name' => 'Сан-Джуліан', 'country' => 'Мальта', 'latitude' => 35.9258, 'longitude' => 14.4894],
         ];
 
         foreach ($cities as $city) {

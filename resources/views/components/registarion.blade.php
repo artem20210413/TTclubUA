@@ -17,7 +17,7 @@
     $countOldCars = $countOldCars === 0 ? 1 : $countOldCars ;
 @endphp
 
-<form method="POST" action="{{ route('web.post.registration') }}" enctype="multipart/form-data">
+<form method="POST" action="{{ route('web.post.registration') }}" enctype="multipart/form-data" id="registration-form">
     @csrf
 
     @if ($errors->any())
@@ -177,17 +177,25 @@
     </div>
 
     <div class="mb-4 text-center">
-        <button type="submit" class="btn btn-primary">📂 Створити</button>
+        <button type="submit" id="add-car-btn" class="btn btn-primary">📂 Створити</button>
     </div>
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 
 <script>
     flatpickr("#birth_date_picker", {
         dateFormat: "d-m-Y", // формат как в Laravel-валидации
         allowInput: true,    // позволяет и ввод вручную, и выбор
         locale: "uk"         // можно сменить на "ru" или другой
+    });
+</script>
+
+<script>
+    document.getElementById('registration-form').addEventListener('submit', function () {
+        // Приховуємо кнопку "Додати ще авто"
+        document.getElementById('add-car-btn').disabled = true;
     });
 </script>
 

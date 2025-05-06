@@ -38,7 +38,7 @@ class RegistrationsController extends Controller
 
         $carFiles = $request->file('car_files');
         foreach ($request->cars as $key => $car) {
-            $carFile = $carFiles[$key];
+            $carFile = $carFiles[$key]??null;
             if (!isset($carFile)) continue;
             $imageWebp = new ImageWebpService($carFile);
             $imageWebp->convert(EnumImageQuality::LOW);

@@ -11,7 +11,7 @@ Artisan::command('inspire', function () {
 app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->weeklyOn(0, '15:00');
 app(Schedule::class)->command('tg:sending-list-of-birthdays 0')->dailyAt('09:00');
 app(Schedule::class)->command('clear:mention 30')->dailyAt('03:00');
-app(Schedule::class)->command('clear:registration 30')->dailyAt('03:05');
+app(Schedule::class)->command('clear:registration 1')->dailyAt('03:05');
 //app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->everyMinute();
 
 //test

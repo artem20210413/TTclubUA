@@ -48,8 +48,8 @@ class RegistrationsController extends Controller
         }
 
 
-        new RegistrationSandToTo($r);
-//        SandRegistrationToTg::dispatch($r);
+//        new RegistrationSandToTo($r);
+        SandRegistrationToTg::dispatch($r);
         return Redirect::route('web.home')->with(['massage' => 'Заявка успішно створено, чекайте на підтвердження']);
     }
 }

@@ -2,21 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Eloquent\MentionEloquent;
 use App\Enum\EnumTelegramChats;
 use App\Enum\EnumTypeMedia;
-use App\Http\Requests\MentionRequest;
 use App\Models\Car;
 use App\Models\Registration;
-use App\Models\User;
 use App\Services\Telegram\TelegramBot;
-use App\Services\Telegram\TelegramBotHelpers;
-use Carbon\Carbon;
-use GuzzleHttp\Psr7\Request;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 class SandRegistrationToTg implements ShouldQueue
 {

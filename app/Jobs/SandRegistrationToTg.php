@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Eloquent\MentionEloquent;
+use App\Enum\EnumTelegramChats;
+use App\Enum\EnumTypeMedia;
+use App\Http\Requests\MentionRequest;
+use App\Models\Car;
+use App\Models\Registration;
+use App\Models\User;
+use App\Services\Telegram\TelegramBot;
+use App\Services\Telegram\TelegramBotHelpers;
+use Carbon\Carbon;
+use GuzzleHttp\Psr7\Request;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
+class SandRegistrationToTg implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create a new job instance.
+     */
+    /**
+     * @param Car $car
+     * @param UploadedFile|UploadedFile[] $request
+     */
+    public function __construct(
+        readonly Registration $registration,
+    )
+    {
+    }
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        $text = $this->generationText();
+
+        $profileImage = $this->registration->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value);
+        $imageUrls = $this->registration->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->map(function ($media) {
+            return $media->getUrl();
+        })->toArray();
+
+        if (isset($profileImage))
+            $imageUrls[] = $profileImage;
+
+        $bot = new TelegramBot(EnumTelegramChats::TEST);
+
+        if (empty($imageUrls)) {
+            $bot->sendMessage($text);
+        } else {
+            $bot->sendPhotosWithDescription($imageUrls, $text);
+        }
+    }
+
+
+    public function generationText()
+    {
+        $data = $this->registration->getJson();
+        $cities = collect($data->cities_model)
+            ->map(fn($city) => "{$city->name} ({$city->country})")
+            ->implode(', ');
+
+        $user = "ім'я: {$data->name}\n"
+            . "Телефон: {$data->phone}\n"
+            . "Города {$cities}\n"
+            . "Рід діяльності: {$data->occupation_description}\n"
+            . "Дата народження: {$data->birth_date}\n"
+            . "ТГ: {$data->telegram_nickname} \n"
+            . "Інста: {$data->instagram_nickname}\n"
+            . "Дата створення: {$this->registration->created_at->format('d.m.Y H:i')}\n";
+
+        $cars = '';
+        foreach ($data->cars as $i => $car) {
+            $key = $i + 1;
+            $cars .= "🚘 Авто {$car->model->name} {$car->gene->name}:\n"
+                . "Колір: {$car->color->name}\n"
+                . "Номер: {$car->license_plate}\n"
+                . "Індивідуальний номер: " . ($car->personalized_license_plate ?? '—') . "\n\n";
+        }
+
+        return $user . "\n\n" . $cars;
+    }
+}

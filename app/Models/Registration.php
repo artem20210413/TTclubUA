@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\Trigger\Registration\TriggerRegistrationCreatedEvent;
 use App\Http\Requests\RegiserFormRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
@@ -28,6 +29,11 @@ class Registration extends Model implements HasMedia
 {
     use HasProfilePhoto;
     use InteractsWithMedia;
+
+
+    protected $dispatchesEvents = [
+//        'created' => TriggerRegistrationCreatedEvent::class,
+    ];
 
     protected static function boot()
     {

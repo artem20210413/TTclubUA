@@ -14,7 +14,7 @@ enum EnumTelegramChats
         return match ($this) {
             self::NOTIFICATION => 'Notification TT_club',
             self::MENTION => 'fa-fa',
-            self::TEST => 'fa-fa',
+            self::TEST => 'test',
         };
     }
 

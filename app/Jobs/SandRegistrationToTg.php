@@ -43,7 +43,7 @@ class SandRegistrationToTg implements ShouldQueue
         if (isset($profileImage))
             $imageUrls[] = $profileImage;
 
-        $bot = new TelegramBot(EnumTelegramChats::TEST);
+        $bot = new TelegramBot(EnumTelegramChats::MENTION);
 
         if (empty($imageUrls)) {
             $bot->sendMessage($text);

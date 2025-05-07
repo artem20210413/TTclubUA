@@ -10,7 +10,6 @@ use App\Http\Requests\User\RegisterRequest;
 use App\Jobs\SandRegistrationToTg;
 use App\Models\Registration;
 use App\Services\Image\ImageWebpService;
-use App\Services\Registration\RegistrationSandToTgService;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -47,8 +46,6 @@ class RegistrationsController extends Controller
             $imageWebp->save($r, EnumTypeMedia::PHOTO_COLLECTION);
         }
 
-
-//        $send = new RegistrationSandToTgService($r);
 
         SandRegistrationToTg::dispatch($r);
         return Redirect::route('web.home')->with(['massage' => 'Заявка успішно створено, чекайте на підтвердження']);

@@ -18,7 +18,7 @@ class RegistrationSandToTo
             return $media->getUrl();
         })->toArray();
 
-        if (isset($profileImage))
+        if ($profileImage != null)
             $imageUrls[] = $profileImage;
 
         $bot = new TelegramBot(EnumTelegramChats::TEST);
@@ -39,7 +39,7 @@ class RegistrationSandToTo
 
         $user = "ім'я: {$data->name}\n"
             . "Телефон: {$data->phone}\n"
-            . "Города {$cities}\n"
+            . "Міста: {$cities}\n"
             . "Рід діяльності: {$data->occupation_description}\n"
             . "Дата народження: {$data->birth_date}\n"
             . "ТГ: {$data->telegram_nickname} \n"

@@ -10,6 +10,7 @@ use App\Http\Requests\User\RegisterRequest;
 use App\Jobs\SandRegistrationToTg;
 use App\Models\Registration;
 use App\Services\Image\ImageWebpService;
+use App\Services\Telegram\Sand\RegistrationSandToTo;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -47,7 +48,8 @@ class RegistrationsController extends Controller
         }
 
 
-        SandRegistrationToTg::dispatch($r);
+        new RegistrationSandToTo($r);
+//        SandRegistrationToTg::dispatch($r);
         return Redirect::route('web.home')->with(['massage' => 'Заявка успішно створено, чекайте на підтвердження']);
     }
 }

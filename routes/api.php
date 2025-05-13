@@ -39,6 +39,7 @@ Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswor
 
 
 Route::get('/registration/list', [\App\Http\Controllers\RegistrationController::class, 'list'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/registration/{registration}/validator', [\App\Http\Controllers\RegistrationController::class, 'validator'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/registration/{registration}/approve', [\App\Http\Controllers\RegistrationController::class, 'approve'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/registration/{registration}/change-active', [\App\Http\Controllers\RegistrationController::class, 'changeActive'])->middleware(['auth:sanctum', 'role:admin']);
 

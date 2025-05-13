@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Eloquent\RegistrationEloquent;
 use App\Eloquent\UserEloquent;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\UpdateUserRequest;
@@ -23,6 +24,24 @@ class RegistrationController extends Controller
                 ->orderBy('created_at', 'desc')->paginate($request->perPage);
 
             return success(data: UserRegistrationResource::collection($r));
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
+    public function validator(Registration $registration)
+    {
+        try {
+            $errors = RegistrationEloquent::validator($registration);
+
+            if (!empty($errors)) {
+                return response()->json([
+                    'status' => 'error',
+                    'messages' => $errors,
+                ], 422);
+            }
+
+            return response()->json(['status' => 'ok']);
+
         } catch (ApiException $e) {
             return error($e);
         }

@@ -80,8 +80,8 @@ class Car extends Model implements HasMedia
         $this->color_id = $request->input('color_id', $this->color_id); // Аналогично для других полей
         $this->name = $request->input('name', $this->name); // Если поле пустое, сохраняем старое значение
         $this->vin_code = $request->input('vin_code', $this->vin_code); // Аналогично для других полей
-        $this->license_plate = $request->input('license_plate', $this->license_plate); // Аналогично для других полей
-        $this->personalized_license_plate = $request->input('personalized_license_plate', $this->personalized_license_plate); // Аналогично для других полей
+        $this->license_plate = formatNormalizePlateNumber($request->input('license_plate', $this->license_plate)); // Аналогично для других полей
+        $this->personalized_license_plate = formatNormalizePlateNumber($request->input('personalized_license_plate', $this->personalized_license_plate)); // Аналогично для других полей
 
         $this->save();
 

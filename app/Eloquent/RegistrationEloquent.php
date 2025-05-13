@@ -11,6 +11,8 @@ use App\Models\Mention;
 use App\Models\Registration;
 use App\Models\User;
 use App\Services\Image\ImageWebpService;
+use App\Services\Validator\Elements\CarsValidator;
+use App\Services\Validator\Elements\UserValidator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -52,6 +54,17 @@ class RegistrationEloquent
             $registration->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->each->delete();
         }
         return $registration->delete();
+    }
+
+    public static function validator(Registration $registration)
+    {
+        $data = json_decode($registration->json, true);
+
+        $validator = new UserValidator();
+        $validator
+            ->setNext(new CarsValidator());
+
+        return $validator->validate($data);
     }
 
 

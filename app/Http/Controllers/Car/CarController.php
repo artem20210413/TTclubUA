@@ -36,8 +36,8 @@ class CarController extends Controller
         $car->color_id = $request->color_id;
         $car->name = $request->name;
         $car->vin_code = $request->vin_code;
-        $car->license_plate = $request->license_plate;
-        $car->personalized_license_plate = $request->personalized_license_plate;
+        $car->license_plate = formatNormalizePlateNumber($request->license_plate);
+        $car->personalized_license_plate = formatNormalizePlateNumber($request->personalized_license_plate);
         $car->save();
 
         return success('Авто створено', new CarResource($car->fresh()));

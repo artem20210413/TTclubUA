@@ -19,8 +19,9 @@ if (!function_exists('formatPhoneNumber')) {
 
 }
 if (!function_exists('formatNormalizePlateNumber')) {
-    function formatNormalizePlateNumber(string $plate): string
+    function formatNormalizePlateNumber(?string $plate): ?string
     {
+        if (!$plate) return null;
         // Словарь замены кириллических букв на латинские
         $replaceMap = [
             'А' => 'A', 'В' => 'B', 'С' => 'C', 'Е' => 'E', 'Н' => 'H',

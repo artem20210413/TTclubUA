@@ -4,9 +4,9 @@ use App\Http\Controllers\Api\ApiException;
 use Illuminate\Database\Eloquent\Collection;
 
 if (!function_exists('success')) {
-    function success(?string $massage = null, array|Collection|ArrayAccess $data = [], int $status = 200): Illuminate\Http\JsonResponse
+    function success(?string $message = null, array|Collection|ArrayAccess $data = [], int $status = 200): Illuminate\Http\JsonResponse
     {
-        return response()->json(['message' => $massage, 'data' => $data], $status);
+        return response()->json(['message' => $message, 'data' => $data], $status);
     }
 }
 

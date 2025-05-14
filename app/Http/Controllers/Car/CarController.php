@@ -87,7 +87,7 @@ class CarController extends Controller
             $car = Car::findOrFail($id);
             $car->updateCustom($request);
 
-            return success(massage: 'Авто успішно оновлено', data: new CarResource($car->refresh()));
+            return success(message: 'Авто успішно оновлено', data: new CarResource($car->refresh()));
 
         } catch (ApiException $e) {
             return error($e);
@@ -109,7 +109,7 @@ class CarController extends Controller
             $images = $imageWebp->convert(EnumImageQuality::HD);
             $imageWebp->save($car, EnumTypeMedia::PHOTO_COLLECTION, 'collection_image_' . time());
 
-            return success(massage: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
+            return success(message: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
 
         } catch (ApiException $e) {
             return error($e);
@@ -124,7 +124,7 @@ class CarController extends Controller
             if (!$media) throw new ApiException('Фото не знайдено.', 0, 400);
             $media->delete();
 
-            return success(massage: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
+            return success(message: 'Колекція успішно оновлено.', data: new CarResource($car->refresh()));
 
         } catch (ApiException $e) {
             return error($e);
@@ -152,7 +152,7 @@ class CarController extends Controller
             $car->active = !$car->active;
             $car->save();
 
-            return success(massage: 'Авто успішно оновлено', data: new CarResource($car));
+            return success(message: 'Авто успішно оновлено', data: new CarResource($car));
 
         } catch (ApiException $e) {
             return error($e);

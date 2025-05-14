@@ -60,7 +60,7 @@ class UserController extends Controller
 
             $user->updateCustom($request);
 
-            return success(massage: 'Користувача успішно оновлено', data: ['user' => new UserResource($user->refresh())]);
+            return success(message: 'Користувача успішно оновлено', data: ['user' => new UserResource($user->refresh())]);
 
         } catch (ApiException $e) {
             return error($e);
@@ -75,7 +75,7 @@ class UserController extends Controller
 
             $user->updateCustom($request);
 
-            return success(massage: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
+            return success(message: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
 
         } catch (ApiException $e) {
             return error($e);
@@ -90,7 +90,7 @@ class UserController extends Controller
             $user->active = !$user->active;
             $user->save();
 
-            return success(massage: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
+            return success(message: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
 
         } catch (ApiException $e) {
             return error($e);

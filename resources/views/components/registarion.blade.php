@@ -29,10 +29,10 @@
             </ul>
         </div>
     @endif
-    @if (session('massage'))
+    @if (session('message'))
         <div class="alert alert-success">
             <ul class="mb-0">
-                <li>{{ session('massage') }}</li>
+                <li>{{ session('message') }}</li>
             </ul>
         </div>
     @endif

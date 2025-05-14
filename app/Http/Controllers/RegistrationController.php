@@ -28,6 +28,7 @@ class RegistrationController extends Controller
             return error($e);
         }
     }
+
     public function validator(Registration $registration)
     {
         try {
@@ -55,12 +56,23 @@ class RegistrationController extends Controller
                 throw new ApiException('Користувач вже створено.', 0, 401);
             }
 
-            //TODO save User
+            $errors = RegistrationEloquent::validator($registration);
+
+            if (count($errors) > 0) {
+                return success(
+                    message: 'Створити неможливо',
+                    data: [
+                        'errors' => $errors
+                    ], status: 400);
+            }
+
+            $user = RegistrationEloquent::create($registration);
+
             $registration->active = false;
             $registration->approve = true;
             $registration->save();
 
-            return success(data: new UserRegistrationResource($registration));
+            return success(data: new UserWithCarsResource($user));
         } catch (ApiException $e) {
             return error($e);
         }

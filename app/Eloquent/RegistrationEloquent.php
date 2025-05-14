@@ -67,5 +67,58 @@ class RegistrationEloquent
         return $validator->validate($data);
     }
 
+    public static function create(Registration $registration)
+    {
+        $imageUrls = $registration->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value);
+        $profileImage = $registration->getMedia(EnumTypeMedia::PROFILE_PICTURE->value)->first();
+        $data = json_decode($registration->json, true);
+//        dd($data);
+        $user = new User();
+        $user->name = $data['name'];
+        $user->setPhone($data['phone']);
+        $user->email = $user->phone . '@email';
+        $user->birth_date = $data['birth_date'] ? Carbon::createFromFormat('d-m-Y', $data['birth_date'])->format('Y-m-d') : null;
+        $user->password = $registration->password;
+        $user->telegram_nickname = $data['telegram_nickname'];
+        $user->instagram_nickname = $data['instagram_nickname'];
+        $user->occupation_description = $data['occupation_description'];
+
+        $user->save();
+        $user->cities()->sync($data['cities'] ?? []);
+        $user = $user->refresh();
+
+        if ($profileImage) {
+            $user->addMedia($profileImage->getPath())
+                ->preservingOriginal()
+                ->toMediaCollection(EnumTypeMedia::PROFILE_PICTURE->value);
+
+            $profileImage->delete();
+        }
+
+        foreach ($data['cars'] ?? [] as $key => $carData) {
+
+            $img = $imageUrls[$key] ?? null;
+            $car = new Car();
+            $car->user_id = $user->id;
+            $car->gene_id = $carData['gene']['id'] ?? null;
+            $car->color_id = $carData['color']['id'] ?? null;
+            $car->model_id = $carData['model']['id'] ?? null;
+            $car->vin_code = $carData['vin_code'];
+            $car->license_plate = formatNormalizePlateNumber($carData['license_plate']);
+            $car->personalized_license_plate = formatNormalizePlateNumber($carData['personalized_license_plate']);
+
+            $car->save();
+            if ($img) {
+                $car->addMedia($img->getPath())
+                    ->preservingOriginal()
+                    ->toMediaCollection(EnumTypeMedia::PHOTO_COLLECTION->value);
+
+                $img->delete();
+            }
+        }
+
+        return $user;
+    }
+
 
 }

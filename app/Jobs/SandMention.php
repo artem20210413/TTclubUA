@@ -30,7 +30,7 @@ class SandMention implements ShouldQueue
      */
     public function __construct(
         readonly Car     $car,
-        readonly string  $path,
+        readonly ?string $path,
         readonly ?string $description,
         readonly User    $user,
         readonly Carbon  $time
@@ -43,10 +43,11 @@ class SandMention implements ShouldQueue
      */
     public function handle(): void
     {
-        $storagePath = storage_path('app/private/' . $this->path);
-        $file = new UploadedFile($storagePath, basename($storagePath), mime_content_type($storagePath), null, true);
-
-        $mention = MentionEloquent::create($this->car, $this->user, $this->description, $file);
+        if ($this->path) {
+            $storagePath = storage_path('app/private/' . $this->path);
+            $file = new UploadedFile($storagePath, basename($storagePath), mime_content_type($storagePath), null, true);
+        }
+        $mention = MentionEloquent::create($this->car, $this->user, $this->description, $file ?? null);
 
         Storage::delete($this->path);
 

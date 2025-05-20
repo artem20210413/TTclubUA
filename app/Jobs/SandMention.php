@@ -43,14 +43,14 @@ class SandMention implements ShouldQueue
      */
     public function handle(): void
     {
-        $isFile = $this->path !== '';
-        if ($isFile) {
+        $isEmptyFile = $this->path == 'nane';
+        if (!$isEmptyFile) {
             $storagePath = storage_path('app/private/' . $this->path);
             $file = new UploadedFile($storagePath, basename($storagePath), mime_content_type($storagePath), null, true);
         }
         $mention = MentionEloquent::create($this->car, $this->user, $this->description, $file ?? null);
 
-        if ($isFile)
+        if (!$isEmptyFile)
             Storage::delete($this->path);
 
         $imageUrl = $mention->getFirstMedia(EnumTypeMedia::PHOTO_MENTION->value)?->getPath();

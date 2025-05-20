@@ -23,7 +23,9 @@ class MentionController extends Controller
     public function mention(Car $car, MentionRequest $request)
     {
 
-        $path = $request->file('file') ? Storage::put('temporary-files/mentions', $request->file('file')) : null;
+        $path = $request->file('file')
+            ? Storage::put('temporary-files/mentions', $request->file('file'))
+            : null;
 
         SandMention::dispatch($car, $path, $request->description, $request->user(), Carbon::now());
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Car;
 
 use App\Eloquent\CarEloquent;
+use App\Eloquent\RemoteCarEloquent;
 use App\Enum\EnumImageQuality;
 use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
@@ -62,6 +63,24 @@ class CarController extends Controller
             $car = Car::findOrFail($id);
 
             return success(data: new CarResource($car));
+
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
+
+    public function delete(int $id)
+    {
+        try {
+            $car = Car::findOrFail($id);
+            $media = $car->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value);
+            foreach ($media ?? [] as $item)
+                $item->delete();
+
+            $isDelete = $car->delete();
+            RemoteCarEloquent::create($car);
+
+            return success(data: ['isDelete' => $isDelete]);
 
         } catch (ApiException $e) {
             return error($e);

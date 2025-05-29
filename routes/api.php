@@ -49,6 +49,7 @@ Route::get('/car', [CarController::class, 'all'])->middleware(['auth:sanctum']);
 Route::get('/car/search/{search}', [CarController::class, 'search'])->middleware(['auth:sanctum']);
 Route::get('/car/my', [CarController::class, 'myCars'])->middleware(['auth:sanctum']);
 Route::get('/car/{id}', [CarController::class, 'find'])->middleware(['auth:sanctum']);
+Route::delete('/car/{id}', [CarController::class, 'delete'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/car/{id}/collections', [CarController::class, 'addCollections'])->middleware(['auth:sanctum']);
 Route::post('/car/{car}/change-active', [CarController::class, 'changeActive'])->middleware(['auth:sanctum'])->middleware(['auth:sanctum', 'role:admin']);
 Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteCollections'])->middleware(['auth:sanctum']);

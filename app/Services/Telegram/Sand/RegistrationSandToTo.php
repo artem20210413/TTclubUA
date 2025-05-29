@@ -21,7 +21,7 @@ class RegistrationSandToTo
         if ($profileImage != null)
             $imageUrls[] = $profileImage;
 
-        $bot = new TelegramBot(EnumTelegramChats::TEST);
+        $bot = new TelegramBot(EnumTelegramChats::NOTIFICATION);
 
         if (empty($imageUrls)) {
             $bot->sendMessage($text);

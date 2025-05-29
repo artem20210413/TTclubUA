@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\ProfilePictureRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\Media;
+use App\Models\User;
 use App\Services\Image\ImageWebpService;
 use Illuminate\Http\Request;
 
@@ -32,6 +33,21 @@ class MediaController extends Controller
 //            ->toMediaCollection(EnumTypeMedia::PROFILE_PICTURE->value);
 
         return success('Фото профілю успішно оновлено.', new UserResource($request->user()->refresh()));
+    }
+
+    public function updateProfilePictureById(User $user, ProfilePictureRequest $request)
+    {
+
+        $image = $request->file('profile_image');
+
+        if (!$image) return error(new ApiException('Фото відсутнє.', 0, 400));
+
+        $imageWebp = new ImageWebpService($image);
+        $imageWebp->convert(EnumImageQuality::LOW);
+        $user->dropProfileImages();
+        $imageWebp->save($user, EnumTypeMedia::PROFILE_PICTURE);
+
+        return success('Фото профілю успішно оновлено.', new UserResource($user->refresh()));
     }
 
     public function deleteProfilePicture(Request $request)

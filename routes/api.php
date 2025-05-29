@@ -24,6 +24,7 @@ Route::post('/change-password', [AuthController::class, 'changePassword'])->midd
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
 
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
+Route::post('/user/{user}/profile-picture', [MediaController::class, 'updateProfilePictureById'])->middleware('auth:sanctum');
 Route::get('/user/search/{search}', [UserController::class, 'search'])->middleware('auth:sanctum');
 Route::delete('/user/profile-picture', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
 Route::get('/user/my-cars', [UserController::class, 'myCars'])->middleware('auth:sanctum');

@@ -46,7 +46,8 @@ class CarController extends Controller
 
     public function all()
     {
-        return success(data: CarResource::collection(Car::all()));
+        $cars = Car::query();
+        return success(data: CarResource::collection($cars->paginate(15)));
     }
 
     public function search(string $search, Request $request)

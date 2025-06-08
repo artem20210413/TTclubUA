@@ -2,11 +2,27 @@
 
 use App\Http\Controllers\Api\ApiException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 if (!function_exists('success')) {
-    function success(?string $message = null, array|Collection|ArrayAccess $data = [], int $status = 200): Illuminate\Http\JsonResponse
+//    function success(?string $message = null, array|Collection|ArrayAccess $data = [], int $status = 200): Illuminate\Http\JsonResponse
+//    {
+//        return response()->json(['message' => $message, 'data' => $data], $status);
+//    }
+    function success(?string $message = null, array|Collection|ArrayAccess|AnonymousResourceCollection $data = [], int $status = 200): Illuminate\Http\JsonResponse
     {
-        return response()->json(['message' => $message, 'data' => $data], $status);
+        $res = [
+            'message' => $message,
+            'data' => $data,
+        ];
+
+        if ($data instanceof AnonymousResourceCollection && $data->resource instanceof \Illuminate\Contracts\Pagination\Paginator) {
+            $pagination = $data->resource->toArray();
+            unset($pagination['data']); // убираем данные из meta
+            $res['meta'] = $pagination;
+        }
+
+        return response()->json($res, $status);
     }
 }
 

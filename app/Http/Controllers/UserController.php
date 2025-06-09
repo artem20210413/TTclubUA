@@ -41,8 +41,8 @@ class UserController extends Controller
     {
         $search = str_replace(' ', '%', trim($request->search ?? ''));
         $query = User::query();
-
         $query = UserEloquent::search($query, $search);
+        $query->orderBy('created_at', 'desc');
 
         return success(data: UserWithCarsResource::collection($query->paginate(15)));
     }

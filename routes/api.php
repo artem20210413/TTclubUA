@@ -25,7 +25,8 @@ Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middl
 
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
 Route::post('/user/{user}/profile-picture', [MediaController::class, 'updateProfilePictureById'])->middleware('auth:sanctum');
-Route::get('/user/search/{search}', [UserController::class, 'search'])->middleware('auth:sanctum');
+Route::get('/user/search/{search}', [UserController::class, 'searchOld'])->middleware('auth:sanctum');//TODO delete after release
+Route::get('/user/search', [UserController::class, 'search'])->middleware('auth:sanctum');
 Route::delete('/user/profile-picture', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
 Route::get('/user/my-cars', [UserController::class, 'myCars'])->middleware('auth:sanctum');
 Route::get('/user/all', [UserController::class, 'all'])->middleware('auth:sanctum');
@@ -47,7 +48,7 @@ Route::post('/registration/{registration}/change-active', [\App\Http\Controllers
 Route::post('/car/create', [CarController::class, 'create'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/car/{id}', [CarController::class, 'update'])->middleware(['auth:sanctum']);
 Route::get('/car', [CarController::class, 'all'])->middleware(['auth:sanctum']);
-Route::get('/car/search/{search}', [CarController::class, 'searchOld'])->middleware(['auth:sanctum']);
+Route::get('/car/search/{search}', [CarController::class, 'searchOld'])->middleware(['auth:sanctum']);//TODO delete after release
 Route::get('/car/search', [CarController::class, 'search'])->middleware(['auth:sanctum']);
 Route::get('/car/my', [CarController::class, 'myCars'])->middleware(['auth:sanctum']);
 Route::get('/car/{id}', [CarController::class, 'find'])->middleware(['auth:sanctum']);

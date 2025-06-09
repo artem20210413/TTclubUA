@@ -13,6 +13,8 @@ class UserEloquent
 
     public static function search(Builder $query, string $search): Builder
     {
+        if (!$search) return $query;
+
         $query->where(function ($q) use ($search) {
             $searchLicense = formatNormalizePlateNumber($search);
             $q->where('phone', 'like', "%{$search}%") // Поиск по номеру телефона

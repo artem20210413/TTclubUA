@@ -47,6 +47,7 @@ Route::post('/registration/{registration}/change-active', [\App\Http\Controllers
 Route::post('/car/create', [CarController::class, 'create'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/car/{id}', [CarController::class, 'update'])->middleware(['auth:sanctum']);
 Route::get('/car', [CarController::class, 'all'])->middleware(['auth:sanctum']);
+Route::get('/car/search/{search}', [CarController::class, 'searchOld'])->middleware(['auth:sanctum']);
 Route::get('/car/search', [CarController::class, 'search'])->middleware(['auth:sanctum']);
 Route::get('/car/my', [CarController::class, 'myCars'])->middleware(['auth:sanctum']);
 Route::get('/car/{id}', [CarController::class, 'find'])->middleware(['auth:sanctum']);

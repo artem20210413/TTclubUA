@@ -12,8 +12,10 @@ use Illuminate\Database\Eloquent\Model;
 class CarEloquent
 {
 
-    public static function search(Builder $query, string $search): Builder
+    public static function search(Builder $query, ?string $search): Builder
     {
+        if (!$search) return $query;
+
         $searchLicense = formatNormalizePlateNumber($search);
         $query->where('license_plate', 'like', "%{$searchLicense}%")
             ->orWhere('personalized_license_plate', 'like', "%{$searchLicense}%");

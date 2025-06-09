@@ -50,17 +50,16 @@ class CarController extends Controller
         return success(data: CarResource::collection($cars->paginate(15)));
     }
 
-    public function searchOld(string $search, Request $request)
-    {
-        $q = Car::query();
-        $cars = CarEloquent::search($q, $search)->paginate($request->perPage ?? 10);
 
-        return success(data: CarWithUserResource::collection($cars));
-    }
     public function search(Request $request)
     {
+        $search = $request->search;
         $q = Car::query();
-        $cars = CarEloquent::search($q, $request->search)->paginate($request->perPage ?? 15);
+        $q = CarEloquent::search($q, $search);
+        if (!$search)
+            $q = CarEloquent::onlyActiveUser($q);
+        $q->orderBy('created_at', 'desc');
+        $cars = $q->paginate($request->perPage ?? 15);
 
         return success(data: CarWithUserResource::collection($cars));
     }

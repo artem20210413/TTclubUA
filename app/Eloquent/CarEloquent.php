@@ -27,4 +27,16 @@ class CarEloquent
     {
         return Car::whereHas('user')->count();
     }
+
+    public static function onlyActive(Builder $q)
+    {
+        return $q->where('active', true);
+    }
+
+    public static function onlyActiveUser(Builder $q)
+    {
+        return $q->whereHas('user', function ($q) {
+            $q->where('active', true);
+        });
+    }
 }

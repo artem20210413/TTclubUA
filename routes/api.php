@@ -36,6 +36,10 @@ Route::post('/user/{user}/change-active', [UserController::class, 'userChangeAct
 Route::post('/user/{id}/update', [UserController::class, 'updateById'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/user/{user}', [UserController::class, 'getUser'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswordByUser'])->middleware(['auth:sanctum', 'role:admin']);
+
+Route::post('/finance/user/{user}', [\App\Http\Controllers\FinanceController::class, 'set'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/finance/user/{user}', [\App\Http\Controllers\FinanceController::class, 'list'])->middleware(['auth:sanctum']);
+Route::delete('/finance/{finance}', [\App\Http\Controllers\FinanceController::class, 'delete'])->middleware(['auth:sanctum', 'role:admin']);
 //Route::post('/user/profile-collection/add', [MediaController::class, 'addProfileCollection'])->middleware('auth:sanctum');
 //Route::delete('/user/profile-collection/{id}', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
 

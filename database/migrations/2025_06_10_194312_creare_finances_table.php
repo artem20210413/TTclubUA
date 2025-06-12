@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-//        Schema::create('finances', function (Blueprint $table) {
-//            $table->id();
-//            $table->unsignedBigInteger('user_id');
-//            $table->text('di')->nullable();
-//            $table->string('phone');
-//            $table->tinyInteger('approve')->default(0);
-//            $table->timestamps();
-//
-//            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-//        });
+        Schema::create('finances', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->decimal('amount', 10, 2);
+            $table->text('description')->nullable();
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
     }
 
     /**
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-//        Schema::dropIfExists('finances');
+        Schema::dropIfExists('finances');
     }
 };

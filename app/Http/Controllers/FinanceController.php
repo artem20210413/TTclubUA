@@ -54,7 +54,13 @@ class FinanceController extends Controller
 //            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfMonth())->sum('amount'),
             'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(30))->sum('amount'),
             'total_payments_count' => Finance::where('user_id', $user->id)->count(), // сколько всего платежей сделал пользователь
-            'average_payment' => round((float) Finance::where('user_id', $user->id)->avg('amount'), 2),
+            'average_payment' => number_format(
+                Finance::where('user_id', $user->id)->avg('amount') ?? 0,
+                2,
+                '.',
+                ''
+            ),
+
             'largest_payment' => Finance::where('user_id', $user->id)->max('amount'), // наибольший платёж
             'smallest_payment' => Finance::where('user_id', $user->id)->min('amount'), // наименьший платёж
             'last_payment_date' => Finance::where('user_id', $user->id)->latest()->value('created_at'), // дата последнего платежа

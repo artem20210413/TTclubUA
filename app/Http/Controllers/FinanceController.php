@@ -40,8 +40,7 @@ class FinanceController extends Controller
 
     public function list(User $user, Request $request)
     {
-
-        $f = Finance::query()->where('user_id', $user->id)->paginate($request->pa);
+        $f = Finance::query()->where('user_id', $user->id)->paginate(15);
         return success(data: FinanceWithUserResource::collection($f));
     }
 
@@ -60,7 +59,6 @@ class FinanceController extends Controller
                 '.',
                 ''
             ),
-
             'largest_payment' => Finance::where('user_id', $user->id)->max('amount'), // наибольший платёж
             'smallest_payment' => Finance::where('user_id', $user->id)->min('amount'), // наименьший платёж
             'last_payment_date' => Finance::where('user_id', $user->id)->latest()->value('created_at'), // дата последнего платежа

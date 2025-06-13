@@ -40,7 +40,7 @@ class FinanceController extends Controller
 
     public function list(User $user, Request $request)
     {
-        $f = Finance::query()->where('user_id', $user->id)->paginate(15);
+        $f = Finance::query()->where('user_id', $user->id)->paginate(15)->orderBy('created_at','desc');
         return success(data: FinanceWithUserResource::collection($f));
     }
 

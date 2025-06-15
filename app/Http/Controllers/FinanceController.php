@@ -121,7 +121,7 @@ class FinanceController extends Controller
 
         $baseUrl = "https://send.monobank.ua/jar/{$monoAccount->getSendId()}";
         $query = http_build_query([
-            't' => 'PAY:' . $m->hash,
+            't' => 'pay:' . $m->hash,
         ]);
 
         return redirect("{$baseUrl}?{$query}");

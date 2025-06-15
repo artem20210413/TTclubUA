@@ -88,18 +88,18 @@ class FinanceController extends Controller
                 $payment->save();
 
                 FinanceEloquent::createByMono($payment);
-            } else {
-                $payment = new MonoTransaction();
-                $payment->jar_id = $monoAccount->getID();
-                $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
-                $payment->currency_code = $statementItem['currency_code'] ?? null;
-                $payment->amount = $statementItem['amount'] ?? null;
-                $payment->comment = $statementItem['comment'] ?? null;
-                $payment->description = $statementItem['description'] ?? null;
-                $payment->save();
+                return success();
             }
         }
 
+        $payment = new MonoTransaction();
+        $payment->jar_id = $monoAccount->getID();
+        $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
+        $payment->currency_code = $statementItem['currency_code'] ?? null;
+        $payment->amount = $statementItem['amount'] ?? null;
+        $payment->comment = $statementItem['comment'] ?? null;
+        $payment->description = $statementItem['description'] ?? null;
+        $payment->save();
 
         return success();
     }

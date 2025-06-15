@@ -19,6 +19,7 @@ return [
     ],
     'monobank' => [
         'token' => env('MONOBANK_TOKEN'),
+        'jarId' => env('MONOBANK_JAR_ID'),
     ],
 
     'ses' => [

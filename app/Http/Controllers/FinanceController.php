@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Api\ApiException;
+use App\Eloquent\FinanceEloquent;
+use App\Enum\EnumMonoAccount;
+use App\Enum\EnumMonoStatus;
 use App\Http\Requests\FinanceRequest;
-use App\Http\Requests\User\ChangePasswordByUserRequest;
-use App\Http\Requests\User\ChangePasswordRequest;
-use App\Http\Requests\User\LoginRequest;
-use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\FinanceWithUserResource;
-use App\Http\Resources\User\UserResource;
 use App\Models\Finance;
+use App\Models\MonoTransaction;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class FinanceController extends Controller
@@ -71,15 +66,66 @@ class FinanceController extends Controller
 
     public function webhookMonobank(Request $request)
     {
-        Log::info('webhookMonobank', [$request->all()]);
+        $monoAccount = EnumMonoAccount::TEST;
+
+        Log::info('webhookMonobank', ['body' => $request->all(), 'headers' => $request->header(), 'ip' => $request->ip(), 'host' => $request->host()]);
+        $statementItem = $request->data['statementItem'] ?? null;
+
+        if ($request->all() === [] || ($request->data['account'] ?? null) !== $monoAccount->getID() || !$statementItem)
+            return success();
+
+        $description = $statementItem['comment'] ?? '';
+        if (preg_match('/pay:([a-zA-Z0-9]+)/', $description, $matches)) {
+            $hash = $matches[1];
+            /** @var MonoTransaction $payment */
+            $payment = MonoTransaction::where('hash', $hash)->first();
+            if ($payment) {
+                $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
+                $payment->currency_code = $statementItem['currency_code'] ?? null;
+                $payment->amount = $statementItem['amount'] ?? null;
+                $payment->description = $statementItem['description'] ?? null;
+                $payment->comment = $statementItem['comment'] ?? null;
+                $payment->save();
+
+                FinanceEloquent::createByMono($payment);
+            } else {
+                $payment = new MonoTransaction();
+                $payment->jar_id = $monoAccount->getID();
+                $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
+                $payment->currency_code = $statementItem['currency_code'] ?? null;
+                $payment->amount = $statementItem['amount'] ?? null;
+                $payment->comment = $statementItem['comment'] ?? null;
+                $payment->description = $statementItem['description'] ?? null;
+                $payment->save();
+            }
+        }
+
+
         return success();
     }
 
-    public function webhookMonobankPost(Request $request)
+    public function redirectJarMonobank(Request $request)
     {
-        Log::info('webhookMonobankPost', ['body' => $request->all(), 'headers' => $request->header()]);
+        $user = User::find($request->userId);
+        $monoAccount = EnumMonoAccount::TEST;
+        $baseUrl = "https://send.monobank.ua/jar/{$monoAccount->getSendId()}";
 
-        return success();
+        if (!$user)
+            return redirect("{$baseUrl}");
+
+        $m = new MonoTransaction();
+        $m->createHash($user, $monoAccount->getID());
+        $m->jar_id = $monoAccount->getID();
+        $m->user_id = $user->id;
+        $m->save();
+
+        $baseUrl = "https://send.monobank.ua/jar/{$monoAccount->getSendId()}";
+        $query = http_build_query([
+            't' => 'PAY:' . $m->hash,
+        ]);
+
+        return redirect("{$baseUrl}?{$query}");
     }
+
 
 }

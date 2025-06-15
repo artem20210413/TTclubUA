@@ -41,19 +41,8 @@ class FinanceController extends Controller
 
     public function list(User $user, Request $request)
     {
-        $f = Finance::query()->where('user_id', $user->id)->orderBy('created_at','desc')->paginate(15);
+        $f = Finance::query()->where('user_id', $user->id)->orderBy('created_at', 'desc')->paginate(15);
         return success(data: FinanceWithUserResource::collection($f));
-    }
-    public function webhookMonobank(Request $request)
-    {
-        Log::info('webhookMonobank', [$request->all()]);
-        return success();
-    }
-    public function webhookMonobankPost(Request $request)
-    {
-        Log::info('webhookMonobankPost', [$request->all()]);
-
-        return success();
     }
 
     public function statistics(User $user, Request $request)
@@ -77,6 +66,20 @@ class FinanceController extends Controller
             'first_payment_date' => Finance::where('user_id', $user->id)->oldest()->value('created_at'),// когда был сделан первый платёж
 
         ]);
+    }
+
+
+    public function webhookMonobank(Request $request)
+    {
+        Log::info('webhookMonobank', [$request->all()]);
+        return success();
+    }
+
+    public function webhookMonobankPost(Request $request)
+    {
+        Log::info('webhookMonobankPost', ['body' => $request->all(), 'headers' => $request->header()]);
+
+        return success();
     }
 
 }

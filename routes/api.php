@@ -40,6 +40,8 @@ Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswor
 Route::post('/finance/user/{user}', [\App\Http\Controllers\FinanceController::class, 'set'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/finance/user/{user}/statistics', [\App\Http\Controllers\FinanceController::class, 'statistics'])->middleware(['auth:sanctum']);
 Route::get('/finance/user/{user}', [\App\Http\Controllers\FinanceController::class, 'list'])->middleware(['auth:sanctum']);
+Route::get('/monobank/personal/webhook', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank'])->middleware(['auth:sanctum']);
+Route::post('/monobank/personal/webhook', [\App\Http\Controllers\FinanceController::class, 'webhookMonobankPost'])->middleware(['auth:sanctum']);
 Route::delete('/finance/{finance}', [\App\Http\Controllers\FinanceController::class, 'delete'])->middleware(['auth:sanctum', 'role:admin']);
 //Route::post('/user/profile-collection/add', [MediaController::class, 'addProfileCollection'])->middleware('auth:sanctum');
 //Route::delete('/user/profile-collection/{id}', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');

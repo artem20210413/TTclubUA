@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class FinanceController extends Controller
 {
@@ -42,6 +43,17 @@ class FinanceController extends Controller
     {
         $f = Finance::query()->where('user_id', $user->id)->orderBy('created_at','desc')->paginate(15);
         return success(data: FinanceWithUserResource::collection($f));
+    }
+    public function webhookMonobank(Request $request)
+    {
+        Log::info('webhookMonobank', [$request->all()]);
+        return success();
+    }
+    public function webhookMonobankPost(Request $request)
+    {
+        Log::info('webhookMonobankPost', [$request->all()]);
+
+        return success();
     }
 
     public function statistics(User $user, Request $request)

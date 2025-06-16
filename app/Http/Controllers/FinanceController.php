@@ -78,26 +78,20 @@ class FinanceController extends Controller
         if (preg_match('/pay:([a-zA-Z0-9]+)/', $description, $matches)) {
             $hash = $matches[1];
             /** @var MonoTransaction $payment */
-            $payment = MonoTransaction::where('hash', $hash)->first();
-            if ($payment) {
-                $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
-                $payment->currency_code = $statementItem['currency_code'] ?? null;
-                $payment->amount = $statementItem['amount'] ?? null;
-                $payment->description = $statementItem['description'] ?? null;
-                $payment->comment = $statementItem['comment'] ?? null;
-                $payment->save();
+            $payment = MonoTransaction::where('hash', $hash)->first() ?? new MonoTransaction();
+            $payment->source_ip = $request->ip();
+            $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
+            $payment->currency_code = $statementItem['currency_code'] ?? null;
+            $payment->amount = $statementItem['amount'] ?? null;
+            $payment->description = $statementItem['description'] ?? null;
+            $payment->comment = $statementItem['comment'] ?? null;
+            $payment->jar_id = $monoAccount->getID();
 
+            if ($payment->id) {
                 FinanceEloquent::createByMono($payment);
-            } else {
-                $payment = new MonoTransaction();
-                $payment->jar_id = $monoAccount->getID();
-                $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
-                $payment->currency_code = $statementItem['currency_code'] ?? null;
-                $payment->amount = $statementItem['amount'] ?? null;
-                $payment->comment = $statementItem['comment'] ?? null;
-                $payment->description = $statementItem['description'] ?? null;
-                $payment->save();
             }
+
+            $payment->save();
         }
 
 

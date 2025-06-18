@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Eloquent\FinanceEloquent;
 use App\Enum\EnumMonoAccount;
 use App\Enum\EnumMonoStatus;
+use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\FinanceRequest;
 use App\Http\Resources\FinanceWithUserResource;
 use App\Models\Finance;
@@ -110,21 +111,25 @@ class FinanceController extends Controller
         $monoAccount = EnumMonoAccount::TEST;
         $baseUrl = "https://send.monobank.ua/jar/{$monoAccount->getSendId()}";
 
-        if (!$user)
-            return redirect("{$baseUrl}");
+        $isApi = $request->is('api/*');
+        if (!$user) {
+            return $isApi
+                ? error(new ApiException('User not found'))
+                : redirect($baseUrl);
+        }
 
-        $m = new MonoTransaction();
-        $m->createHash($user, $monoAccount->getID());
-        $m->jar_id = $monoAccount->getID();
-        $m->user_id = $user->id;
-        $m->save();
+        $transaction = new MonoTransaction();
+        $transaction->createHash($user, $monoAccount->getID());
+        $transaction->jar_id = $monoAccount->getID();
+        $transaction->user_id = $user->id;
+        $transaction->save();
+        $url = $baseUrl . '?' . http_build_query([
+                't' => 'pay:' . $transaction->hash,
+            ]);
 
-        $baseUrl = "https://send.monobank.ua/jar/{$monoAccount->getSendId()}";
-        $query = http_build_query([
-            't' => 'pay:' . $m->hash,
-        ]);
-
-        return redirect("{$baseUrl}?{$query}");
+        return $isApi
+            ? success(data: ['url' => $url])
+            : redirect($url);
     }
 
 

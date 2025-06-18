@@ -47,7 +47,7 @@ Route::get('finance/jar-monobank', [\App\Http\Controllers\FinanceController::cla
 //Route::delete('/user/profile-collection/{id}', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
 
 Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
-Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);//TODO  check IP
+Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
 
 Route::get('/registration/list', [\App\Http\Controllers\RegistrationController::class, 'list'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/registration/{registration}/validator', [\App\Http\Controllers\RegistrationController::class, 'validator'])->middleware(['auth:sanctum', 'role:admin']);

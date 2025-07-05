@@ -158,11 +158,11 @@
                            value="{{ old("cars.$i.personalized_license_plate") }}">
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">VIN-код</label>
-                    <input type="text" class="form-control" name="cars[{{$i}}][vin_code]"
-                           value="{{ old("cars.$i.vin_code") }}">
-                </div>
+{{--                <div class="mb-3">--}}
+{{--                    <label class="form-label">VIN-код</label>--}}
+{{--                    <input type="text" class="form-control" name="cars[{{$i}}][vin_code]"--}}
+{{--                           value="{{ old("cars.$i.vin_code") }}">--}}
+{{--                </div>--}}
 
                 <div class="mb-3">
                     <label class="form-label">Фото авто</label>

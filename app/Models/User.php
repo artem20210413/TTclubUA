@@ -32,6 +32,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon|null $birth_date
  * @property \Illuminate\Support\Carbon|null $club_entry_date
  * @property string|null $occupation_description
+ * @property string|null $why_tt
+ * @property string|null $mail_address
  * @property \Illuminate\Support\Carbon|null $phone_verified_at
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $approve_verified_at

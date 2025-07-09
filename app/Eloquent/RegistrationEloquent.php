@@ -80,6 +80,8 @@ class RegistrationEloquent
         $user->birth_date = $data['birth_date'] ? Carbon::createFromFormat('d-m-Y', $data['birth_date'])->format('Y-m-d') : null;
         $user->password = $registration->password;
         $user->telegram_nickname = isset($data['telegram_nickname']) ? str_replace('@', '', $data['telegram_nickname']) : null;
+        $user->why_tt = $data['why_tt'] ?? null;
+        $user->mail_address = $data['mail_address'] ?? null;
         $user->instagram_nickname = $data['instagram_nickname'];
         $user->occupation_description = $data['occupation_description'];
 

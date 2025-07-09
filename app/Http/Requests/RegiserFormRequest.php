@@ -31,7 +31,10 @@ class RegiserFormRequest extends FormRequest
             'cities.*' => 'integer|exists:cities,id',
             'birth_date' => 'nullable|date_format:d-m-Y', // если дата не null, то должна быть в формате Y-m-d
             'occupation_description' => 'nullable|string',
+            'why_tt' => 'nullable|string',
+            'mail_address' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
+
             'cars' => 'nullable|array',
             'cars.*.gene_id' => 'required|exists:car_genes,id',
             'cars.*.model_id' => 'required|exists:car_models,id',

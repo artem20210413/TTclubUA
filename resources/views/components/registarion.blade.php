@@ -86,6 +86,16 @@
         <textarea class="form-control" name="occupation_description"
                   rows="3">{{ old('occupation_description') }}</textarea>
     </div>
+    <div class="mb-3">
+        <label class="form-label">Чому саме ауді ТТ?</label>
+        <textarea class="form-control" name="why_tt"
+                  rows="3">{{ old('why_tt') }}</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Адреса НП (для подарунків)</label>
+        <input type="text" class="form-control" name="mail_address" value="{{ old('mail_address') }}">
+    </div>
 
     <div class="mb-3">
         <label class="form-label required">Пароль</label>

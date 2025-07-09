@@ -40,10 +40,12 @@ class RegistrationSandToTo
         $user = "ім'я: {$data->name}\n"
             . "Телефон: {$data->phone}\n"
             . "Міста: {$cities}\n"
-            . "Рід діяльності: {$data->occupation_description}\n"
             . "Дата народження: {$data->birth_date}\n"
             . "ТГ: {$data->telegram_nickname} \n"
             . "Інста: {$data->instagram_nickname}\n"
+            . "Рід діяльності: {$data->occupation_description}\n"
+            . "Адреса НП (для подарунків): {$data->mail_address}\n"
+            . "Чому саме ауді ТТ?: {$data->why_tt}\n"
             . "Дата створення: {$this->registration->created_at->format('d.m.Y H:i')}\n";
 
         $cars = '';

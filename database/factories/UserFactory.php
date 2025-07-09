@@ -33,7 +33,7 @@ class UserFactory extends Factory
             'phone' => $this->faker->unique()->phoneNumber(),
             'email' => $this->faker->unique()->safeEmail(),
             'birth_date' => $this->faker->date(),
-            'club_entry_date' => $this->faker->date(),
+//            'club_entry_date' => $this->faker->date(),
             'occupation_description' => $this->faker->text(),
             'phone_verified_at' => now(),
             'email_verified_at' => now(),

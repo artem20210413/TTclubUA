@@ -41,7 +41,7 @@ class AuthController extends Controller
         $user->telegram_nickname = $request->telegram_nickname;
         $user->instagram_nickname = $request->instagram_nickname;
         $user->birth_date = Carbon::parse($request->birth_date);
-        $user->club_entry_date = Carbon::parse($request->club_entry_date);
+//        $user->club_entry_date = Carbon::parse($request->club_entry_date);
         $user->occupation_description = $request->occupation_description;
         $user->save();
 

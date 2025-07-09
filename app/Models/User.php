@@ -72,7 +72,6 @@ class User extends Authenticatable implements HasMedia
         'phone',
         'email',
         'birth_date',
-        'club_entry_date',
         'occupation_description',
         'password',
         'profile_photo_path',
@@ -101,7 +100,6 @@ class User extends Authenticatable implements HasMedia
     // Если вам нужно преобразовать дату в формат Carbon:
     protected $dates = [
         'birth_date',
-        'club_entry_date',
         'phone_verified_at',
         'email_verified_at',
         'approve_verified_at',
@@ -165,7 +163,7 @@ class User extends Authenticatable implements HasMedia
         $this->telegram_nickname = $request->input('telegram_nickname', $this->telegram_nickname);
         $this->instagram_nickname = $request->input('instagram_nickname', $this->instagram_nickname);
         $this->birth_date = Carbon::parse($request->input('birth_date', $this->birth_date));
-        $this->club_entry_date = Carbon::parse($request->input('club_entry_date', $this->club_entry_date));
+//        $this->club_entry_date = Carbon::parse($request->input('club_entry_date', $this->club_entry_date));
         $this->occupation_description = $request->input('occupation_description', $this->occupation_description);
 
         $this->save();

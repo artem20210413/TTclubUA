@@ -30,7 +30,7 @@ class RegisterRequest extends FormRequest
             'cities' => 'nullable|array',
             'cities.*' => 'integer|exists:cities,id',
             'birth_date' => 'nullable|date_format:d-m-Y', // если дата не null, то должна быть в формате Y-m-d
-            'club_entry_date' => 'nullable|date_format:d-m-Y', // если дата обязательна, то тоже проверка на формат
+//            'club_entry_date' => 'nullable|date_format:d-m-Y', // если дата обязательна, то тоже проверка на формат
             'occupation_description' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
         ];

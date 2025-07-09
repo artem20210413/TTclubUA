@@ -21,7 +21,7 @@ class UserResource extends JsonResource
         /** @var User $this */
 //        return parent::toArray($request);
         $birthDate = $this->birth_date ? Carbon::parse($this->birth_date) : null;
-        $clubEntryDate = $this->club_entry_date ? Carbon::parse($this->club_entry_date) : null;
+//        $clubEntryDate = $this->club_entry_date ? Carbon::parse($this->club_entry_date) : null;
 
 
         $default = asset("storage/default/" . EnumTypeMedia::PROFILE_PICTURE->value . ".webp");

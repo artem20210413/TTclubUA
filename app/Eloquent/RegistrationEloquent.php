@@ -103,9 +103,9 @@ class RegistrationEloquent
             $car->gene_id = $carData['gene']['id'] ?? null;
             $car->color_id = $carData['color']['id'] ?? null;
             $car->model_id = $carData['model']['id'] ?? null;
-            $car->vin_code = $carData['vin_code'];
-            $car->license_plate = formatNormalizePlateNumber($carData['license_plate']);
-            $car->personalized_license_plate = formatNormalizePlateNumber($carData['personalized_license_plate']);
+            $car->vin_code = $carData['vin_code'] ?? null;
+            $car->license_plate = formatNormalizePlateNumber($carData['license_plate'] ?? null);
+            $car->personalized_license_plate = formatNormalizePlateNumber($carData['personalized_license_plate'] ?? null);
 
             $car->save();
             if ($img) {

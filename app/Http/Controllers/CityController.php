@@ -11,7 +11,7 @@ class CityController extends Controller
 
     public function all()
     {
-        return success(data: ['cities' => CityResource::collection(City::all())]);
+        return success(data: ['cities' => CityResource::collection(City::orderBy('name')->get())]);
     }
 
 

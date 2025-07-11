@@ -8,7 +8,7 @@
 </style>
 
 @php
-    $cities = \App\Models\City::all();
+    $cities = \App\Models\City::orderBy('name')->get();
     $genes = \App\Models\CarGene::all();
     $models = \App\Models\CarModel::all();
     $colors = \App\Models\Color::all();

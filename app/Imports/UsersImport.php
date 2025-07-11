@@ -113,7 +113,11 @@ class UsersImport implements ToModel
         $carData['user_id'] = $user?->id;
         $carData['active'] = 1;
 
-        $car = Car::where('license_plate', $carData['license_plate'])->first() ?? Car::Where('personalized_license_plate', $carData['personalized_license_plate'])->first() ?? new Car();
+        if ($carData['personalized_license_plate'])
+            $car = Car::where('license_plate', $carData['license_plate'])->first() ?? Car::Where('personalized_license_plate', $carData['personalized_license_plate'])->first() ?? new Car();
+        else
+            $car = Car::where('license_plate', $carData['license_plate'])->first() ?? new Car();
+//        $car = Car::where('license_plate', $carData['license_plate'])->first() ?? Car::Where('personalized_license_plate', $carData['personalized_license_plate'])->first() ?? new Car();
 
         $car->fill($carData);
         $car->save();

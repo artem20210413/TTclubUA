@@ -47,6 +47,7 @@ class Car extends Model implements HasMedia
         'model_id',
         'color_id',
         'name',
+        'active',
         'license_plate',
         'personalized_license_plate',
         'photo_path',

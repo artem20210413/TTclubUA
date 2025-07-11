@@ -4,8 +4,10 @@ use App\Http\Controllers\Api\ApiException;
 use Illuminate\Database\Eloquent\Collection;
 
 if (!function_exists('formatPhoneNumber')) {
-    function formatPhoneNumber(string $phone): string
+    function formatPhoneNumber(?string $phone): ?string
     {
+        if (!$phone) return null;
+
         $phone = preg_replace('/\D+/', '', $phone);
 
         // Если номер начинается с "0", заменяем его на "380"
@@ -22,6 +24,8 @@ if (!function_exists('formatNormalizePlateNumber')) {
     function formatNormalizePlateNumber(?string $plate): ?string
     {
         if (!$plate) return null;
+
+        $plate = trim($plate);
         // Словарь замены кириллических букв на латинские
         $replaceMap = [
             'А' => 'A', 'В' => 'B', 'С' => 'C', 'Е' => 'E', 'Н' => 'H',

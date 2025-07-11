@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Car;
 use App\Models\City;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -34,28 +35,29 @@ class UsersImport implements ToModel
     {
         if ($row[0] === null || $row[0] === 'Модель') return;
 
-
-        $l = $row[3] ?? null;
-        if ($l) {
-            $l = str_replace(")", "", $l);
-            $ls = explode("(", $l);
-
-            $licensePlate = $ls[0] ?? null;
-            $personalizedLicensePlate = $ls[1] ?? null;
-        } else {
-            $licensePlate = null;
-            $personalizedLicensePlate = null;
-        }
-        $d = $row[6] ?? 0;
+        $licensePlate = $row[3] ?? null;
+        $personalizedLicensePlate = $row[4] ?? null;
+        $d = $row[7] ?? 0;
         $d = is_numeric($d) ? $d : 0;
-        $array['user']['cities'] = $this->searchCities($row[7] ?? null);
+        $array['user']['cities'] = $this->searchCities($row[8] ?? null);
         $array['user']['birth_date'] = Date::excelToDateTimeObject($d);
-        $array['user']['telegram_nickname'] = $this->filterTelegram($row[5] ?? null); //TODO сохранять только с собачкой при это убирать собачку
-        $array['user']['instagram_nickname'] = $row[9] ?? null;
-        $array['user']['occupation_description'] = $row[10] ?? null;
-        $array['user']['name'] = $row[4] ?? null;
-        $array['user']['phone'] = $row[8] ?? null;
+        $array['user']['telegram_nickname'] = $this->filterTelegram($row[6] ?? null); //TODO сохранять только с собачкой при это убирать собачку
+        $array['user']['instagram_nickname'] = $row[10] ?? null;
+        $array['user']['occupation_description'] = $row[11] ?? null;
+        $array['user']['name'] = $row[5] ?? null;
+        $array['user']['phone'] = formatPhoneNumber($row[9] ?? null);
         $array['user']['email'] = $array['user']['phone'] . '@gmail.com';
+
+        $array['user']['finances'] = [];
+        if ($value = ($row[13] ?? null))
+            $array['user']['finances']['2022'] = (int)$value;
+        if ($value = ($row[14] ?? null))
+            $array['user']['finances']['2023'] = (int)$value;
+        if ($value = ($row[15] ?? null))
+            $array['user']['finances']['2024'] = (int)$value;
+        if ($value = ($row[16] ?? null))
+            $array['user']['finances']['2025'] = (int)$value;
+
 
         $array['car']['model_id'] = $this->searchCarModel($row[0] ?? null);
         $array['car']['gene_id'] = $this->searchCarGen($row[1] ?? null);
@@ -75,22 +77,29 @@ class UsersImport implements ToModel
     public function createUser(array $userData): ?User
     {
         if (!isset($userData['phone'])) return null;
-
-        $user = User::where('phone', formatPhoneNumber($userData['phone']))->first();
+        /** @var User $user */
+        $user = User::where('phone', $userData['phone'])->first();
 
         if ($user) {
             $user->fill($userData);
-            $user->setPhone($userData['phone']);
         } else {
             $user = new User();
             $user->fill($userData);
-            $user->setPhone($userData['phone']);
             $user->setPassword($userData['phone'] . '!');
             $user->save();
         }
 
         if (!empty($userData['cities'])) {
             $user->cities()->sync($userData['cities']);
+        }
+
+        foreach ($userData['finances'] as $year => $finances) {
+            $dataTime = Carbon::createFromDate($year, 7, 1)->startOfDay();
+            $user->finances()->create([
+                'amount' => $finances,
+                'description' => 'З таблиці',
+                'created_at' => $dataTime,
+            ]);
         }
 
         return $user;
@@ -102,8 +111,9 @@ class UsersImport implements ToModel
 //        if (str_contains($carData['license_plate'], 'ПРОДАВ')) return null;
 
         $carData['user_id'] = $user?->id;
+        $carData['active'] = 1;
 
-        $car = Car::where('license_plate', $carData['license_plate'])->where('personalized_license_plate', $carData['personalized_license_plate'])->first() ?? new Car();
+        $car = Car::where('license_plate', $carData['license_plate'])->first() ?? Car::Where('personalized_license_plate', $carData['personalized_license_plate'])->first() ?? new Car();
 
         $car->fill($carData);
         $car->save();

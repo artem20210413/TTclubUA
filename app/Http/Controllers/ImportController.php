@@ -20,6 +20,8 @@ class ImportController extends Controller
 
         $processedData = $import->getProcessedData();
 
+
+        \App\Models\Car::query()->update(['active' => 0]);
         foreach ($processedData as $data) {
             $import->createUserAndCar($data);
         }

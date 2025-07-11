@@ -154,6 +154,10 @@ class User extends Authenticatable implements HasMedia
 
         return $user;
     }
+    public function finances()
+    {
+        return $this->hasMany(Finance::class);
+    }
 
     public function updateCustom(UpdateUserRequest $request): User
     {

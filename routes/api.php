@@ -8,6 +8,7 @@ use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PublicationController;
+use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -46,8 +47,7 @@ Route::get('finance/jar-monobank', [\App\Http\Controllers\FinanceController::cla
 //Route::post('/user/profile-collection/add', [MediaController::class, 'addProfileCollection'])->middleware('auth:sanctum');
 //Route::delete('/user/profile-collection/{id}', [MediaController::class, 'deleteProfilePicture'])->middleware('auth:sanctum');
 
-Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
-Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
+
 
 Route::get('/registration/list', [\App\Http\Controllers\RegistrationController::class, 'list'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/registration/{registration}/validator', [\App\Http\Controllers\RegistrationController::class, 'validator'])->middleware(['auth:sanctum', 'role:admin']);
@@ -87,6 +87,13 @@ Route::post('/import', [ImportController::class, 'importMain'])->middleware(['au
 
 Route::post('/test/fa-fa', [TestController::class, 'fafa'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/test/getT', [TestController::class, 'get']);//->middleware(['auth:sanctum', 'role:admin']);
+
+
+Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
+Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
+
+Route::post('/telegram/webhook', [TelegramController::class, 'webhook']);
+
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
 //->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).

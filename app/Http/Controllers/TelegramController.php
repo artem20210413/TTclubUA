@@ -15,6 +15,8 @@ use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\FileUpload\InputFile;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramController extends Controller
 {
@@ -26,10 +28,11 @@ class TelegramController extends Controller
         $tgBot = new TelegramBot();
         $tg = $tgBot->getTelegram();
         $message = $request->input('message');
-
         if (!$message) return;
-
         $chatId = $message['chat']['id'];
+        $fromId = $message['from']['id'];
+        if ($fromId !== $chatId) return;
+
         $text = $message['text'] ?? '';
 
         match (trim($text)) {
@@ -48,6 +51,51 @@ class TelegramController extends Controller
                 'text' => "Неизвестная команда. Введите /help для списка команд.",
             ]),
         };
+
+        return success();
+    }
+
+    public function test(Request $request)
+    {
+
+        $chatId = 616322991;
+//        $bot = Telegram::getMe();
+//        Telegram::sendMessage([
+//            'chat_id' => $chatId,
+//            'text' => 'Привет!',
+//        ]);
+
+//        Telegram::sendMessage([
+//            'chat_id' => $chatId,
+//            'text' => 'Нажмите кнопку ниже:',
+//            'reply_markup' => json_encode([
+//                'keyboard' => [
+//                    [['text' => '📞 Отправить номер', 'request_contact' => true]],
+//                ],
+//                'resize_keyboard' => true,
+//                'one_time_keyboard' => true,
+//            ]),
+//        ]);
+
+//        Telegram::sendMessage([
+//            'chat_id' => $chatId,
+//            'text' => 'Выберите:',
+//            'reply_markup' => json_encode([
+//                'inline_keyboard' => [
+//                    [
+//                        ['text' => 'Открыть сайт', 'url' => 'https://example.com'],
+//                        ['text' => 'Поздороваться', 'callback_data' => 'hi'],
+//                    ],
+//                ],
+//            ]),
+//        ]);
+
+        Telegram::sendPhoto([
+            'chat_id' => -1002693142471,
+            'photo' => fopen("https://tt.tishchenko.kiev.ua/storage/236/profile_picture.webp", 'r'),
+            'caption' => "ТЕСТ!!! Привет, @olha_mo! Это изображение с веба ️",
+        ]);
+
 
         return success();
     }

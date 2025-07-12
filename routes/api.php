@@ -93,6 +93,7 @@ Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 
 Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
 
 Route::post('/telegram/webhook', [TelegramController::class, 'webhook']);
+Route::get('/telegram/test', [TelegramController::class, 'test']);
 
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.

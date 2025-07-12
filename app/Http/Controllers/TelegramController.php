@@ -11,6 +11,7 @@ use App\Http\Resources\FinanceWithUserResource;
 use App\Models\Finance;
 use App\Models\MonoTransaction;
 use App\Models\User;
+use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -20,9 +21,10 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
-
+//https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://tt.tishchenko.kiev.ua/api/telegram/webhook
         Log::info("webhook request received", [$request->all()]);
-        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+        $tgBot = new TelegramBot();
+        $tg = $tgBot->getTelegram();
         $message = $request->input('message');
 
         if (!$message) return;
@@ -31,21 +33,22 @@ class TelegramController extends Controller
         $text = $message['text'] ?? '';
 
         match (trim($text)) {
-            '/start', '/hi' => $telegram->sendMessage([
+            '/start', '/hi' => $tg->sendMessage([
                 'chat_id' => $chatId,
                 'text' => "Привет! Я твой Telegram-бот 😊",
             ]),
 
-            '/help' => $telegram->sendMessage([
+            '/help' => $tg->sendMessage([
                 'chat_id' => $chatId,
                 'text' => "Список команд:\n/start или /hi — приветствие\n/help — помощь\n/pfvtyf — скоро будет реализовано",
             ]),
 
-            default => $telegram->sendMessage([
+            default => $tg->sendMessage([
                 'chat_id' => $chatId,
                 'text' => "Неизвестная команда. Введите /help для списка команд.",
             ]),
         };
+
         return success();
     }
 

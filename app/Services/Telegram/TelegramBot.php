@@ -16,7 +16,7 @@ class TelegramBot
     /**
      * @throws TelegramSDKException
      */
-    public function __construct(readonly EnumTelegramChats $enumTelegramChats)
+    public function __construct(readonly ?EnumTelegramChats $enumTelegramChats = null)
     {
         $this->telegram = new Api(config('services.telegram.token'));
     }
@@ -91,6 +91,11 @@ class TelegramBot
     {
 //        $response = $this->telegram->getMe();
 //        dd($response);
+    }
+
+    public function getTelegram(): Api
+    {
+        return $this->telegram;
     }
 
 

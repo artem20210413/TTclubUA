@@ -88,7 +88,7 @@ class UserEloquent
         if (!$contact) return null;
 
         $phone = str_replace('+', '', $contact['phone_number']);
-        $user = User::query()->where('phone')->first();
+        $user = User::query()->where('phone', $phone)->first();
 
         if (!$user) throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
 

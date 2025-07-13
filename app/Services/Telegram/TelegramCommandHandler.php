@@ -102,6 +102,7 @@ TEXT;
                 'remove_keyboard' => true, // убрать клавиатуру
             ]),
         ]);
+        $this->commandStart();
     }
 
     public function commandChangePassword(?string $password)
@@ -111,6 +112,7 @@ TEXT;
                 'chat_id' => $this->chatId,
                 'text' => "❗ Пароль не було вказано після команди",
             ]);
+            return;
         }
 
         $password = trim($password);

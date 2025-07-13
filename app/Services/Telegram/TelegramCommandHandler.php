@@ -10,8 +10,10 @@ class TelegramCommandHandler
     public function __construct(readonly int $chatId, readonly ?User $user, string $text)
     {
 
-        if (!$this->user)
+        if (!$this->user) {
             $this->commandGetPhone();
+            return;
+        }
 
         $pieces = explode(' ', trim($text));
 

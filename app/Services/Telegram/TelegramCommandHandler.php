@@ -7,13 +7,21 @@ use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramCommandHandler
 {
-    public function __construct(readonly int $chatId, readonly ?User $user, string $text)
+    public function __construct(readonly array $message, readonly int $chatId, readonly ?User $user)
     {
+        $text = $message['text'] ?? '';
 
         if (!$this->user) {
             $this->commandGetPhone();
             return;
         }
+
+        $contact = $message['contact'] ?? null;
+        if ($contact) {
+            $this->commandContactSuccessfully();
+            return;
+        }
+
 
         $pieces = explode(' ', trim($text));
 
@@ -70,6 +78,17 @@ TEXT;
                 ],
                 'resize_keyboard' => true,
                 'one_time_keyboard' => true,
+            ]),
+        ]);
+    }
+
+    public function commandContactSuccessfully()
+    {
+        Telegram::sendMessage([
+            'chat_id' => $this->chatId,
+            'text' => "✅ Дякуємо {$this->user->name}!\nМожемо продовжити спілкування 👌",
+            'reply_markup' => json_encode([
+                'remove_keyboard' => true, // убрать клавиатуру
             ]),
         ]);
     }

@@ -95,7 +95,7 @@ class UserEloquent
         $user->telegram_id = $contact['user_id'];
         $user->save();
 
-        throw new ApiException("✅ Дякуємо! Ваш номер $phone успішно знайдений.\nМожемо продовжити спілкування 👌");
+        return $user;
     }
 
 

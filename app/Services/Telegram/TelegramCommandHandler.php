@@ -22,18 +22,18 @@ class TelegramCommandHandler
             return;
         }
 
-
         $pieces = explode(' ', trim($text));
+        if (str_starts_with($message['text'], '/')) {
+            match ($pieces[0] ?? '') {
+                '/start', '/hi' => $this->commandStart(),
 
-        match ($pieces[0] ?? '') {
-            '/start', '/hi' => $this->commandStart(),
+                '/changePassword', '/CP' => $this->commandChangePassword($pieces[1] ?? null),
 
-            '/changePassword' => $this->commandChangePassword($pieces[1] ?? null),
+                '/help' => $this->commandHelp(),
 
-            '/help' => $this->commandHelp(),
-
-            default => $this->commandDefault()
-        };
+                default => $this->commandDefault()
+            };
+        }
     }
 
 
@@ -46,7 +46,7 @@ class TelegramCommandHandler
 
 /help — показати це повідомлення з переліком команд 📋
 
-/changePassword — змінити пароль до вашого акаунта 🔐
+/changePassword {new-password} або /CP {new-password} — змінити пароль до вашого акаунта 🔐
 
 Більше можливостей з'явиться скоро. Якщо виникли питання — звертайтесь до підтримки.
 TEXT;
@@ -104,8 +104,15 @@ TEXT;
         ]);
     }
 
-    public function commandChangePassword(string $password)
+    public function commandChangePassword(?string $password)
     {
+        if (!$password) {
+            Telegram::sendMessage([
+                'chat_id' => $this->chatId,
+                'text' => "❗ Пароль не було вказано після команди",
+            ]);
+        }
+
         $password = trim($password);
 
         if (strlen($password) < 8) {

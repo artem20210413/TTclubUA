@@ -95,6 +95,7 @@ class UserEloquent
         $user->telegram_id = $contact['user_id'];
         if (isset($from['username']))
             $user->telegram_nickname = $from['username'];
+        $user->phone_verified_at = Carbon::now();
         $user->save();
 
         return $user;

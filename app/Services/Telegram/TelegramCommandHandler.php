@@ -18,7 +18,7 @@ class TelegramCommandHandler
         match ($pieces[0] ?? '') {
             '/start', '/hi' => $this->commandStart(),
 
-            '/change-password' => $this->commandHelp($pieces[1] ?? null),
+            '/change-password' => $this->commandChangePassword($pieces[1] ?? null),
 
             '/help' => $this->commandHelp(),
 
@@ -74,9 +74,17 @@ TEXT;
 
     public function commandChangePassword(string $password)
     {
+        $password = trim($password);
 
+        if (strlen($password) < 8) {
+            Telegram::sendMessage([
+                'chat_id' => $this->chatId,
+                'text' => "❗ Пароль має містити щонайменше 8 символів.",
+            ]);
+            return;
+        }
         // Сменить пароль
-        $this->user->setPassword(trim($password));
+        $this->user->setPassword($password);
         $this->user->save();
 
         Telegram::sendMessage([

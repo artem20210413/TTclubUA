@@ -39,7 +39,7 @@ class TelegramController extends Controller
 
         try {
             $user = UserEloquent::updateByTg($fromId, $contact);
-            new TelegramCommandHandler($chatId, $user, $text);
+//            new TelegramCommandHandler($chatId, $user, $text);
         } catch (ApiException $e) {
             Telegram::sendMessage([
                 'chat_id' => $chatId,

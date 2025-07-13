@@ -63,6 +63,17 @@ TEXT;
         Telegram::sendMessage([
             'chat_id' => $this->chatId,
             'text' => "Привіт {$this->user->name}! Я Telegram-бот Клубу TT. Щоб дізнатися що я вмію напиши команду '/help'",
+            'reply_markup' => json_encode([
+                'keyboard' => [
+                    [
+                        ['text' => '/start'],
+                        ['text' => '/help'],
+                        ['text' => '/changePassword'],
+                    ],
+                ],
+                'resize_keyboard' => true,
+                'one_time_keyboard' => true,
+            ]),
         ]);
 
     }

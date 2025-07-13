@@ -63,10 +63,16 @@ class MentionEloquent
 
     public static function delete(Mention $mention): ?bool
     {
+        self::fileDelete($mention);
+
+        return $mention->delete();
+    }
+
+    public static function fileDelete(Mention $mention): void
+    {
         if ($mention->hasMedia(EnumTypeMedia::PROFILE_PICTURE->value)) {
             $mention->getMedia(EnumTypeMedia::PROFILE_PICTURE->value)->each->delete();
         }
-        return $mention->delete();
     }
 
 

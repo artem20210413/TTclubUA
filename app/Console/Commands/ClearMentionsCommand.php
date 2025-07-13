@@ -34,7 +34,8 @@ class ClearMentionsCommand extends Command
         $count = count($mentions);
 //        dd($mentions);
         foreach ($mentions as $mention) {
-            MentionEloquent::delete($mention);
+            MentionEloquent::fileDelete($mention);
+//            MentionEloquent::delete($mention);
         }
 
         $this->info("✅ Clear completed! Count: $count");

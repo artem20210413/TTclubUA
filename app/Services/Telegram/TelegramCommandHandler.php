@@ -11,29 +11,39 @@ class TelegramCommandHandler
     {
         $text = $message['text'] ?? '';
 
-        if (!$this->user) {
-            $this->commandGetPhone();
-            return;
-        }
+        if (!$user) return $this->commandGetPhone();
+        if (!$user->active) return $this->commandUserNotActive();
+        if (isset($message['contact'])) return $this->commandContactSuccessfully();
+//
+//        if (!$this->user) {
+//            $this->commandGetPhone();
+//            return;
+//        }
+//        if (!$this->user->active) {
+//            $this->commandUserNotActive();
+//            return;
+//        }
+//
+//        $contact = $message['contact'] ?? null;
+//        if ($contact) {
+//            $this->commandContactSuccessfully();
+//            return;
+//        }
 
-        $contact = $message['contact'] ?? null;
-        if ($contact) {
-            $this->commandContactSuccessfully();
-            return;
-        }
+        $this->handleCommand($text);
+    }
 
+    private function handleCommand(string $text): void
+    {
         $pieces = explode(' ', trim($text));
-        if (str_starts_with($message['text'], '/')) {
-            match ($pieces[0] ?? '') {
-                '/start', '/hi' => $this->commandStart(),
+        $command = $pieces[0] ?? '';
 
-                '/changePassword', '/CP' => $this->commandChangePassword($pieces[1] ?? null),
-
-                '/help' => $this->commandHelp(),
-
-                default => $this->commandDefault()
-            };
-        }
+        match ($command) {
+            '/start', '/hi' => $this->commandStart(),
+            '/changePassword', '/CP' => $this->commandChangePassword($pieces[1] ?? null),
+            '/help' => $this->commandHelp(),
+            default => $this->commandDefault(),
+        };
     }
 
 
@@ -103,6 +113,14 @@ TEXT;
             ]),
         ]);
         $this->commandStart();
+    }
+
+    public function commandUserNotActive()
+    {
+        Telegram::sendMessage([
+            'chat_id' => $this->chatId,
+            'text' => "⚠️ Ваш обліковий запис неактивний.\n\nЗверніться до адміністратора або служби підтримки, щоб активувати доступ.",
+        ]);
     }
 
     public function commandChangePassword(?string $password)

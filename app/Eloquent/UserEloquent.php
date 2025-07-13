@@ -81,9 +81,9 @@ class UserEloquent
      * @return User|null
      * @throws ApiException
      */
-    public static function updateByTg(int $UserTgId, ?array $contact): ?User
+    public static function updateByTg(array $from, ?array $contact): ?User
     {
-        $user = User::query()->where('telegram_id', $UserTgId)->first();
+        $user = User::query()->where('telegram_id', $from['id'])->first();
         if ($user) return $user;
         if (!$contact) return null;
 
@@ -93,6 +93,8 @@ class UserEloquent
         if (!$user) throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
 
         $user->telegram_id = $contact['user_id'];
+        if (isset($from['username']))
+            $user->telegram_nickname = $from['username'];
         $user->save();
 
         return $user;

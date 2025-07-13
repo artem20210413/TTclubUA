@@ -66,9 +66,7 @@ class TelegramCommandHandler
     {
         Telegram::sendMessage([
             'chat_id' => $this->chatId,
-            'text' => "Привіт {$this->user->name}!
-            Я Telegram-бот Клубу TT.
-            \nЩоб дізнатися що я вмію напиши команду '/help'",
+            'text' => "Привіт {$this->user->name}!\nЯ Telegram-бот Клубу TT.\nЩоб дізнатися що я вмію напиши команду '/help'",
             'reply_markup' => json_encode([
                 'keyboard' => [
                     [

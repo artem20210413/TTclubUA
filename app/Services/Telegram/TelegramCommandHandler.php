@@ -28,7 +28,7 @@ class TelegramCommandHandler
         match ($pieces[0] ?? '') {
             '/start', '/hi' => $this->commandStart(),
 
-            '/change-password' => $this->commandChangePassword($pieces[1] ?? null),
+            '/changePassword' => $this->commandChangePassword($pieces[1] ?? null),
 
             '/help' => $this->commandHelp(),
 
@@ -46,7 +46,7 @@ class TelegramCommandHandler
 
 /help — показати це повідомлення з переліком команд 📋
 
-/change-password — змінити пароль до вашого акаунта 🔐
+/changePassword — змінити пароль до вашого акаунта 🔐
 
 Більше можливостей з'явиться скоро. Якщо виникли питання — звертайтесь до підтримки.
 TEXT;

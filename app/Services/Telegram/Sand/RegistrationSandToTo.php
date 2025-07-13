@@ -6,12 +6,14 @@ use App\Enum\EnumTelegramChats;
 use App\Enum\EnumTypeMedia;
 use App\Models\Registration;
 use App\Services\Telegram\TelegramBot;
+use App\Services\Telegram\TelegramBotHelpers;
 
 class RegistrationSandToTo
 {
     public function __construct(readonly Registration $registration)
     {
-        $text = $this->generationText();
+//        $text = $this->generationText();
+        $text = TelegramBotHelpers::generationTextRegistration($registration);
 
         $profileImage = $this->registration->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value);
         $imageUrls = $this->registration->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->map(function ($media) {
@@ -30,33 +32,4 @@ class RegistrationSandToTo
         }
     }
 
-    public function generationText()
-    {
-        $data = $this->registration->getJson();
-        $cities = collect($data->cities_model)
-            ->map(fn($city) => "{$city->name} ({$city->country})")
-            ->implode(', ');
-
-        $user = "ім'я: {$data->name}\n"
-            . "Телефон: {$data->phone}\n"
-            . "Міста: {$cities}\n"
-            . "Дата народження: {$data->birth_date}\n"
-            . "ТГ: {$data->telegram_nickname} \n"
-            . "Інста: {$data->instagram_nickname}\n"
-            . "Рід діяльності: {$data->occupation_description}\n"
-            . "Адреса НП (для подарунків): {$data->mail_address}\n"
-            . "Чому саме ауді ТТ?: {$data->why_tt}\n"
-            . "Дата створення: {$this->registration->created_at->format('d.m.Y H:i')}\n";
-
-        $cars = '';
-        foreach ($data->cars as $i => $car) {
-            $key = $i + 1;
-            $cars .= "🚘 Авто {$car->model->name} {$car->gene->name}:\n"
-                . "Колір: {$car->color->name}\n"
-                . "Номер: {$car->license_plate}\n"
-                . "Індивідуальний номер: " . ($car->personalized_license_plate ?? '—') . "\n\n";
-        }
-
-        return $user . "\n\n" . $cars;
-    }
 }

@@ -3,6 +3,7 @@
 namespace App\Services\Telegram;
 
 use App\Models\Car;
+use App\Models\Registration;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -24,7 +25,6 @@ class TelegramBotHelpers
         if ($user?->telegram_id)
             return self::MentionPerson($user);
         return self::LinkToPerson($user);
-
     }
 
     public static function generationTextMention(User $owner, Car $car, ?string $description, ?Carbon $time = null): string
@@ -43,5 +43,35 @@ class TelegramBotHelpers
         }
 
         return $text;
+    }
+
+    public static function generationTextRegistration(Registration $registration): string
+    {
+        $data = $registration->getJson();
+        $cities = collect($data->cities_model)
+            ->map(fn($city) => "{$city->name} ({$city->country})")
+            ->implode(', ');
+
+        $user = "ім'я: {$data->name}\n"
+            . "Телефон: {$data->phone}\n"
+            . "Міста: {$cities}\n"
+            . "Дата народження: {$data->birth_date}\n"
+            . "ТГ: {$data->telegram_nickname} \n"
+            . "Інста: {$data->instagram_nickname}\n"
+            . "Рід діяльності: {$data->occupation_description}\n"
+            . "Адреса НП (для подарунків): {$data->mail_address}\n"
+            . "Чому саме ауді ТТ?: {$data->why_tt}\n"
+            . "Дата створення: {$registration->created_at->format('d.m.Y H:i')}\n";
+
+        $cars = '';
+        foreach ($data->cars as $i => $car) {
+            $key = $i + 1;
+            $cars .= "🚘 Авто {$car->model->name} {$car->gene->name}:\n"
+                . "Колір: {$car->color->name}\n"
+                . "Номер: {$car->license_plate}\n"
+                . "Індивідуальний номер: " . ($car->personalized_license_plate ?? '—') . "\n\n";
+        }
+
+        return $user . "\n\n" . $cars;
     }
 }

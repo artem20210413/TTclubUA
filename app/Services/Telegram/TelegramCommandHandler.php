@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Services\Telegram;
+
+use App\Models\User;
+use Telegram\Bot\Laravel\Facades\Telegram;
+
+class TelegramCommandHandler
+{
+    public function __construct(readonly int $chatId, readonly ?User $user, string $text)
+    {
+
+        if (!$this->user)
+            $this->commandGetPhone();
+
+        $pieces = explode(' ', trim($text));
+
+        match ($pieces[0] ?? '') {
+            '/start', '/hi' => $this->commandStart(),
+
+            '/change-password' => $this->commandHelp($pieces[1] ?? null),
+
+            '/help' => $this->commandHelp(),
+
+            default => $this->commandDefault()
+        };
+    }
+
+
+    public function commandHelp()
+    {
+        $text = <<<TEXT
+🆘 *Допомога — список команд:*
+
+/start або /hi — привітання з ботом 🤖
+
+/help — показати це повідомлення з переліком команд 📋
+
+/change-password — змінити пароль до вашого акаунта 🔐
+
+Більше можливостей з'явиться скоро. Якщо виникли питання — звертайтесь до підтримки.
+TEXT;
+
+        Telegram::sendMessage([
+            'chat_id' => $this->chatId,
+            'text' => $text,
+            'parse_mode' => 'Markdown',
+        ]);
+    }
+
+    public function commandStart()
+    {
+        Telegram::sendMessage([
+            'chat_id' => $this->chatId,
+            'text' => "Привіт {$this->user->name}! Я Telegram-бот Клубу TT. Щоб дізнатися що я вмію напиши команду '/help'",
+        ]);
+
+    }
+
+    public function commandGetPhone()
+    {
+        Telegram::sendMessage([
+            'chat_id' => $this->chatId,
+            'text' => 'Для продовження спілкування з ботом необхідно ідентифікувати себе',
+            'reply_markup' => json_encode([
+                'keyboard' => [
+                    [['text' => '📞 Надіслати номер', 'request_contact' => true]],
+                ],
+                'resize_keyboard' => true,
+                'one_time_keyboard' => true,
+            ]),
+        ]);
+    }
+
+    public function commandChangePassword(string $password)
+    {
+
+        // Сменить пароль
+        $this->user->setPassword(trim($password));
+        $this->user->save();
+
+        Telegram::sendMessage([
+            'chat_id' => $this->chatId,
+            'text' => "✅ Пароль успішно змінено.",
+        ]);
+    }
+
+    public function commandDefault()
+    {
+        Telegram::sendMessage([
+            'chat_id' => $this->chatId,
+            'text' => "🤖 Невідома команда. Введіть /help, щоб переглянути список доступних команд.",
+        ]);
+    }
+
+
+}

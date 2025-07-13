@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Eloquent\FinanceEloquent;
+use App\Eloquent\UserEloquent;
 use App\Enum\EnumMonoAccount;
 use App\Enum\EnumMonoStatus;
 use App\Http\Controllers\Api\ApiException;
@@ -12,6 +13,7 @@ use App\Models\Finance;
 use App\Models\MonoTransaction;
 use App\Models\User;
 use App\Services\Telegram\TelegramBot;
+use App\Services\Telegram\TelegramCommandHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -23,41 +25,34 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
-//https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://tt.tishchenko.kiev.ua/api/telegram/webhook
+        //https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://tt.tishchenko.kiev.ua/api/telegram/webhook
         Log::info("webhook request received", [$request->all()]);
-        $tgBot = new TelegramBot();
-        $tg = $tgBot->getTelegram();
+
         $message = $request->input('message');
-        if (!$message) return;
+        if (!$message) success();
         $chatId = $message['chat']['id'];
         $fromId = $message['from']['id'];
-        if ($fromId !== $chatId) return;
+        if ($fromId !== $chatId) success();
 
         $text = $message['text'] ?? '';
+        $contact = $message['contact'] ?? null;
 
-        match (trim($text)) {
-            '/start', '/hi' => $tg->sendMessage([
+        try {
+            $user = UserEloquent::updateByTg($fromId, $contact);
+            new TelegramCommandHandler($chatId, $user, $text);
+        } catch (ApiException $e) {
+            Telegram::sendMessage([
                 'chat_id' => $chatId,
-                'text' => "Привет! Я твой Telegram-бот 😊",
-            ]),
-
-            '/help' => $tg->sendMessage([
-                'chat_id' => $chatId,
-                'text' => "Список команд:\n/start или /hi — приветствие\n/help — помощь\n/pfvtyf — скоро будет реализовано",
-            ]),
-
-            default => $tg->sendMessage([
-                'chat_id' => $chatId,
-                'text' => "Неизвестная команда. Введите /help для списка команд.",
-            ]),
-        };
+                'text' => $e->getMessage(),
+            ]);
+        }
 
         return success();
     }
 
     public function test(Request $request)
     {
-
+        dd('test');
         $chatId = 616322991;
 //        $bot = Telegram::getMe();
 //        Telegram::sendMessage([

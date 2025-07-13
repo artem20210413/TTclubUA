@@ -2,6 +2,7 @@
 
 namespace App\Eloquent;
 
+use App\Http\Controllers\Api\ApiException;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,6 +73,29 @@ class UserEloquent
     public static function countUsersWithCars(): int
     {
         return User::whereHas('cars')->count();
+    }
+
+    /**
+     * @param int $UserTgId
+     * @param array|null $contact
+     * @return User|null
+     * @throws ApiException
+     */
+    public static function updateByTg(int $UserTgId, ?array $contact): ?User
+    {
+        $user = User::query()->where('telegram_id', $UserTgId)->first();
+        if ($user) return $user;
+        if (!$contact) return null;
+
+        $phone = str_replace('+', '', $contact['phone_number']);
+        $user = User::query()->where('phone')->first();
+
+        if (!$user) throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
+
+        $user->telegram_id = $contact['user_id'];
+        $user->save();
+
+        throw new ApiException("✅ Дякуємо! Ваш номер $phone успішно знайдений.\nМожемо продовжити спілкування 👌");
     }
 
 

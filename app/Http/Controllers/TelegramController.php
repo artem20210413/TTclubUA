@@ -38,11 +38,16 @@ class TelegramController extends Controller
 
         try {
             $user = UserEloquent::updateByTg($message['from'], $contact);
-            new TelegramCommandHandler($message,$chatId, $user);
+            new TelegramCommandHandler($message, $chatId, $user);
         } catch (ApiException $e) {
             Telegram::sendMessage([
                 'chat_id' => $chatId,
                 'text' => $e->getMessage(),
+            ]);
+        } catch (\Throwable $e) {
+            Telegram::sendMessage([
+                'chat_id' => $chatId,
+                'text' => "❗ Виникла непередбачена помилка.\nЧас: " . now()->format('Y-m-d H:i:s') . "\n\nБудь ласка, спробуйте пізніше або зверніться до підтримки.",
             ]);
         }
 

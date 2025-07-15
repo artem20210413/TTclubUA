@@ -69,7 +69,8 @@ class FinanceController extends Controller
     {
         $monoAccount = EnumMonoAccount::LILIIA;
 
-        Log::info('webhookMonobank', ['body' => $request->all(), 'headers' => $request->header(), 'ip' => $request->ip(), 'host' => $request->host()]);
+//        Log::info('webhookMonobank', ['body' => $request->all()]);
+//        Log::info('webhookMonobank', ['body' => $request->all(), 'headers' => $request->header(), 'ip' => $request->ip(), 'host' => $request->host()]);
         $statementItem = $request->data['statementItem'] ?? null;
 
         if ($request->all() === [] || ($request->data['account'] ?? null) !== $monoAccount->getID() || !$statementItem)

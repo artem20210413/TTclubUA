@@ -67,7 +67,7 @@ class FinanceController extends Controller
 
     public function webhookMonobank(Request $request)
     {
-        $monoAccount = EnumMonoAccount::TEST;
+        $monoAccount = EnumMonoAccount::LILIIA;
 
         Log::info('webhookMonobank', ['body' => $request->all(), 'headers' => $request->header(), 'ip' => $request->ip(), 'host' => $request->host()]);
         $statementItem = $request->data['statementItem'] ?? null;
@@ -102,7 +102,7 @@ class FinanceController extends Controller
     public function redirectJarMonobank(Request $request)
     {
         $user = User::find($request->userId);
-        $monoAccount = EnumMonoAccount::TEST;
+        $monoAccount = EnumMonoAccount::LILIIA;
         $baseUrl = "https://send.monobank.ua/jar/{$monoAccount->getSendId()}";
 
         $isApi = $request->is('api/*');

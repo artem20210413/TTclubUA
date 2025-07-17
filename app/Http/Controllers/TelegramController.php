@@ -29,12 +29,12 @@ class TelegramController extends Controller
         Log::info("webhook request received", [$request->all()]);
 
         $message = $request->message ?? $request->edited_message ?? null;
-        if (!$message) success();
+        if (!$message) return success();
         $chatId = $message['chat']['id'];
         $chatType = $message['chat']['type']??null;
         $isPrivet = $chatType=== 'private';
 //        $fromId = $message['from']['id'];
-        if (!$isPrivet) success();
+        if (!$isPrivet) return success();
 
         $contact = $message['contact'] ?? null;
 

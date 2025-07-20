@@ -27,15 +27,6 @@ class UserController extends Controller
         return success(data: new UserWithCarsResource($user));
     }
 
-    public function searchOld(string $search, Request $request)
-    {
-        $search = str_replace(' ', '%', trim($search));
-        $query = User::query();
-
-        $query = UserEloquent::search($query, $search);
-
-        return success(data: UserWithCarsResource::collection($query->paginate(15)));
-    }
 
     public function search(Request $request)
     {

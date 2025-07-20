@@ -31,7 +31,7 @@ class PublicationController extends Controller
             ->where('publication_type_id', $typeId)
             ->where('active', 1)
             ->orderBy('updated_at', 'desc')
-            ->paginate(50);
+            ->paginate($request->per_page ?? 15);
 
         return success(data: PublicationResource::collection($publications));
     }

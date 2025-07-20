@@ -39,7 +39,7 @@ class CostsController extends Controller
         $costs->description = $request->description;
         $costs->save();
 
-        return new CostsWithUserR esource($costs);
+        return new CostsWithUserResource($costs);
     }
 
     public function delete(Costs $costs)

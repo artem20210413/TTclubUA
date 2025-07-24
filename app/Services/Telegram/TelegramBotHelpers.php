@@ -39,7 +39,7 @@ class TelegramBotHelpers
             $text = $text . "\nДата: " . $time->toDateTimeString();
         }
         if ($description) {
-            $text = $text . "\n\nПовідомлення: $description";
+            $text = $text . "\n\n✍️: $description";
         }
 
         return $text;

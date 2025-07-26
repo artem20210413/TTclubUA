@@ -28,6 +28,16 @@ class RegistrationController extends Controller
             return error($e);
         }
     }
+    public function count(Request $request)
+    {
+        try {
+            $r = Registration::query()->where('active', true);
+
+            return success(data: ['count' => $r->count()]);
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
 
     public function validator(Registration $registration)
     {

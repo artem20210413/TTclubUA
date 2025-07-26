@@ -59,24 +59,30 @@ class TelegramController extends Controller
     public function test(Request $request)
     {
         dd('test');
-        $chatId = 616322991;
+//        $chatId = 550488516;
+
+//        Telegram::sendMessage([
+//            'chat_id' => $chatId,
+//            'text' => 'Привет!',
+//        ]);
+
 //        $bot = Telegram::getMe();
 //        Telegram::sendMessage([
 //            'chat_id' => $chatId,
 //            'text' => 'Привет!',
 //        ]);
 
-//        Telegram::sendMessage([
-//            'chat_id' => $chatId,
-//            'text' => 'Нажмите кнопку ниже:',
-//            'reply_markup' => json_encode([
-//                'keyboard' => [
-//                    [['text' => '📞 Отправить номер', 'request_contact' => true]],
-//                ],
-//                'resize_keyboard' => true,
-//                'one_time_keyboard' => true,
-//            ]),
-//        ]);
+        Telegram::sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Нажмите кнопку ниже:',
+            'reply_markup' => json_encode([
+                'keyboard' => [
+                    [['text' => '📞 Отправить номер', 'request_contact' => true]],
+                ],
+                'resize_keyboard' => true,
+                'one_time_keyboard' => true,
+            ]),
+        ]);
 
 //        Telegram::sendMessage([
 //            'chat_id' => $chatId,
@@ -91,11 +97,11 @@ class TelegramController extends Controller
 //            ]),
 //        ]);
 
-        Telegram::sendPhoto([
-            'chat_id' => -1002693142471,
-            'photo' => fopen("https://tt.tishchenko.kiev.ua/storage/236/profile_picture.webp", 'r'),
-            'caption' => "ТЕСТ!!! Привет, @olha_mo! Это изображение с веба ️",
-        ]);
+//        Telegram::sendPhoto([
+//            'chat_id' => -1002693142471,
+//            'photo' => fopen("https://tt.tishchenko.kiev.ua/storage/236/profile_picture.webp", 'r'),
+//            'caption' => "ТЕСТ!!! Привет, @olha_mo! Это изображение с веба ️",
+//        ]);
 
 
         return success();

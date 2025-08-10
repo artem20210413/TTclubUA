@@ -8,5 +8,7 @@ enum EnumTypeMedia: string
     case PHOTO_COLLECTION = 'photo_collection';
     case PHOTO_MENTION = 'photo_mention';
     case PHOTO_PUBLICATION = 'photo_publication';
+    case PHOTO_EVENT = 'photo_event';
+    case PHOTO_EVENT_TYPE = 'photo_event_type';
 
 }

@@ -3,12 +3,11 @@
 namespace App\Http\Resources;
 
 use App\Enum\EnumTypeMedia;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PublicationResource extends JsonResource
+class EventResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +16,8 @@ class PublicationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_PUBLICATION->value)->map(function ($media) {
+        /** @var Event $this */
+        $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_EVENT->value)->map(function ($media) {
             return [
                 'id' => $media->id,
                 'url' => $media->getUrl(),
@@ -26,13 +26,16 @@ class PublicationResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'publication_type_id' => $this->publication_type_id,
             'title' => $this->title,
             'description' => $this->description,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'place' => $this->place,
+            'event_date' => $this->event_date?->format('Y-m-d H:i:s'),
+            'google_maps_url' => $this->google_maps_url,
+
             'images' => $imageUrls,
             'active' => $this->active,
+            'event_type' => new EventTypeResource($this->eventType),
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
         ];
     }
 }

@@ -4,13 +4,14 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\Car\MentionController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
-use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
+use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/user', function (Request $request) {
@@ -68,14 +69,20 @@ Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteC
 
 Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
 
-Route::get('/publication-type', [PublicationController::class, 'allType'])->middleware(['auth:sanctum']);
-Route::post('/publication-type/image/{publicationTypeId}', [PublicationController::class, 'addImgType'])->middleware(['auth:sanctum', 'role:admin']);
-Route::delete('/publication-type/image/{publicationTypeId}', [PublicationController::class, 'deleteAllImagesType'])->middleware(['auth:sanctum', 'role:admin']);
 
-Route::get('/publication/type/{typeId}', [PublicationController::class, 'publication'])->middleware(['auth:sanctum']);
-Route::post('/publication', [PublicationController::class, 'create'])->middleware(['auth:sanctum', 'role:admin']);
-Route::post('/publication/image/{publicationId}', [PublicationController::class, 'addImg'])->middleware(['auth:sanctum', 'role:admin']);
-Route::delete('/publication/image/{publicationId}', [PublicationController::class, 'deleteAllImages'])->middleware(['auth:sanctum', 'role:admin']);
+Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {
+    Route::get('/', [EventController::class, 'list']);
+    Route::post('/', [EventController::class, 'create'])->middleware(['role:admin']);
+    Route::put('/{event}', [EventController::class, 'update'])->middleware(['role:admin']);
+    Route::put('/{event}/active/{active}', [EventController::class, 'changeActive'])->whereIn('active', [0, 1])->middleware(['role:admin']);
+    Route::post('/{event}/image', [EventController::class, 'eventAddImage'])->middleware(['role:admin']);
+    Route::delete('/{event}/image', [EventController::class, 'eventDeleteImages'])->middleware(['role:admin']);
+
+    Route::get('/type', [EventController::class, 'type']);
+    Route::post('/type/{eventType}/image', [EventController::class, 'eventTypeAddImage'])->middleware(['role:admin']);
+    Route::delete('/type/{eventType}/image', [EventController::class, 'eventTypeDeleteImages'])->middleware(['role:admin']);
+});
+
 
 Route::get('/genes', [CarController::class, 'genes'])->middleware(['auth:sanctum']);
 Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanctum']);

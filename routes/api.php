@@ -5,6 +5,7 @@ use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\Car\MentionController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
@@ -83,6 +84,16 @@ Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static fun
     Route::delete('/type/{eventType}/image', [EventController::class, 'eventTypeDeleteImages'])->middleware(['role:admin']);
 });
 
+Route::group(['prefix' => 'goods', 'middleware' => ['auth:sanctum']], static function () {
+    Route::get('/', [GoodsController::class, 'lists']);
+    Route::post('/', [GoodsController::class, 'create'])->middleware(['role:admin']);
+    Route::put('/{goods}', [GoodsController::class, 'update'])->middleware(['role:admin']);
+    Route::patch('/{goods}/active/{active}', [GoodsController::class, 'changeActive'])->middleware(['role:admin']);
+
+    Route::post('/{goods}/images', [GoodsController::class, 'eventAddImage'])->middleware(['role:admin']);
+    Route::delete('/{goods}/images/{mediaId}', [GoodsController::class, 'eventDeleteImage'])->middleware(['role:admin']);
+    Route::delete('/{goods}/images', [GoodsController::class, 'eventDeleteImages'])->middleware(['role:admin']);
+});
 
 Route::get('/genes', [CarController::class, 'genes'])->middleware(['auth:sanctum']);
 Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanctum']);

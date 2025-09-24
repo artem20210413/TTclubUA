@@ -8,28 +8,21 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
 
-    <link rel="stylesheet" href="{{ asset('media/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('media/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('media/export/bootstrap/bootstrap.min.css') }}">
+    {{--    <script src="{{ asset('build/assets/app-eMHK6VFw.js') }}" defer></script>--}}
 
     <title>@yield('title')</title>
 
     <style>
-        body {
-            position: relative;
-        }
-
-        *, p, form{
-            padding: 0;
-            margin: 0;
-            border: none;
-        }
 
     </style>
 
 </head>
-<body style="background-color: var(--background-color)">
+<body>
 
 {{--<header> header</header>--}}
-@yield('body')
+<main class="container pt-5 pb-5"> @yield('body')</main>
 {{--<footer> footer</footer>--}}
 
 </body>

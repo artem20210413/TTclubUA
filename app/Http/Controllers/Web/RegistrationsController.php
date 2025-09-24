@@ -16,9 +16,17 @@ use Illuminate\Support\Facades\Redirect;
 
 class RegistrationsController extends Controller
 {
-    public function index()
+    public function indexOld()
     {
         return view('welcome.welcomeForm');
+    }
+    public function index()
+    {
+        return view('welcome.welcome');
+    }
+    public function indexForm()
+    {
+        return view('welcome.form');
     }
 
     public function registration(RegiserFormRequest $request)

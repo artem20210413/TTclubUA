@@ -7,7 +7,12 @@ use Illuminate\Support\Facades\Route;
 //    return view('welcome');
 //});
 
-Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'index'])->name('web.home'); //->middleware('only.ua')
+Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'indexOld'])->name('web.home'); //->middleware('only.ua')
 Route::post('/registration', [\App\Http\Controllers\Web\RegistrationsController::class, 'registration'])->name('web.post.registration');
 
 Route::get('/redirect-jar-monobank', [\App\Http\Controllers\FinanceController::class, 'redirectJarMonobank']);
+
+
+
+Route::get('/new', [\App\Http\Controllers\Web\RegistrationsController::class, 'index'])->name('web.home.test'); //->middleware('only.ua')
+Route::get('/indexForm', [\App\Http\Controllers\Web\RegistrationsController::class, 'indexForm'])->name('web.home.test'); //->middleware('only.ua')

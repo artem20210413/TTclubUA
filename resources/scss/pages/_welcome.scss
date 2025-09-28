@@ -1,0 +1,133 @@
+
+/* ===== Desktop-first базовые стили ===== */
+.hero{
+    position:relative;
+    width:100%;
+    min-height:100dvh;
+    display:flex;
+    color:var(--c-text);
+    background:center/cover no-repeat url('/media/images/banner_1.webp');
+}
+.hero__gradient{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    width:min(75vw,1200px);
+    min-height:100dvh;
+    background:linear-gradient(-90deg, rgba(30,30,30,0) 0%, rgba(0,0,0,.93) 52.78%);
+}
+.hero__inner{
+    display:flex;
+    flex-direction:column;
+    gap:60px;
+    margin-left:5vw;
+    padding: clamp(16px,2vw,32px) 0;
+}
+.hero__intro{ display:flex; }
+.hero__stack{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+    max-width:648px;
+}
+.logo{ width:clamp(96px,12vw,130px); height:auto; }
+
+p.header{
+    font-weight:700;
+    font-size: clamp(32px,6vw,75px);
+    line-height:1.1;
+    letter-spacing:.374px;
+    margin:0;
+}
+p.basis{
+    font-size: clamp(16px,2.2vw,20px);
+    line-height:1.4;
+    letter-spacing:.38px;
+    margin:0;
+    opacity:.95;
+}
+
+.btn{
+    cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+    padding:10px;
+    width: clamp(220px,35vw,348px);
+    height: clamp(52px,10vw,87px);
+    font-size: clamp(18px,2.4vw,28px);
+    letter-spacing:.38px;
+    border-radius:var(--radius-xxl);
+    border:2px solid #fff;
+    background: radial-gradient(219.21% 50% at 50% 50%, #7B7B7B 0%, var(--c-bg-dark) 90.38%);
+    box-shadow:var(--shadow-soft);
+    transition: transform .15s ease, box-shadow .15s ease, background .2s ease, border-color .2s ease;
+}
+.btn:hover{
+    border-color:#000;
+    background: radial-gradient(219.21% 50% at 50% 50%, #fff 0%, rgba(255,255,255,.35) 100%);
+    transform: translateY(-1px);
+}
+.btn:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
+
+.hero__media{ display:flex; align-items:center; gap:22px; }
+.media-pill{
+    width:83px; height:83px; display:inline-flex; align-items:center; justify-content:center;
+    border-radius:50%; background:var(--c-card-2); box-shadow: inset 0 0 0 1px #fff1;
+}
+.media-pill__inner{
+    width:65px; height:65px; border-radius:50%; background:var(--c-card);
+    display:grid; place-items:center;
+}
+.media-text{ font-size: clamp(14px,2vw,18px); opacity:.9; }
+
+/* ===== Точка 1440 ===== */
+@media (max-width:1440px){
+    .hero__stack{ max-width:620px; }
+    .hero__inner{ margin-left:4vw; gap:48px; }
+}
+
+/* ===== Точка 1024 ===== */
+@media (max-width:1024px){
+    p.header{ font-size: clamp(28px,5.6vw,56px); }
+    p.basis{  font-size: clamp(15px,2vw,18px); }
+    .btn{     width: clamp(220px,44vw,320px); height: clamp(52px,9vw,76px); }
+    .hero__stack{ max-width:540px; }
+}
+
+/* ===== Мобилки ≤ 900 — как в твоём макете ===== */
+@media (max-width:900px) {
+    .hero {
+        background-position: center bottom;
+        background-size: cover;
+        padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom));
+    }
+    .hero__gradient {
+        width: 100%;
+        min-height: 100dvh;
+        background: linear-gradient(0deg, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .55) 45%, rgba(0, 0, 0, 0) 70%);
+        display: grid;
+        place-items: start center;
+    }
+    .hero__inner {
+        margin: 0 auto;
+        width: min(92vw, 560px);
+        gap: 28px;
+        padding: 24px 0 20vh; /* запас снизу, чтобы не залезать на машины */
+        text-align: center;
+    }
+    .hero__intro {
+        justify-content: center;
+    }
+    .hero__stack {
+        align-items: center;
+        max-width: none;
+    }
+    .logo {
+        width: clamp(82px, 18vw, 120px);
+    }
+
+    p.header {
+        font-weight: 800;
+        text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+    }
+}

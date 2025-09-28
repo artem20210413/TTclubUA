@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="{{ asset('media/css/custom.css') }}">
 
     <title>@yield('title')</title>
+    {{-- Подключаем Vite: SCSS соберётся в CSS  //'resources/js/app.js'--}}
+    @vite(['resources/scss/app.scss'])
+    @stack('styles')
 
     <style>
         body {

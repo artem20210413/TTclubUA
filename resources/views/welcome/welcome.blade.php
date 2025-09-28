@@ -22,10 +22,10 @@
                     </div>
                 </div>
 
-                <div class="hero__media" aria-label="Відеозапрошення голови клубу">
-                    @include('components.svg.play')
-                    <p class="media-text">Дивись запрошення від голови клубу</p>
-                </div>
+{{--                <div class="hero__media" aria-label="Відеозапрошення голови клубу">--}}
+{{--                    @include('components.svg.play')--}}
+{{--                    <p class="media-text">Дивись запрошення від голови клубу</p>--}}
+{{--                </div>--}}
 
             </div>
         </div>

@@ -126,7 +126,8 @@ p.basis{
         width: min(92vw, 560px);
         gap: 28px;
         /* нижний паддинг уже на .hero, здесь можно оставить небольшой */
-        padding: 24px 0;
+        //padding: 24px 0;
+        padding-bottom: 30svh;
         text-align: center;
     }
 

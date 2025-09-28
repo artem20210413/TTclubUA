@@ -58,12 +58,12 @@ p.basis{
     cursor:pointer;
     display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
     padding:10px;
-    width: clamp(220px,35vw,348px);
-    height: clamp(52px,10vw,87px);
+    width: clamp(220px,35svw,348px);
+    height: clamp(52px,10svw,87px);
     border-radius:var(--radius-xxl);
     border:2px solid var(--c-text);
     //background: radial-gradient(219.21% 50% at 50% 50%, #7B7B7B 0%, var(--c-bg-dark) 90.38%);
-    background: radial-gradient(25% 100% at 50% 50%, #7B7B7B 0%, var(--c-bg-dark) 230%);
+    background: radial-gradient(25% 100% at 50% 50%, var(--c-background) 0%, var(--c-bg-dark) 230%);
     box-shadow:var(--shadow-soft);
     transition: transform .15s ease, box-shadow .15s ease, background .2s ease, border-color .2s ease;
 
@@ -119,8 +119,6 @@ p.basis{
                 rgba(0,0,0,0.3) 75svh,
                 rgba(0,0,0,0) 100svh
         );
-
-        //display: grid;
     }
 
     .hero__inner {
@@ -141,39 +139,4 @@ p.basis{
         font-weight: 800;
         text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
     }
-    //.hero {
-    //    height:600px;
-    //    background-position: center bottom;
-    //    background-size: cover;
-    //    padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom));
-    //}
-    //.hero__gradient {
-    //    width: 100%;
-    //    min-height: 100dvh;
-    //    background: linear-gradient(0deg, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .55) 45%, rgba(0, 0, 0, 0) 70%);
-    //    display: grid;
-    //    place-items: start center;
-    //}
-    //.hero__inner {
-    //    margin: 0 auto;
-    //    width: min(92vw, 560px);
-    //    gap: 28px;
-    //    padding: 24px 0 20vh; /* запас снизу, чтобы не залезать на машины */
-    //    text-align: center;
-    //}
-    //.hero__intro {
-    //    justify-content: center;
-    //}
-    //.hero__stack {
-    //    align-items: center;
-    //    max-width: none;
-    //}
-    //.logo {
-    //    width: clamp(82px, 18vw, 120px);
-    //}
-    //
-    //p.header {
-    //    font-weight: 800;
-    //    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
-    //}
 }

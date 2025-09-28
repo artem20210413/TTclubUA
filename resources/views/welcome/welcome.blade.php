@@ -18,7 +18,7 @@
                             для спілкування, підтримки та обміну досвідом. Події — організація зустрічей, поїздок
                             і заходів для учасників клубу.
                         </p>
-                        <button type="button" class="btn">Хочу до вас!</button>
+                        <button type="button" class="btn"  onclick="window.location.href='{{route('web.home')}}';">Хочу до вас!</button>
                     </div>
                 </div>
 

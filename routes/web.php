@@ -14,5 +14,5 @@ Route::get('/redirect-jar-monobank', [\App\Http\Controllers\FinanceController::c
 
 
 
-Route::get('/new', [\App\Http\Controllers\Web\RegistrationsController::class, 'index'])->name('web.home.test'); //->middleware('only.ua')
-Route::get('/indexForm', [\App\Http\Controllers\Web\RegistrationsController::class, 'indexForm'])->name('web.home.test'); //->middleware('only.ua')
+Route::get('/welcome', [\App\Http\Controllers\Web\RegistrationsController::class, 'index'])->name('web.welcome'); //->middleware('only.ua')
+Route::get('/form', [\App\Http\Controllers\Web\RegistrationsController::class, 'indexForm'])->name('web.welcome-form'); //->middleware('only.ua')

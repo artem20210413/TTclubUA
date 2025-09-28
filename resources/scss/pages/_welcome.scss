@@ -6,7 +6,13 @@
     min-height:100dvh;
     display:flex;
     color:var(--c-text);
+
     background:center/cover no-repeat url('/media/images/banner_1.webp');
+
+    //background-image: url('/media/images/banner_1.webp');
+    //background-position: center;
+    //background-size: cover;
+    //background-repeat: no-repeat;
 }
 .hero__gradient{
     display:flex;
@@ -54,28 +60,31 @@ p.basis{
     padding:10px;
     width: clamp(220px,35vw,348px);
     height: clamp(52px,10vw,87px);
-    font-size: clamp(18px,2.4vw,28px);
-    letter-spacing:.38px;
     border-radius:var(--radius-xxl);
-    border:2px solid #fff;
-    background: radial-gradient(219.21% 50% at 50% 50%, #7B7B7B 0%, var(--c-bg-dark) 90.38%);
+    border:2px solid var(--c-text);
+    //background: radial-gradient(219.21% 50% at 50% 50%, #7B7B7B 0%, var(--c-bg-dark) 90.38%);
+    background: radial-gradient(25% 100% at 50% 50%, #7B7B7B 0%, var(--c-bg-dark) 230%);
     box-shadow:var(--shadow-soft);
     transition: transform .15s ease, box-shadow .15s ease, background .2s ease, border-color .2s ease;
+
+    font-size: clamp(18px,2.4vw,28px);
+    letter-spacing:.38px;
 }
 .btn:hover{
-    border-color:#000;
-    background: radial-gradient(219.21% 50% at 50% 50%, #fff 0%, rgba(255,255,255,.35) 100%);
+    color: var(--c-background);
+    //background: radial-gradient(219.21% 50% at 50% 50%, var(--c-text) 0%, rgba(255,255,255,.35) 100%);
+    background: radial-gradient(25% 50% at 50% 50%, var(--c-text) 0%, rgba(255,255,255,.35) 230%);
     transform: translateY(-1px);
 }
-.btn:focus-visible{ outline:3px solid #fff; outline-offset:3px; }
+.btn:focus-visible{ outline:3px solid var(--c-text); outline-offset:3px; }
 
 .hero__media{ display:flex; align-items:center; gap:22px; }
 .media-pill{
     width:83px; height:83px; display:inline-flex; align-items:center; justify-content:center;
-    border-radius:50%; background:var(--c-card-2); box-shadow: inset 0 0 0 1px #fff1;
+    border-radius:50%; background:var(--c-card); box-shadow: inset 0 0 0 1px #fff1;
 }
 .media-pill__inner{
-    width:65px; height:65px; border-radius:50%; background:var(--c-card);
+    width:65px; height:65px; border-radius:50%; background:var(--c-background);
     display:grid; place-items:center;
 }
 .media-text{ font-size: clamp(14px,2vw,18px); opacity:.9; }
@@ -86,48 +95,85 @@ p.basis{
     .hero__inner{ margin-left:4vw; gap:48px; }
 }
 
-/* ===== Точка 1024 ===== */
-@media (max-width:1024px){
-    p.header{ font-size: clamp(28px,5.6vw,56px); }
-    p.basis{  font-size: clamp(15px,2vw,18px); }
-    .btn{     width: clamp(220px,44vw,320px); height: clamp(52px,9vw,76px); }
-    .hero__stack{ max-width:540px; }
-}
 
-/* ===== Мобилки ≤ 900 — как в твоём макете ===== */
-@media (max-width:900px) {
+/* ===== Мобилки ≤ 1024 — как в твоём макете ===== */
+@media (max-width:1024px) {
+
     .hero {
-        background-position: center bottom;
-        background-size: cover;
-        padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom));
+
+        //height: 50svh;
+        //background-size: contain;
+        background-position: bottom center;
+        background-repeat: no-repeat;
+        background-size: auto 45svh; /* по ширине блока */
     }
+
     .hero__gradient {
-        width: 100%;
-        min-height: 100dvh;
-        background: linear-gradient(0deg, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .55) 45%, rgba(0, 0, 0, 0) 70%);
-        display: grid;
-        place-items: start center;
+        width: 100svw;
+        /* градиент сверху → прозрачность к низу, чтобы фон был виден */
+        background: linear-gradient(
+                180deg,
+                rgba(0,0,0,1) 0svh,
+                rgba(0,0,0,0.99) 65svh,
+                rgba(0,0,0,0.80) 70svh,
+                rgba(0,0,0,0.3) 75svh,
+                rgba(0,0,0,0) 100svh
+        );
+
+        //display: grid;
     }
+
     .hero__inner {
         margin: 0 auto;
         width: min(92vw, 560px);
         gap: 28px;
-        padding: 24px 0 20vh; /* запас снизу, чтобы не залезать на машины */
+        /* нижний паддинг уже на .hero, здесь можно оставить небольшой */
+        padding: 24px 0;
         text-align: center;
     }
-    .hero__intro {
-        justify-content: center;
-    }
-    .hero__stack {
-        align-items: center;
-        max-width: none;
-    }
-    .logo {
-        width: clamp(82px, 18vw, 120px);
-    }
+
+    .hero__intro { justify-content: center; }
+    .hero__stack { align-items: center; max-width: none; }
+
+    .logo { width: clamp(82px, 18vw, 120px); }
 
     p.header {
         font-weight: 800;
         text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
     }
+    //.hero {
+    //    height:600px;
+    //    background-position: center bottom;
+    //    background-size: cover;
+    //    padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom));
+    //}
+    //.hero__gradient {
+    //    width: 100%;
+    //    min-height: 100dvh;
+    //    background: linear-gradient(0deg, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .55) 45%, rgba(0, 0, 0, 0) 70%);
+    //    display: grid;
+    //    place-items: start center;
+    //}
+    //.hero__inner {
+    //    margin: 0 auto;
+    //    width: min(92vw, 560px);
+    //    gap: 28px;
+    //    padding: 24px 0 20vh; /* запас снизу, чтобы не залезать на машины */
+    //    text-align: center;
+    //}
+    //.hero__intro {
+    //    justify-content: center;
+    //}
+    //.hero__stack {
+    //    align-items: center;
+    //    max-width: none;
+    //}
+    //.logo {
+    //    width: clamp(82px, 18vw, 120px);
+    //}
+    //
+    //p.header {
+    //    font-weight: 800;
+    //    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+    //}
 }

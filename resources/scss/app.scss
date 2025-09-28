@@ -9,7 +9,46 @@
 
 /* Потом твои кастомные стили */
 [x-cloak]{display:none;}
-body{display:flex;flex-direction:column;height:100vh;}
-header{height:80px;background-color:yellow;flex-shrink:0;}
-main{flex-grow:1;}
-footer{height:100px;background-color:green;flex-shrink:0;}
+//body{display:flex;flex-direction:column;height:100vh;}
+//header{height:80px;background-color:yellow;flex-shrink:0;}
+//main{flex-grow:1;}
+//footer{height:100px;background-color:green;flex-shrink:0;}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url( '/fonts/SF-Pro-Display-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/fonts/SF-Pro-Display-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/fonts/SF-Pro-Display-Italic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+
+body {
+    background-color: var(--c-background);
+    position: relative;
+}
+
+
+body, p, h1, h2, h3, h4, h5, h6, button{
+    font-family: var(--main-font);
+    color: var(--main-text-color);
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+p button{
+    font-weight: 400;
+}

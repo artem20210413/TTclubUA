@@ -1,8 +1,17 @@
 :root{
-    --c-bg-dark:#0B0B0B;
+    --c-background: #282A2F;
+    --c-card:#303234;
+
+
+
     --c-text:#fff;
-    --c-card:#26292D;
-    --c-card-2:#303234;
+    --c-secondary-text: #848484;
+
     --radius-xxl:300px;
+    --c-bg-dark:#0B0B0B;
     --shadow-soft:0 0 10px 0 rgba(189,235,255,.49);
+
+    --danger-color: #F00;
+
+    --main-font: 'SF Pro Display', sans-serif;
 }

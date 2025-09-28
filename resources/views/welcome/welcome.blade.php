@@ -23,13 +23,7 @@
                 </div>
 
                 <div class="hero__media" aria-label="Відеозапрошення голови клубу">
-        <span class="media-pill">
-          <span class="media-pill__inner">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M8 5v14l11-7L8 5z" fill="white"/>
-            </svg>
-          </span>
-        </span>
+                    @include('components.svg.play')
                     <p class="media-text">Дивись запрошення від голови клубу</p>
                 </div>
 

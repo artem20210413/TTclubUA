@@ -8,28 +8,18 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
 
-    <link rel="stylesheet" href="{{ asset('media/css/custom.css') }}">
+    {{--    <link rel="stylesheet" href="{{ asset('media/css/custom.css') }}">--}}
 
     <title>@yield('title')</title>
-    {{-- Подключаем Vite: SCSS соберётся в CSS  //'resources/js/app.js'--}}
+
     @vite(['resources/scss/app.scss'])
     @stack('styles')
 
     <style>
-        body {
-            position: relative;
-        }
-
-        *, p, form{
-            padding: 0;
-            margin: 0;
-            border: none;
-        }
-
     </style>
 
 </head>
-<body style="background-color: var(--background-color)">
+<body>
 
 {{--<header> header</header>--}}
 @yield('body')

@@ -1,6 +1,7 @@
 /* SCSS-модули первыми */
 @use "vars";
 @use "pages/welcome";
+@use "pages/register";
 
 /* Затем Tailwind */
 @tailwind base;
@@ -13,27 +14,6 @@
 //header{height:80px;background-color:yellow;flex-shrink:0;}
 //main{flex-grow:1;}
 //footer{height:100px;background-color:green;flex-shrink:0;}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url( '/fonts/SF-Pro-Display-Regular.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('/fonts/SF-Pro-Display-Bold.otf') format('opentype');
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('/fonts/SF-Pro-Display-Italic.otf') format('opentype');
-    font-weight: 400;
-    font-style: italic;
-}
 
 
 body {

@@ -11,6 +11,7 @@ use App\Jobs\SandRegistrationToTg;
 use App\Models\Registration;
 use App\Services\Image\ImageWebpService;
 use App\Services\Telegram\Sand\RegistrationSandToTo;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -24,9 +25,27 @@ class RegistrationsController extends Controller
     {
         return view('welcome.welcome');
     }
-    public function indexForm()
+    public function register()
     {
-        return view('welcome.form');
+        return view('welcome.register');
+    }
+
+    public function apply(Request $r)
+    {
+        $data = $r->validate([
+            'full_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:50',
+            'birthday' => 'required|date',
+            'city' => 'required|string|max:120',
+            'password' => 'required|confirmed|min:6',
+            'profile_photo' => 'nullable|image|max:4096',
+            'cars.*.model' => 'required|string',
+            'cars.*.photo' => 'nullable|image|max:8192',
+        ]);
+
+        // TODO: сохранить в БД, загрузить файлы, отправить уведомление
+
+        return back()->with('status', 'Заявка відправлена! Ми зв’яжемося з вами.');
     }
 
     public function registration(RegiserFormRequest $request)

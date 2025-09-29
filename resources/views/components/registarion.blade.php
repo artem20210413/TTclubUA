@@ -150,12 +150,6 @@
                     </select>
                 </div>
 
-                {{--            <div class="mb-3">--}}
-                {{--                <label class="form-label">Назва авто (опціонально)</label>--}}
-                {{--                <input type="text" class="form-control" name="cars[{{$i}}][name]" value="{{ old("cars.$i.name") }}">--}}
-                {{--            </div>--}}
-
-
                 <div class="mb-3">
                     <label class="form-label required">Держ. номер </label>
                     <input type="text" class="form-control" name="cars[{{$i}}][license_plate]"

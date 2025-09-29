@@ -16,6 +16,26 @@
     @stack('styles')
 
     <style>
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url( '/fonts/SF-Pro-Display-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('/fonts/SF-Pro-Display-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('/fonts/SF-Pro-Display-Italic.otf') format('opentype');
+            font-weight: 400;
+            font-style: italic;
+        }
     </style>
 
 </head>

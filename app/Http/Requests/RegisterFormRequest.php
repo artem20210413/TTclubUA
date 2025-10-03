@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class RegisterFormRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|unique:users',
+            'telegram_nickname' => 'nullable|string|unique:users',
+            'instagram_nickname' => 'nullable|string|unique:users',
+            'cities' => 'nullable|array',
+            'cities.*' => 'integer|exists:cities,id',
+            'birth_date' => 'nullable', //|date_format:d-m-Y если дата не null, то должна быть в формате Y-m-d
+            'occupation_description' => 'nullable|string',
+            'why_tt' => 'nullable|string',
+            'mail_address' => 'nullable|string',
+            'password' => 'required|string|min:8|confirmed',
+            'profile_photo' => 'nullable|max:20480',
+
+            'no_tt_friend' => 'nullable|boolean',
+
+            'car' => 'exclude_if:no_tt_friend,1|nullable|array',
+            'car.gene_id' => 'exclude_if:no_tt_friend,1|required|exists:car_genes,id',
+            'car.model_id' => 'exclude_if:no_tt_friend,1|required|exists:car_models,id',
+            'car.color_id' => 'exclude_if:no_tt_friend,1|required|exists:colors,id',
+            'car.name' => 'exclude_if:no_tt_friend,1|nullable|string|max:255',
+            'car.vin_code' => 'exclude_if:no_tt_friend,1|nullable|string|max:64|unique:cars,vin_code',
+            'car.license_plate' => 'exclude_if:no_tt_friend,1|required|string|max:15|unique:cars,license_plate',
+            'car.personalized_license_plate' => 'exclude_if:no_tt_friend,1|nullable|string|max:20|unique:cars,personalized_license_plate',
+            'car.photo' => 'nullable|max:20480', // Макс. 20 MB |mimes:jpeg,png,jpg
+        ];
+    }
+}

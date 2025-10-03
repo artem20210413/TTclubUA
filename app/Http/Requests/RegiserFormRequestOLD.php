@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegiserFormRequest extends FormRequest
+class RegiserFormRequestOLD extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,8 +27,7 @@ class RegiserFormRequest extends FormRequest
             'phone' => 'required|string|unique:users',
             'telegram_nickname' => 'nullable|string|unique:users',
             'instagram_nickname' => 'nullable|string|unique:users',
-            'cities' => 'nullable|array',
-            'cities.*' => 'integer|exists:cities,id',
+            'city_id' => 'integer|exists:cities,id',
             'birth_date' => 'nullable|date_format:d-m-Y', // если дата не null, то должна быть в формате Y-m-d
             'occupation_description' => 'nullable|string',
             'why_tt' => 'nullable|string',
@@ -40,6 +39,7 @@ class RegiserFormRequest extends FormRequest
             'cars.*.model_id' => 'required|exists:car_models,id',
             'cars.*.color_id' => 'required|exists:colors,id',
             'cars.*.name' => 'nullable|string|max:255',
+            'cars.*.year' => 'nullable|integer',
             'cars.*.vin_code' => 'nullable|string|max:64|unique:cars,vin_code',
             'cars.*.license_plate' => 'required|string|max:15|unique:cars,license_plate',
             'cars.*.personalized_license_plate' => 'nullable|string|max:20|unique:cars,personalized_license_plate',

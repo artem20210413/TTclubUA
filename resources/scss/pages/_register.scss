@@ -79,7 +79,7 @@
     grid-column: 1 / -1;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1200px) {
     .register-page {
         max-width: 98vw;
     }
@@ -262,7 +262,7 @@
         //height: 100%;
         position: relative;
         border-radius: 38px;
-        aspect-ratio: 16 / 9; /* всегда 16:9 */
+        aspect-ratio: 4 / 3; /* всегда 16:9 */
         width: 100%;
         height: unset;
     }
@@ -273,6 +273,7 @@
     position: relative; /* чтобы глазик позиционировался внутри */
     display: flex;
     align-items: center;
+    width: 100%;
 
     input {
         width: 100%;
@@ -428,9 +429,45 @@
     }
 }
 
-/* ADD: коли увімкнено "друг" — приглушити блок авто */
 .is-friend #carSection {
     opacity: .45;
     filter: grayscale(.25);
     pointer-events: none;
 }
+
+
+/* перекрыть весь вьюпорт, без влияния контейнеров */
+.cropper-modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, .85); /* плотный оверлей */
+    z-index: 9999; /* очень высокий индекс */
+    display: grid;
+    place-items: center;
+    isolation: isolate; /* свой стек слоёв */
+}
+
+.cropper-modal {
+    background-color: #000;
+    opacity: 1;
+}
+
+/* само «окно» — НЕ прозрачное */
+.cropper-dialog {
+    background: #2a2e35; /* сплошной */
+    border-radius: 16px;
+    max-width: min(92vw, 900px);
+    width: 100%;
+    padding: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .6);
+}
+
+/* картинка внутри */
+#cropperImage {
+    display: block;
+    max-width: 100%;
+    max-height: 70vh;
+    margin: 0 auto;
+    border-radius: 12px;
+}
+

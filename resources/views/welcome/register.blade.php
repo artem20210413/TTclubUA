@@ -12,6 +12,16 @@
         $colors = \App\Models\Color::all();
     @endphp
 
+    <div id="cropperModal" class="cropper-modal" hidden>
+        <div class="cropper-dialog">
+            <img id="cropperImage" alt="">
+            <div class="cropper-actions">
+                <button type="button" id="cropCancel" class="btn">Скасувати</button>
+                <button type="button" id="cropOk" class="btn btn--primary">Обрізати</button>
+            </div>
+        </div>
+    </div>
+
     <div class="register-page">
         <div class="logo__intro">
             <img class="logo" src="{{ asset('media/images/logo.webp') }}" alt="Логотип Audi TT Club UA">
@@ -46,9 +56,9 @@
             {{-- ===== Ваша інфо ===== --}}
             <fieldset class="fieldset">
                 <div class="grid grid-4">
-                    <label class="field @error('full_name') fail  @enderror">
+                    <label class="field @error('name') fail  @enderror">
                         <span>Ім’я та Прізвище</span>
-                        <input name="full_name" type="text" required value="{{ old('full_name') }}">
+                        <input name="name" type="text" required value="{{ old('name') }}">
                     </label>
 
                     <label class="field @error('phone') fail  @enderror">
@@ -57,37 +67,37 @@
                                value="{{ old('phone') }}">
                     </label>
 
-                    <label class="field @error('birthday') fail  @enderror">
+                    <label class="field @error('birth_date') fail  @enderror">
                         <span>Дата народження</span>
-                        <input name="birthday" type="date" required value="{{ old('birthday') }}">
+                        <input name="birth_date" type="date" required value="{{ old('birth_date') }}">
                     </label>
 
-                    <label class="field @error('city') fail  @enderror">
+                    <label class="field @error('city_id') fail  @enderror">
                         <span>Місто проживання</span>
-                        <select class="form-select" name="city" required>
+                        <select class="form-select" name="city_id" required>
                             <option value="">Оберіть...</option>
                             @foreach($cities as $city)
                                 <option
-                                    value="{{ $city->id }}" @selected(collect(old('city'))->contains($city->id))>{{ $city->name }}</option>
+                                    value="{{ $city->id }}" @selected(collect(old('city_id'))->contains($city->id))>{{ $city->name }}</option>
                             @endforeach
                         </select>
                         {{--                        <input name="city" type="text" required value="{{ old('city') }}">--}}
                     </label>
 
-                    <label class="field @error('tg') fail  @enderror">
+                    <label class="field @error('telegram_nickname') fail  @enderror">
                         <span>Нік у Telegram</span>
-                        <input name="tg" type="text" placeholder="@nickname" required value="{{ old('tg') }}">
+                        <input name="telegram_nickname" type="text" placeholder="@nickname" required value="{{ old('telegram_nickname') }}">
                     </label>
 
-                    <label class="field @error('ig') fail  @enderror">
+                    <label class="field @error('instagram_nickname') fail  @enderror">
                         <span>Нік в Instagram</span>
-                        <input name="ig" type="text" placeholder="@nickname" value="{{ old('ig') }}">
+                        <input name="instagram_nickname" type="text" placeholder="@nickname" value="{{ old('instagram_nickname') }}">
                     </label>
 
-                    <label class="field field--wide @error('tt_handle') fail  @enderror">
+                    <label class="field field--wide @error('mail_address') fail  @enderror">
                         <span>Адреса НП для подарунку</span>
-                        <input name="tt_handle" type="text" placeholder="м. Київ. НП - 123"
-                               value="{{ old('tt_handle') }}">
+                        <input name="mail_address" type="text" placeholder="м. Київ. НП - 123"
+                               value="{{ old('mail_address') }}">
                     </label>
 
                     <label class="field field--wide @error('why_tt') fail  @enderror">
@@ -95,16 +105,16 @@
                         <textarea name="why_tt" required rows="3">{{ old('why_tt') }}</textarea>
                     </label>
 
-                    <label class="field field--wide @error('bio') fail  @enderror">
+                    <label class="field field--wide @error('occupation_description') fail  @enderror">
                         <span>Опис занять, роб. діяльності</span>
-                        <textarea name="bio" required rows="3">{{ old('bio') }}</textarea>
+                        <textarea name="occupation_description" required rows="3">{{ old('occupation_description') }}</textarea>
                     </label>
 
                     <div class="field field--wide upload @error('profile_photo') fail  @enderror">
                         <span>Додати фото профілю</span>
                         <label class="upload__drop">
                             <input id="profile_photo" type="file" accept="image/*" name="profile_photo" required
-                                   data-upload>
+                                   data-upload data-aspect="1/1">
                             {{--                            <span class="upload__hint">Завантажити фото</span>--}}
                             @include('components.svg.image')
 
@@ -150,37 +160,37 @@
                         <div class="grid grid-2" id="carSection">
                             <div class="grid grid-2">
 
-                                <label class="field @error('car[model]') fail  @enderror">
+                                <label class="field @error('car[model_id]') fail  @enderror">
                                     <span>Модель</span>
-                                    <select name="car[model]" required>
+                                    <select name="car[model_id]" required>
                                         <option value="">Оберіть…</option>
                                         @foreach($models as $model)
                                             <option
-                                                value="{{ $model->id }}" @selected(old("car.model") == $model->id)>{{ $model->name }}</option>
+                                                value="{{ $model->id }}" @selected(old("car.model_id") == $model->id)>{{ $model->name }}</option>
                                         @endforeach
                                     </select>
                                 </label>
 
-                                <label class="field @error('car[gen]') fail  @enderror">
+                                <label class="field @error('car[gene_id]') fail  @enderror">
                                     <span>Генерація</span>
-                                    <select name="car[gen]" required>
+                                    <select name="car[gene_id]" required>
                                         <option value="">Оберіть...</option>
                                         @foreach($genes as $gene)
                                             <option
-                                                value="{{ $gene->id }}" @selected(old("car.gen") == $gene->id)>{{ $gene->name }}</option>
+                                                value="{{ $gene->id }}" @selected(old("car.gene_id") == $gene->id)>{{ $gene->name }}</option>
                                         @endforeach
                                     </select>
                                 </label>
 
-                                <label class="field @error('car[plate]') fail  @enderror">
+                                <label class="field @error('car[license_plate]') fail  @enderror">
                                     <span>Державний номер</span>
-                                    <input name="car[plate]" type="text" required value="{{ old('car.plate') }}"
+                                    <input name="car[license_plate]" type="text" required value="{{ old('car.license_plate') }}"
                                            placeholder="KA6969CH">
                                 </label>
 
-                                <label class="field @error('car[vanity]') fail  @enderror">
+                                <label class="field @error('car[personalized_license_plate]') fail  @enderror">
                                     <span>Індивідуальний номер</span>
-                                    <input name="car[vanity]" type="text" value="{{ old('car.vanity') }}"
+                                    <input name="car[personalized_license_plate]" type="text" value="{{ old('car.personalized_license_plate') }}"
                                            placeholder="UGROZA">
                                 </label>
 
@@ -195,14 +205,14 @@
                                     </select>
                                 </label>
 
-                                <div class="field field--full @error('car.color') fail  @enderror">
+                                <div class="field field--full @error('car.color_id') fail  @enderror">
                                     <span>Оберіть колір</span>
                                     <div class="colors">
                                         @foreach($colors  as $i => $color)
                                             <label class="color">
-                                                <input type="radio" name="car[color]"
+                                                <input type="radio" name="car[color_id]"
                                                        value="{{ $color->id }}"
-                                                    @checked($i === 0 || old('сar.color') == $color->id)>
+                                                    @checked($i === 0 || old('сar.color_id') == $color->id)>
                                                 <div style="--dot: {{ $color->hex ==='#' ? '#fff':  $color->hex}}">
 
                                                     @if($color->hex == '#')
@@ -220,9 +230,10 @@
                             </div>
 
                             <div class="field upload @error('car[photo]') fail  @enderror">
-                                <span>Завантажити фото авто (16:9)</span>
+                                <span>Завантажити фото авто (4:3)</span>
                                 <label class="upload__drop car__drop">
-                                    <input type="file" accept="image/*" name="car[photo]" required data-upload>
+                                    <input type="file" accept="image/*" name="car[photo]" required data-upload
+                                           data-aspect="4/3">
                                     <span class="upload__hint">@include('components.svg.image')</span>
                                     <img class="upload__preview" alt="Превʼю фото" style="display: none">
                                 </label>
@@ -246,6 +257,123 @@
             </div>
         </form>
     </div>
+
+
+{{--    <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">--}}
+{{--    <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>--}}
+{{--    <script>--}}
+{{--        (function () {--}}
+{{--            const modal = document.getElementById('cropperModal');--}}
+{{--            const imgEl = document.getElementById('cropperImage');--}}
+{{--            const okBtn = document.getElementById('cropOk');--}}
+{{--            const cancel = document.getElementById('cropCancel');--}}
+{{--            let cropper = null;--}}
+{{--            let currentInput = null;--}}
+{{--            let objectUrl = null;--}}
+{{--            let aspect = 1;--}}
+
+{{--            function parseAspect(str) {--}}
+{{--                if (!str) return 1;--}}
+{{--                const [w, h] = str.split('/').map(Number);--}}
+{{--                return (w && h) ? (w / h) : 1;--}}
+{{--            }--}}
+
+{{--            function openCropper(file, input) {--}}
+{{--                currentInput = input;--}}
+{{--                aspect = parseAspect(input.getAttribute('data-aspect'));--}}
+
+{{--                if (objectUrl) URL.revokeObjectURL(objectUrl);--}}
+{{--                objectUrl = URL.createObjectURL(file);--}}
+
+{{--                imgEl.src = objectUrl;--}}
+{{--                modal.hidden = false;--}}
+
+{{--                if (cropper) {--}}
+{{--                    cropper.destroy();--}}
+{{--                    cropper = null;--}}
+{{--                }--}}
+{{--                // Инициализация--}}
+{{--                cropper = new Cropper(imgEl, {--}}
+{{--                    viewMode: 1,--}}
+{{--                    aspectRatio: aspect,--}}
+{{--                    autoCropArea: 1,--}}
+{{--                    background: true,--}}
+{{--                    movable: true,--}}
+{{--                    zoomable: true,--}}
+{{--                    scalable: false,--}}
+{{--                    rotatable: true--}}
+{{--                });--}}
+{{--            }--}}
+
+{{--            okBtn.addEventListener('click', () => {--}}
+{{--                if (!cropper || !currentInput) return;--}}
+
+{{--                // Ограничим итоговый размер (например, 2000px по ширине)--}}
+{{--                const canvas = cropper.getCroppedCanvas({--}}
+{{--                    maxWidth: 2000,--}}
+{{--                    imageSmoothingEnabled: true,--}}
+{{--                    imageSmoothingQuality: 'high'--}}
+{{--                });--}}
+
+{{--                canvas.toBlob((blob) => {--}}
+{{--                    if (!blob) return;--}}
+
+{{--                    // Подменяем файл в input через DataTransfer--}}
+{{--                    const fileName = (currentInput.files[0]?.name) || 'cropped.jpg';--}}
+{{--                    const croppedFile = new File([blob], fileName, {type: blob.type || 'image/jpeg'});--}}
+{{--                    const dt = new DataTransfer();--}}
+{{--                    dt.items.add(croppedFile);--}}
+{{--                    currentInput.files = dt.files;--}}
+
+{{--                    // Обновим превью в соответствующем .upload__drop--}}
+{{--                    const drop = currentInput.closest('.upload__drop');--}}
+{{--                    if (drop) {--}}
+{{--                        const preview = drop.querySelector('.upload__preview');--}}
+{{--                        const hint = drop.querySelector('.upload__hint, svg');--}}
+{{--                        if (preview) {--}}
+{{--                            const previewUrl = URL.createObjectURL(croppedFile);--}}
+{{--                            preview.src = previewUrl;--}}
+{{--                            preview.style.display = 'block';--}}
+{{--                            preview.onload = () => URL.revokeObjectURL(previewUrl);--}}
+{{--                        }--}}
+{{--                        if (hint) hint.style.display = 'none';--}}
+{{--                    }--}}
+
+{{--                    closeModal();--}}
+{{--                }, 'image/jpeg', 0.92);--}}
+{{--            });--}}
+
+{{--            function closeModal() {--}}
+{{--                modal.hidden = true;--}}
+{{--                if (cropper) {--}}
+{{--                    cropper.destroy();--}}
+{{--                    cropper = null;--}}
+{{--                }--}}
+{{--                if (objectUrl) {--}}
+{{--                    URL.revokeObjectURL(objectUrl);--}}
+{{--                    objectUrl = null;--}}
+{{--                }--}}
+{{--                currentInput = null;--}}
+{{--            }--}}
+
+{{--            cancel.addEventListener('click', closeModal);--}}
+{{--            modal.addEventListener('click', (e) => {--}}
+{{--                if (e.target === modal) closeModal();--}}
+{{--            });--}}
+
+{{--            // Хук на все инпуты файлов--}}
+{{--            document.querySelectorAll('input[type="file"][data-upload]').forEach(input => {--}}
+{{--                input.addEventListener('change', e => {--}}
+{{--                    const file = e.target.files && e.target.files[0];--}}
+{{--                    if (!file) return;--}}
+{{--                    // Открываем кроппер--}}
+{{--                    openCropper(file, input);--}}
+{{--                });--}}
+{{--            });--}}
+{{--        })();--}}
+{{--    </script>--}}
+
+
 
     <script>
         (function () {

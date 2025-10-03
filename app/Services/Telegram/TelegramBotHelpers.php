@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Registration;
 use App\Models\User;
 use Carbon\Carbon;
+use Monolog\Handler\IFTTTHandler;
 
 class TelegramBotHelpers
 {
@@ -64,13 +65,24 @@ class TelegramBotHelpers
             . "Дата створення: {$registration->created_at->format('d.m.Y H:i')}\n";
 
         $cars = '';
-        foreach ($data->cars as $i => $car) {
-            $key = $i + 1;
+        if (isset($data->car)) {
+            $car = $data->car;
             $cars .= "🚘 Авто {$car->model->name} {$car->gene->name}:\n"
                 . "Колір: {$car->color->name}\n"
                 . "Номер: {$car->license_plate}\n"
                 . "Індивідуальний номер: " . ($car->personalized_license_plate ?? '—') . "\n\n";
+
         }
+        if (isset($data->cars)) {
+            //TODO OLD
+            foreach ($data->cars as $i => $car) {
+                $cars .= "🚘 Авто {$car->model->name} {$car->gene->name}:\n"
+                    . "Колір: {$car->color->name}\n"
+                    . "Номер: {$car->license_plate}\n"
+                    . "Індивідуальний номер: " . ($car->personalized_license_plate ?? '—') . "\n\n";
+            }
+        }
+        $cars = $cars === "" ? 'Авто немає.' : $cars;
 
         return $user . "\n\n" . $cars;
     }

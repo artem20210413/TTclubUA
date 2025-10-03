@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Events\Trigger\Registration\TriggerRegistrationCreatedEvent;
-use App\Http\Requests\RegiserFormRequest;
+use App\Http\Requests\RegiserFormRequestOLD;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Hash;
@@ -44,13 +44,30 @@ class Registration extends Model implements HasMedia
         });
     }
 
-    public function generationJsom(RegiserFormRequest $request): void
+    public function generationJsomOld(\Illuminate\Http\Request $request): void
     {
         $json = $request->all();
         unset($json['_token'], $json['password'], $json['confirm_password'], $json['password_confirmation']);
 
         $json['cities_model'] = City::query()->whereIn('id', $json['cities'] ?? [])->get()->toArray();
         foreach ($json['cars'] as $key => &$car) {
+            $car['model'] = CarModel::query()->select(['id', 'name'])->where('id', $car['model_id'])->first()->toArray();
+            $car['gene'] = CarGene::query()->select(['id', 'name'])->where('id', $car['gene_id'])->first()->toArray();
+            $car['color'] = Color::query()->where('id', $car['color_id'])->first()->toArray();
+        }
+
+        $this->json = json_encode($json);
+    }
+
+    public function generationJsom(\Illuminate\Http\Request $request): void
+    {
+        $json = $request->all();
+        unset($json['_token'], $json['password'], $json['confirm_password'], $json['password_confirmation']);
+
+        $json['cities_model'] = City::query()->whereIn('id', $json['cities'] ?? [])->get()->toArray();
+
+        $car = $json['car'] ?? null;
+        if (isset($car)) {
             $car['model'] = CarModel::query()->select(['id', 'name'])->where('id', $car['model_id'])->first()->toArray();
             $car['gene'] = CarGene::query()->select(['id', 'name'])->where('id', $car['gene_id'])->first()->toArray();
             $car['color'] = Color::query()->where('id', $car['color_id'])->first()->toArray();

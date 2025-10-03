@@ -30,17 +30,27 @@ class RegistrationsController extends Controller
         return view('welcome.register');
     }
 
-    public function apply(Request $r)
+    public function apply(Request $request)
     {
-        $data = $r->validate([
-            'full_name' => 'required|string|max:255',
-            'phone' => 'required|string|max:50',
-            'birthday' => 'required|date',
-            'city' => 'required|string|max:120',
-            'password' => 'required|confirmed|min:6',
-            'profile_photo' => 'nullable|image|max:4096',
-            'cars.*.model' => 'required|string',
-            'cars.*.photo' => 'nullable|image|max:8192',
+        $request->validate([
+            'full_name' => ['required','string','max:255'],
+            'phone' => ['required','string','max:50'],
+            'birthday' => ['required','date'],
+            'city' => ['required','exists:cities,id'],
+            'why_tt' => ['required','string','min:5'],
+            'bio' => ['required','string','min:5'],
+            'profile_photo' => ['required','image','max:4096'],
+
+            'password' => ['required','confirmed','min:6'],
+            // поле confirm должно называться password_confirmation — у тебя так и есть
+
+            'car.model' => ['required','exists:car_models,id'],
+            'car.gen' => ['nullable','exists:car_genes,id'],
+            'car.plate' => ['required','string','max:20'],
+            'car.vanity' => ['nullable','string','max:20'],
+            'car.year' => ['nullable','integer','between:1998,'.now()->year],
+            'car.color' => ['required','exists:colors,id'],
+            'car.photo' => ['nullable','image','max:8192'],
         ]);
 
         // TODO: сохранить в БД, загрузить файлы, отправить уведомление

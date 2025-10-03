@@ -30,10 +30,15 @@
                     @endforeach
                 </ul>
             </div>
+            {{--            @if ($errors->has('password'))--}}
+            {{--                <div class="alert error">--}}
+            {{--                    {{ $errors->first('password') }}--}}
+            {{--                </div>--}}
+            {{--            @endif--}}
         @endif
 
         <form class="card form" method="POST" action="{{ route('web.register.apply') }}" enctype="multipart/form-data"
-              novalidate>
+        >
             @csrf
 
             <h1 class="h1">Заявка на учасника</h1>
@@ -41,25 +46,26 @@
             {{-- ===== Ваша інфо ===== --}}
             <fieldset class="fieldset">
                 <div class="grid grid-4">
-                    <label class="field">
-                        <span>Ім’я та Прізвище*</span>
+                    <label class="field @error('full_name') fail  @enderror">
+                        <span>Ім’я та Прізвище</span>
                         <input name="full_name" type="text" required value="{{ old('full_name') }}">
                     </label>
 
-                    <label class="field">
-                        <span>Телефон*</span>
-                        <input name="phone" type="tel" inputmode="tel" placeholder="+380…" required
+                    <label class="field @error('phone') fail  @enderror">
+                        <span>Телефон</span>
+                        <input name="phone" type="tel" inputmode="tel" placeholder="380…" required
                                value="{{ old('phone') }}">
                     </label>
 
-                    <label class="field">
-                        <span>Дата народження*</span>
+                    <label class="field @error('birthday') fail  @enderror">
+                        <span>Дата народження</span>
                         <input name="birthday" type="date" required value="{{ old('birthday') }}">
                     </label>
 
-                    <label class="field">
-                        <span>Місто проживання*</span>
-                        <select class="form-select" name="city">
+                    <label class="field @error('city') fail  @enderror">
+                        <span>Місто проживання</span>
+                        <select class="form-select" name="city" required>
+                            <option value="">Оберіть...</option>
                             @foreach($cities as $city)
                                 <option
                                     value="{{ $city->id }}" @selected(collect(old('city'))->contains($city->id))>{{ $city->name }}</option>
@@ -68,58 +74,65 @@
                         {{--                        <input name="city" type="text" required value="{{ old('city') }}">--}}
                     </label>
 
-                    <label class="field">
+                    <label class="field @error('tg') fail  @enderror">
                         <span>Нік у Telegram</span>
-                        <input name="tg" type="text" placeholder="@nickname" value="{{ old('tg') }}">
+                        <input name="tg" type="text" placeholder="@nickname" required value="{{ old('tg') }}">
                     </label>
 
-                    <label class="field">
+                    <label class="field @error('ig') fail  @enderror">
                         <span>Нік в Instagram</span>
                         <input name="ig" type="text" placeholder="@nickname" value="{{ old('ig') }}">
                     </label>
 
-                    <label class="field field--wide ">
-                        <span>Адрес @TT (для підпису)</span>
-                        <input name="tt_handle" type="text" placeholder="@tt_example" value="{{ old('tt_handle') }}">
+                    <label class="field field--wide @error('tt_handle') fail  @enderror">
+                        <span>Адреса НП для подарунку</span>
+                        <input name="tt_handle" type="text" placeholder="м. Київ. НП - 123"
+                               value="{{ old('tt_handle') }}">
                     </label>
 
-                    <label class="field field--wide ">
+                    <label class="field field--wide @error('why_tt') fail  @enderror">
                         <span>Чому саме Audi TT?</span>
-                        <textarea name="why_tt" rows="3">{{ old('why_tt') }}</textarea>
+                        <textarea name="why_tt" required rows="3">{{ old('why_tt') }}</textarea>
                     </label>
 
-                    <label class="field field--wide ">
+                    <label class="field field--wide @error('bio') fail  @enderror">
                         <span>Опис занять, роб. діяльності</span>
-                        <textarea name="bio" rows="3">{{ old('bio') }}</textarea>
+                        <textarea name="bio" required rows="3">{{ old('bio') }}</textarea>
                     </label>
 
-                    <div class="field field--wide upload">
+                    <div class="field field--wide upload @error('profile_photo') fail  @enderror">
                         <span>Додати фото профілю</span>
                         <label class="upload__drop">
-                            <input id="profile_photo" type="file" accept="image/*" name="profile_photo">
-{{--                            <span class="upload__hint">Завантажити фото</span>--}}
+                            <input id="profile_photo" type="file" accept="image/*" name="profile_photo" required
+                                   data-upload>
+                            {{--                            <span class="upload__hint">Завантажити фото</span>--}}
                             @include('components.svg.image')
+
+                            <img class="upload__preview" alt="Превʼю фото" style="display: none">
                         </label>
-                        <img id="profile_preview" class="upload__preview" alt="" hidden>
                     </div>
 
-                    <div class="field pass">
-                        <span>Вигадати пароль*</span>
+                    <div class="field pass @error('password') fail  @enderror">
+                        <span>Вигадати пароль</span>
                         <div class="pass__wrap">
                             <input id="password" name="password" type="password" required minlength="6">
                             <button type="button" class="icon-btn" aria-label="Показати пароль"
-                                    data-toggle-password="#password">👁
+                                    data-toggle-password="#password">
+                                <span class="eye eye-open">@include('components.svg.eye')</span>
+                                <span class="eye eye-close" hidden>@include('components.svg.eye-close')</span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="field pass">
-                        <span>Підтвердження паролю*</span>
+                    <div class="field pass @error('password') fail  @enderror">
+                        <span>Підтвердження паролю</span>
                         <div class="pass__wrap">
                             <input id="password_confirmation" name="password_confirmation" type="password" required
                                    minlength="6">
                             <button type="button" class="icon-btn" aria-label="Показати пароль"
-                                    data-toggle-password="#password_confirmation">👁
+                                    data-toggle-password="#password_confirmation">
+                                <span class="eye eye-open">@include('components.svg.eye')</span>
+                                <span class="eye eye-close" hidden>@include('components.svg.eye-close')</span>
                             </button>
                         </div>
                     </div>
@@ -130,87 +143,94 @@
             <fieldset class="fieldset">
 
                 <h1 class="h1">Авто</h1>
-{{--                <legend class="legend">Авто</legend>--}}
+                {{--                <legend class="legend">Авто</legend>--}}
 
                 <div id="cars" class="cars">
                     {{-- Шаблон одного авто --}}
-                    <div class="car card--soft" data-car>
+                    <div class="car" data-car>
                         <div class="grid grid-2">
-                            <label class="field">
-                                <span>Модель*</span>
-                                <select name="car[model]" required>
-                                    <option value="">Оберіть…</option>
-                                    @foreach($models as $model)
-                                        <option
-                                            value="{{ $model->id }}" @selected(old("car.model") == $model->id)>{{ $model->name }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
+                            <div class="grid grid-2">
+                                <label class="field @error('car[model]') fail  @enderror">
+                                    <span>Модель</span>
+                                    <select name="car[model]" required>
+                                        <option value="">Оберіть…</option>
+                                        @foreach($models as $model)
+                                            <option
+                                                value="{{ $model->id }}" @selected(old("car.model") == $model->id)>{{ $model->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
 
-                            <label class="field">
-                                <span>Генерація</span>
-                                <select name="car[gen]">
-                                    <option value="">Оберіть...</option>
-                                    @foreach($genes as $gene)
-                                        <option
-                                            value="{{ $gene->id }}" @selected(old("car.gen") == $gene->id)>{{ $gene->name }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
+                                <label class="field @error('car[gen]') fail  @enderror">
+                                    <span>Генерація</span>
+                                    <select name="car[gen]" required>
+                                        <option value="">Оберіть...</option>
+                                        @foreach($genes as $gene)
+                                            <option
+                                                value="{{ $gene->id }}" @selected(old("car.gen") == $gene->id)>{{ $gene->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
 
-                            <label class="field">
-                                <span>Державний номер*</span>
-                                <input name="car[plate]" type="text" value="{{ old('cars.0.plate') }}"
-                                       placeholder="KA6969CH">
-                            </label>
+                                <label class="field @error('car[plate]') fail  @enderror">
+                                    <span>Державний номер</span>
+                                    <input name="car[plate]" type="text" required value="{{ old('car.plate') }}"
+                                           placeholder="KA6969CH">
+                                </label>
 
-                            <label class="field">
-                                <span>Індивідуальний номер</span>
-                                <input name="car[vanity]" type="text" value="{{ old('cars.0.vanity') }}"
-                                       placeholder="UGROZA">
-                            </label>
+                                <label class="field @error('car[vanity]') fail  @enderror">
+                                    <span>Індивідуальний номер</span>
+                                    <input name="car[vanity]" type="text" value="{{ old('car.vanity') }}"
+                                           placeholder="UGROZA">
+                                </label>
 
-                            <label class="field">
-                                <span>Рік випуску</span>
-                                <select name="car[year]">
-                                    <option value="">Оберіть...</option>
-                                    @for($y = now()->year; $y >= 1998; $y--)
-                                        <option value="{{ $y }}">{{ $y }}</option>
-                                    @endfor
-                                </select>
-                            </label>
+                                <label class="field field--full @error('car.year') fail  @enderror">
+                                    <span>Рік випуску</span>
+                                    <select name="car[year]">
+                                        <option value="">Оберіть...</option>
+                                        @for($y = now()->year; $y >= 1998; $y--)
+                                            <option
+                                                @selected(old("car.year") == $gene->id) value="{{ $y }}">{{ $y }}</option>
+                                        @endfor
+                                    </select>
+                                </label>
 
-                            <div class="field">
-                                <span>Оберіть колір</span>
-                                <div class="colors">
-                                    @foreach($colors as $color)
-                                        <label class="color">
-                                            <input type="radio" name="car[color]"
-                                                   value="{{ $color->id }}" {{ $color->id=== old('color')?'checked':'' }}>
-                                            @if($color->hex == '#')
-                                                <span
-                                                    style="background: conic-gradient(red 0% 14.28%,orange 14.28% 28.56%,yellow 28.56% 42.84%,green 42.84% 57.12%,cyan 57.12% 71.4%,blue 71.4% 85.68%,violet 85.68% 100%);"></span>
-                                            @else
-                                                <span style="--dot: {{ $color->hex }}"></span>
-                                            @endif
-                                        </label>
-                                    @endforeach
+                                <div class="field field--full @error('car.color') fail  @enderror">
+                                    <span>Оберіть колір</span>
+                                    <div class="colors">
+                                        @foreach($colors  as $i => $color)
+                                            <label class="color">
+                                                <input type="radio" name="car[color]"
+                                                       value="{{ $color->id }}"
+                                                    @checked($i === 0 || old('сar.color') == $color->id)>
+                                                <div style="--dot: {{ $color->hex ==='#' ? '#fff':  $color->hex}}">
+
+                                                    @if($color->hex == '#')
+                                                        <span
+                                                            style="background: conic-gradient(red 0% 14.28%,orange 14.28% 28.56%,yellow 28.56% 42.84%,green 42.84% 57.12%,cyan 57.12% 71.4%,blue 71.4% 85.68%,violet 85.68% 100%);"></span>
+                                                    @else
+                                                        <span style="--dot: {{ $color->hex }}"></span>
+                                                    @endif
+
+                                                </div>
+                                            </label>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="field upload field--full">
-                                <span>Завантажити фото авто</span>
-                                <label class="upload__drop">
-                                    <input type="file" accept="image/*" name="car[photo]" data-car-photo>
-                                    <span class="upload__hint">Додати фото</span>
+                            <div class="field upload @error('car[photo]') fail  @enderror">
+                                <span>Завантажити фото авто (16:9)</span>
+                                <label class="upload__drop car__drop">
+                                    <input type="file" accept="image/*" name="car[photo]" required data-upload>
+                                    <span class="upload__hint">@include('components.svg.image')</span>
+                                    <img class="upload__preview" alt="Превʼю фото" style="display: none">
                                 </label>
-                                <img class="upload__preview" alt="" hidden>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button type="button" class="link-btn" id="addCar">Додати ще авто +</button>
             </fieldset>
 
             <div class="actions">
@@ -219,81 +239,137 @@
         </form>
     </div>
 
-    @push('scripts')
-        <script>
-            /* Показать/скрыть пароль */
-            document.querySelectorAll('[data-toggle-password]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const input = document.querySelector(btn.dataset.togglePassword);
-                    if (!input) return;
-                    input.type = input.type === 'password' ? 'text' : 'password';
-                });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.field').forEach(field => {
+                const input = field.querySelector('input[required], textarea[required], select[required]');
+                const labelSpan = field.querySelector('span');
+
+                if (input && labelSpan) {
+                    labelSpan.textContent = labelSpan.textContent.trim() + '*';
+                }
             });
+        });
+    </script>
 
-            /* Превью фото (профиль) */
-            const prof = document.getElementById('profile_photo');
-            if (prof) {
-                prof.addEventListener('change', e => {
-                    const img = document.getElementById('profile_preview');
-                    const file = e.target.files?.[0];
-                    if (!img) return;
-                    if (file) {
-                        img.src = URL.createObjectURL(file);
-                        img.hidden = false;
-                    }
-                });
-            }
+    <script>
+        document.querySelectorAll('[data-toggle-password]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selector = btn.getAttribute('data-toggle-password');
+                const input = document.querySelector(selector);
+                if (!input) return;
 
-            /* Добавление ещё одного авто */
-            const cars = document.getElementById('cars');
-            const addBtn = document.getElementById('addCar');
-            if (addBtn && cars) {
-                addBtn.addEventListener('click', () => {
-                    const index = cars.querySelectorAll('[data-car]').length;
-                    const tpl = cars.querySelector('[data-car]').cloneNode(true);
+                const eyeOpen = btn.querySelector('.eye-open');
+                const eyeClose = btn.querySelector('.eye-close');
 
-                    // очистка значений + новые name с индексом
-                    tpl.querySelectorAll('input,select,textarea').forEach(el => {
-                        const name = el.getAttribute('name');
-                        if (name) el.setAttribute('name', name.replace(/\[\d+]/, '[' + index + ']'));
-                        if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
-                        else el.value = '';
-                    });
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    eyeOpen.hidden = true;
+                    eyeClose.hidden = false;
+                } else {
+                    input.type = 'password';
+                    eyeOpen.hidden = false;
+                    eyeClose.hidden = true;
+                }
+            });
+        });
+    </script>
 
-                    // сброс превью
-                    const prev = tpl.querySelector('.upload__preview');
-                    if (prev) {
-                        prev.hidden = true;
-                        prev.removeAttribute('src');
-                    }
+    <script>
+        document.querySelectorAll('[data-upload]').forEach(input => {
+            input.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) return;
 
-                    // навесим превью на фото авто
-                    tpl.querySelectorAll('[data-car-photo]').forEach(inp => {
-                        inp.addEventListener('change', e => {
-                            const img = inp.closest('.field').querySelector('.upload__preview');
-                            const file = e.target.files?.[0];
-                            if (img && file) {
-                                img.src = URL.createObjectURL(file);
-                                img.hidden = false;
-                            }
-                        });
-                    });
+                const drop = input.closest('.upload__drop');
+                const preview = drop.querySelector('.upload__preview');
+                const hint = drop.querySelector('svg');
 
-                    cars.appendChild(tpl);
-                });
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+                if (hint) hint.style.display = "none"; // убираем иконку
 
-                // превью для первого авто
-                cars.querySelectorAll('[data-car-photo]').forEach(inp => {
-                    inp.addEventListener('change', e => {
-                        const img = inp.closest('.field').querySelector('.upload__preview');
-                        const file = e.target.files?.[0];
-                        if (img && file) {
-                            img.src = URL.createObjectURL(file);
-                            img.hidden = false;
-                        }
-                    });
-                });
-            }
-        </script>
-    @endpush
+                // очищаем blob после загрузки
+                preview.onload = () => URL.revokeObjectURL(preview.src);
+            });
+        });
+    </script>
+
+    {{--    @push('scripts')--}}
+    {{--        <script>--}}
+    {{--            /* Показать/скрыть пароль */--}}
+    {{--            document.querySelectorAll('[data-toggle-password]').forEach(btn => {--}}
+    {{--                btn.addEventListener('click', () => {--}}
+    {{--                    const input = document.querySelector(btn.dataset.togglePassword);--}}
+    {{--                    if (!input) return;--}}
+    {{--                    input.type = input.type === 'password' ? 'text' : 'password';--}}
+    {{--                });--}}
+    {{--            });--}}
+
+    {{--            /* Превью фото (профиль) */--}}
+    {{--            const prof = document.getElementById('profile_photo');--}}
+    {{--            if (prof) {--}}
+    {{--                prof.addEventListener('change', e => {--}}
+    {{--                    const img = document.getElementById('profile_preview');--}}
+    {{--                    const file = e.target.files?.[0];--}}
+    {{--                    if (!img) return;--}}
+    {{--                    if (file) {--}}
+    {{--                        img.src = URL.createObjectURL(file);--}}
+    {{--                        img.hidden = false;--}}
+    {{--                    }--}}
+    {{--                });--}}
+    {{--            }--}}
+
+    {{--            /* Добавление ещё одного авто */--}}
+    {{--            const cars = document.getElementById('cars');--}}
+    {{--            const addBtn = document.getElementById('addCar');--}}
+    {{--            if (addBtn && cars) {--}}
+    {{--                addBtn.addEventListener('click', () => {--}}
+    {{--                    const index = cars.querySelectorAll('[data-car]').length;--}}
+    {{--                    const tpl = cars.querySelector('[data-car]').cloneNode(true);--}}
+
+    {{--                    // очистка значений + новые name с индексом--}}
+    {{--                    tpl.querySelectorAll('input,select,textarea').forEach(el => {--}}
+    {{--                        const name = el.getAttribute('name');--}}
+    {{--                        if (name) el.setAttribute('name', name.replace(/\[\d+]/, '[' + index + ']'));--}}
+    {{--                        if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;--}}
+    {{--                        else el.value = '';--}}
+    {{--                    });--}}
+
+    {{--                    // сброс превью--}}
+    {{--                    const prev = tpl.querySelector('.upload__preview');--}}
+    {{--                    if (prev) {--}}
+    {{--                        prev.hidden = true;--}}
+    {{--                        prev.removeAttribute('src');--}}
+    {{--                    }--}}
+
+    {{--                    // навесим превью на фото авто--}}
+    {{--                    tpl.querySelectorAll('[data-car-photo]').forEach(inp => {--}}
+    {{--                        inp.addEventListener('change', e => {--}}
+    {{--                            const img = inp.closest('.field').querySelector('.upload__preview');--}}
+    {{--                            const file = e.target.files?.[0];--}}
+    {{--                            if (img && file) {--}}
+    {{--                                img.src = URL.createObjectURL(file);--}}
+    {{--                                img.hidden = false;--}}
+    {{--                            }--}}
+    {{--                        });--}}
+    {{--                    });--}}
+
+    {{--                    cars.appendChild(tpl);--}}
+    {{--                });--}}
+
+    {{--                // превью для первого авто--}}
+    {{--                cars.querySelectorAll('[data-car-photo]').forEach(inp => {--}}
+    {{--                    inp.addEventListener('change', e => {--}}
+    {{--                        const img = inp.closest('.field').querySelector('.upload__preview');--}}
+    {{--                        const file = e.target.files?.[0];--}}
+    {{--                        if (img && file) {--}}
+    {{--                            img.src = URL.createObjectURL(file);--}}
+    {{--                            img.hidden = false;--}}
+    {{--                        }--}}
+    {{--                    });--}}
+    {{--                });--}}
+    {{--            }--}}
+    {{--        </script>--}}
+    {{--    @endpush--}}
 @endsection

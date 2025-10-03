@@ -1,9 +1,9 @@
 .register-page {
-    max-width: 1100px;
+    max-width: 80vw;
     margin-inline: auto;
     padding-inline: clamp(16px, 4vw, 32px);
     padding-bottom: 8svh;
-    color: #fff;
+    color: var(--c-text);
 }
 
 .logo__intro {
@@ -70,41 +70,64 @@
 .grid-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+
 .field--wide {
     grid-column: span 2;
 }
+
 .field--full {
     grid-column: 1 / -1;
 }
 
 @media (max-width: 800px) {
+    .register-page {
+        max-width: 98vw;
+    }
     .grid-2 {
         grid-template-columns: 1fr;
     }
     .grid-4 {
         grid-template-columns: 1fr;
     }
+    .field--wide {
+        grid-column: span 1;
+    }
 }
+
 
 .field {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 8px;
 
     > span {
+        //display: none; /* по умолчанию скрыт */
         font-size: 14px;
         opacity: .85;
     }
 
     input, select, textarea {
+        //border-radius: 14px;
+        //background: #22262b;
+        //padding: 14px 16px;
         width: 100%;
-        border-radius: 14px;
-        border: 1px solid #3b4047;
-        background: #22262b;
+        height: 54px;
         color: #fff;
-        padding: 14px 16px;
         outline: none;
         transition: border-color .15s, box-shadow .15s;
+        background: var(--c-input);
+        padding-left: clamp(16px, 3vw, 28px);
+        border-radius: 38px;
+        border: transparent;
+        box-shadow: inset 2px 2px 4px 0 rgba(0, 0, 0, 0.8);
+
+    }
+
+
+    textarea {
+        min-height: 100px;
     }
 
     textarea {
@@ -112,9 +135,14 @@
     }
 
     input:focus, select:focus, textarea:focus {
-        border-color: #8fb8ff;
-        box-shadow: 0 0 0 3px rgba(143, 184, 255, .2);
+
+        border-color: transparent;
+        //border-color: #ffffff;
+        //background-color: var(--c-input-focused);
+        //box-shadow: 0 0 0 3px rgba(255, 255, 255, .3);
+        box-shadow: inset -1px -1px 6px rgba(255, 255, 255, 0.8);;
     }
+
 
     .help {
         font-size: 12px;
@@ -122,23 +150,90 @@
     }
 }
 
-.upload {
+//input:invalid:focus,
+//select:invalid:focus,
+//textarea:invalid:focus {
+//    border-color: transparent;
+//    box-shadow: inset -1px -1px 3px rgba(255, 0, 0, 0.6);
+//}
 
+.fail {
+    input, select, textarea {
+        border-color: transparent;
+        box-shadow: inset -1px -1px 3px rgba(255, 0, 0, 0.6);
+    }
+}
+
+//.field:focus-within > span {
+//    display: flex; /* показываем, если внутри есть активный input/select/textarea */
+//}
+//
+
+//.upload {
+//    .upload__drop {
+//        position: relative;
+//        display: grid;
+//        place-items: center;
+//
+//        width: 150px;
+//        height: 150px;
+//        border-radius: 50%; /* круг */
+//        background: var(--c-input);
+//        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8);
+//
+//        cursor: pointer;
+//        overflow: hidden; /* <-- обрезаем всё лишнее */
+//
+//        input {
+//            position: absolute;
+//            inset: 0;
+//            width: 100%;
+//            height: 100%;
+//            opacity: 0;
+//            cursor: pointer;
+//        }
+//
+//        .upload__preview {
+//            position: absolute;
+//            inset: 0;
+//            width: 100%;
+//            height: 100%;
+//            object-fit: cover; /* картинка заполняет весь круг */
+//            display: block;
+//        }
+//
+//        &:hover {
+//            box-shadow: inset -1px -1px 4px rgba(255,255,255,0.6);
+//        }
+//    }
+//
+//    .car__drop {
+//        border-radius: 38px;
+//        width: 100%;
+//        height: 100%;
+//    }
+//}
+
+
+.upload {
     align-content: center;
     align-items: center;
+
     .upload__drop {
+        box-shadow: inset 2px 2px 4px 0px rgba(0, 0, 0, 0.8);
         display: grid;
         place-items: center;
         border-radius: 999px;
-        background: #22262b;
-        width: 84px;
-        height: 84px;
-        border: 1px dashed #3b4047;
+        background: var(--c-input);;
+        width: 150px;
+        height: 150px;
+        //border: 1px dashed var(--c-input-focused);
         cursor: pointer;
+        overflow: hidden;
 
-        //&:hover {
-        //    border-color: #8fb8ff;
-        //}
+        &:hover {
+            box-shadow: inset -1px -1px 4px 0px rgba(255, 255, 255, 0.6);
+        }
 
         input {
             position: absolute;
@@ -150,61 +245,110 @@
         }
 
         position: relative;
+
+        .upload__preview {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: flex;
+        }
     }
 
-    .upload__preview {
-        margin-top: 10px;
-        max-width: 220px;
-        border-radius: 12px;
-        display: block;
+    .car__drop {
+        //border-radius: 38px;
+        //width: 100%;
+        //height: 100%;
+        position: relative;
+        border-radius: 38px;
+        aspect-ratio: 16 / 9; /* всегда 16:9 */
+        width: 100%;
+        height: unset;
     }
+
 }
 
 .pass .pass__wrap {
+    position: relative; /* чтобы глазик позиционировался внутри */
     display: flex;
     align-items: center;
-    gap: 8px;
-
-    .icon-btn {
-        border: 1px solid #3b4047;
-        background: #22262b;
-        color: #ddd;
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        cursor: pointer;
-    }
 
     input {
-        flex: 1;
+        width: 100%;
+        padding-right: 44px; /* место под кнопку справа */
+    }
+
+    svg {
+        width: 24px;
+    }
+
+    .icon-btn {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        padding: 0;
     }
 }
+
 
 .colors {
     display: flex;
     gap: 10px;
     align-items: center;
     padding-top: 10px;
+    flex-wrap: wrap;
 }
 
 .color {
     input {
         display: none;
+        border: transparent;
+        box-shadow: inset 2px 2px 4px 0 rgba(0, 0, 0, 0.8);
+    }
+
+    div {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: var(--c-input);;
+        border-radius: 50%;
+        box-shadow: 0px 4px 10px 0px rgba(255, 255, 255, 0.1);
+    }
+
+    input:checked + div {
+        --dot: #fff;
+        box-shadow: 0px 0px 0px 2px var(--c-text);
+        //box-shadow: 0px 0px 0px 2px var(--dot);
     }
 
     span {
+        cursor: pointer;
         --dot: #fff;
         width: 18px;
         height: 18px;
         border-radius: 50%;
         display: inline-block;
         background: var(--dot);
-        box-shadow: 0 0 0 2px #22262b, 0 0 0 3px #555a60;
+
+        border: transparent;
+        //box-shadow: 0 0 0 2px #22262b, 0 0 0 3px #555a60;
+
     }
 
-    input:checked + span {
-        box-shadow: 0 0 0 2px #22262b, 0 0 0 3px #9fd1ff;
-    }
+
+    //input:checked + span {
+    //    box-shadow: 0 0 0 2px #22262b, 0 0 0 3px #9fd1ff;
+    //}
 }
 
 .actions {
@@ -225,7 +369,7 @@
 }
 
 .btn--primary:hover {
-    background: radial-gradient(25% 50% at 50% 50%, var(--c-text) 0%, rgba(255,255,255,.35) 230%);
+    background: radial-gradient(25% 50% at 50% 50%, var(--c-text) 0%, rgba(255, 255, 255, .35) 230%);
 }
 
 .alert {

@@ -144,12 +144,12 @@
 
                 <h1 class="h1">Авто</h1>
                 {{--                <legend class="legend">Авто</legend>--}}
-
                 <div id="cars" class="cars">
                     {{-- Шаблон одного авто --}}
                     <div class="car" data-car>
-                        <div class="grid grid-2">
+                        <div class="grid grid-2" id="carSection">
                             <div class="grid grid-2">
+
                                 <label class="field @error('car[model]') fail  @enderror">
                                     <span>Модель</span>
                                     <select name="car[model]" required>
@@ -230,7 +230,15 @@
                         </div>
                     </div>
                 </div>
-
+                <label class="friend-check">
+                    <input type="checkbox"
+                           id="no_tt_friend"
+                           name="no_tt_friend"
+                           value="1"
+                           data-toggle-car="#carSection" @checked(old('no_tt_friend'))>
+                    <span class="friend-check__box"></span>
+                    <span class="friend-check__label">Немаю Audi TT, але хочу бути другом клубу</span>
+                </label>
             </fieldset>
 
             <div class="actions">
@@ -238,6 +246,42 @@
             </div>
         </form>
     </div>
+
+    <script>
+        (function () {
+            const cb = document.getElementById('no_tt_friend');
+            const section = document.querySelector(cb?.dataset.toggleCar || '#carSection');
+
+            if (!cb || !section) return;
+
+            const carFields = section.querySelectorAll('input, select, textarea');
+
+            function applyState(checked) {
+                // Переключаем класс на форме (для стилей)
+                section.closest('fieldset')?.classList.toggle('is-friend', checked);
+
+                carFields.forEach(el => {
+                    const isCar = (el.name || '').startsWith('car');
+                    if (!isCar) return;
+                    if (checked) {
+                        // запомним, что было required
+                        if (el.required) el.dataset.wasRequired = 'true';
+                        el.required = false;
+                        el.disabled = true;
+                    } else {
+                        if (el.dataset.wasRequired === 'true') el.required = true;
+                        el.disabled = false;
+                    }
+                });
+            }
+
+            // начальное состояние (например, после old())
+            applyState(cb.checked);
+
+            // по клику переключаем
+            cb.addEventListener('change', () => applyState(cb.checked));
+        })();
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -295,81 +339,4 @@
         });
     </script>
 
-    {{--    @push('scripts')--}}
-    {{--        <script>--}}
-    {{--            /* Показать/скрыть пароль */--}}
-    {{--            document.querySelectorAll('[data-toggle-password]').forEach(btn => {--}}
-    {{--                btn.addEventListener('click', () => {--}}
-    {{--                    const input = document.querySelector(btn.dataset.togglePassword);--}}
-    {{--                    if (!input) return;--}}
-    {{--                    input.type = input.type === 'password' ? 'text' : 'password';--}}
-    {{--                });--}}
-    {{--            });--}}
-
-    {{--            /* Превью фото (профиль) */--}}
-    {{--            const prof = document.getElementById('profile_photo');--}}
-    {{--            if (prof) {--}}
-    {{--                prof.addEventListener('change', e => {--}}
-    {{--                    const img = document.getElementById('profile_preview');--}}
-    {{--                    const file = e.target.files?.[0];--}}
-    {{--                    if (!img) return;--}}
-    {{--                    if (file) {--}}
-    {{--                        img.src = URL.createObjectURL(file);--}}
-    {{--                        img.hidden = false;--}}
-    {{--                    }--}}
-    {{--                });--}}
-    {{--            }--}}
-
-    {{--            /* Добавление ещё одного авто */--}}
-    {{--            const cars = document.getElementById('cars');--}}
-    {{--            const addBtn = document.getElementById('addCar');--}}
-    {{--            if (addBtn && cars) {--}}
-    {{--                addBtn.addEventListener('click', () => {--}}
-    {{--                    const index = cars.querySelectorAll('[data-car]').length;--}}
-    {{--                    const tpl = cars.querySelector('[data-car]').cloneNode(true);--}}
-
-    {{--                    // очистка значений + новые name с индексом--}}
-    {{--                    tpl.querySelectorAll('input,select,textarea').forEach(el => {--}}
-    {{--                        const name = el.getAttribute('name');--}}
-    {{--                        if (name) el.setAttribute('name', name.replace(/\[\d+]/, '[' + index + ']'));--}}
-    {{--                        if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;--}}
-    {{--                        else el.value = '';--}}
-    {{--                    });--}}
-
-    {{--                    // сброс превью--}}
-    {{--                    const prev = tpl.querySelector('.upload__preview');--}}
-    {{--                    if (prev) {--}}
-    {{--                        prev.hidden = true;--}}
-    {{--                        prev.removeAttribute('src');--}}
-    {{--                    }--}}
-
-    {{--                    // навесим превью на фото авто--}}
-    {{--                    tpl.querySelectorAll('[data-car-photo]').forEach(inp => {--}}
-    {{--                        inp.addEventListener('change', e => {--}}
-    {{--                            const img = inp.closest('.field').querySelector('.upload__preview');--}}
-    {{--                            const file = e.target.files?.[0];--}}
-    {{--                            if (img && file) {--}}
-    {{--                                img.src = URL.createObjectURL(file);--}}
-    {{--                                img.hidden = false;--}}
-    {{--                            }--}}
-    {{--                        });--}}
-    {{--                    });--}}
-
-    {{--                    cars.appendChild(tpl);--}}
-    {{--                });--}}
-
-    {{--                // превью для первого авто--}}
-    {{--                cars.querySelectorAll('[data-car-photo]').forEach(inp => {--}}
-    {{--                    inp.addEventListener('change', e => {--}}
-    {{--                        const img = inp.closest('.field').querySelector('.upload__preview');--}}
-    {{--                        const file = e.target.files?.[0];--}}
-    {{--                        if (img && file) {--}}
-    {{--                            img.src = URL.createObjectURL(file);--}}
-    {{--                            img.hidden = false;--}}
-    {{--                        }--}}
-    {{--                    });--}}
-    {{--                });--}}
-    {{--            }--}}
-    {{--        </script>--}}
-    {{--    @endpush--}}
 @endsection

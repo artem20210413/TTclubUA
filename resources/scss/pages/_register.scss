@@ -354,7 +354,7 @@
 .actions {
     display: flex;
     justify-content: center;
-    padding-top: 8px;
+    padding-top: 16px;
 }
 
 .btn {
@@ -387,4 +387,50 @@
 .alert.error {
     background: #3d1720;
     color: #ffd6de;
+}
+
+/* ADD: чекбокс-пилюля */
+.friend-check {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 0 14px;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .friend-check__box {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: var(--c-input);
+        box-shadow: inset 2px 2px 4px rgba(0, 0, 0, .8);
+        position: relative;
+        flex: 0 0 22px;
+    }
+
+    input:checked + .friend-check__box::after {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #FFFFFF 0%, #9EB0CC 100%);
+        box-shadow: 0 0 8px rgba(158, 176, 204, .6);
+    }
+
+    .friend-check__label {
+        font-size: 14px;
+        opacity: .9;
+    }
+}
+
+/* ADD: коли увімкнено "друг" — приглушити блок авто */
+.is-friend #carSection {
+    opacity: .45;
+    filter: grayscale(.25);
+    pointer-events: none;
 }

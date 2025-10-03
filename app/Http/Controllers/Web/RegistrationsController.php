@@ -43,7 +43,7 @@ class RegistrationsController extends Controller
         $r->generationJsom($request);
         $r->save();
 
-        if ($image = $request->file('file')) {
+        if ($image = $request->file('profile_photo')) {
             $imageWebp = new ImageWebpService($image);
             $imageWebp->convert(EnumImageQuality::LOW);
             $imageWebp->save($r, EnumTypeMedia::PROFILE_PICTURE);

@@ -42,7 +42,9 @@ class UserEloquent
         $users = User::whereRaw('DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?', [
             $todayFormatted,
             $birthdayNext8DaysFormatted,
-        ])->where('active', true);
+        ])
+            ->where('active', true)
+            ->where('is_tt', true);
         if ($isActive !== null) {
             $users = $users->where('active', $isActive);
         }

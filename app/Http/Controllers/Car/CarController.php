@@ -30,8 +30,13 @@ class CarController extends Controller
 
     public function create(CreateCarRequest $request)
     {
+        /** @var User $user */
+        $user = User::find($request->user_id);
+        $user->is_tt = true;
+        $user->save();
+
         $car = new Car();
-        $car->user_id = $request->user_id;
+        $car->user_id = $user->id;
         $car->gene_id = $request->gene_id;
         $car->model_id = $request->model_id;
         $car->color_id = $request->color_id;

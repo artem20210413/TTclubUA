@@ -253,7 +253,7 @@
                            id="no_tt_friend"
                            name="no_tt_friend"
                            value="1"
-                           data-toggle-car="#carSection" @checked(old('no_tt_friend')) disabled>
+                           data-toggle-car="#carSection" @checked(old('no_tt_friend')) >
                     <span class="friend-check__box"></span>
                     <span class="friend-check__label">Немаю Audi TT, але хочу бути другом клубу</span>
                 </label>

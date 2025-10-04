@@ -38,6 +38,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $approve_verified_at
  * @property int $active
+ * @property int $is_tt
  * @property string $password
  * @property string|null $profile_photo_path
  * @property \Illuminate\Support\Carbon $created_at
@@ -117,6 +118,7 @@ class User extends Authenticatable implements HasMedia
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_tt' => 'boolean',
         ];
     }
 

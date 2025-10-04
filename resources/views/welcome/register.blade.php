@@ -63,7 +63,12 @@
 
                     <label class="field @error('phone') fail  @enderror">
                         <span>Телефон</span>
-                        <input name="phone" type="tel" inputmode="tel" placeholder="380…" required
+                        <input name="phone" type="tel"
+                               inputmode="tel"
+                               placeholder="380XXXXXXXXX"
+                               required
+                               pattern="^380\d{9}$"
+                               title="Введіть номер у форматі 380XXXXXXXXX (наприклад 380931234567)"
                                value="{{ old('phone') }}">
                     </label>
 

@@ -17,6 +17,6 @@ class ColorEloquent
      */
     public static function list(): Collection
     {
-        return Color::query()->where('active', true)->orderBy('priority', 'asc')->get();
+        return Color::query()->where('active', true)->orderBy('priority', 'desc')->get();
     }
 }

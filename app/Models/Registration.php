@@ -64,7 +64,7 @@ class Registration extends Model implements HasMedia
         $json = $request->all();
         unset($json['_token'], $json['password'], $json['confirm_password'], $json['password_confirmation']);
 
-        $json['cities_model'] = City::query()->whereIn('id', $json['cities'] ?? [])->get()->toArray();
+        $json['cities_model'] = City::query()->whereIn('id', [$json['city_id']])->get()->toArray();
 
         $car = $json['car'] ?? null;
         if (isset($car)) {

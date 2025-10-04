@@ -9,7 +9,7 @@
         $cities = \App\Models\City::orderBy('name')->get();
         $genes = \App\Models\CarGene::all();
         $models = \App\Models\CarModel::all();
-        $colors = \App\Models\Color::all();
+        $colors = \App\Eloquent\ColorEloquent::list();
     @endphp
 
     <div id="cropperModal" class="cropper-modal" hidden>
@@ -91,12 +91,14 @@
 
                     <label class="field @error('telegram_nickname') fail  @enderror">
                         <span>Нік у Telegram</span>
-                        <input name="telegram_nickname" type="text" placeholder="@nickname" required value="{{ old('telegram_nickname') }}">
+                        <input name="telegram_nickname" type="text" placeholder="@nickname" required
+                               value="{{ old('telegram_nickname') }}">
                     </label>
 
                     <label class="field @error('instagram_nickname') fail  @enderror">
                         <span>Нік в Instagram</span>
-                        <input name="instagram_nickname" type="text" placeholder="@nickname" required value="{{ old('instagram_nickname') }}">
+                        <input name="instagram_nickname" type="text" placeholder="@nickname" required
+                               value="{{ old('instagram_nickname') }}">
                     </label>
 
                     <label class="field field--wide @error('mail_address') fail  @enderror">
@@ -112,7 +114,8 @@
 
                     <label class="field field--wide @error('occupation_description') fail  @enderror">
                         <span>Опис занять, роб. діяльності</span>
-                        <textarea name="occupation_description" required rows="3">{{ old('occupation_description') }}</textarea>
+                        <textarea name="occupation_description" required
+                                  rows="3">{{ old('occupation_description') }}</textarea>
                     </label>
 
                     <div class="field field--wide upload @error('profile_photo') fail  @enderror">
@@ -191,13 +194,15 @@
                                     <span>Державний номер</span>
                                     <input name="car[license_plate]" type="text"
                                            pattern="^[A-Za-zА-Яа-яІіЇїЄє]{2}\d{4}[A-Za-zА-Яа-яІіЇїЄє]{2}$"
-                                           title="Формат: 2 літери, 4 цифри, 2 літери (наприклад KA6969CH)" required value="{{ old('car.license_plate') }}"
+                                           title="Формат: 2 літери, 4 цифри, 2 літери (наприклад KA6969CH)" required
+                                           value="{{ old('car.license_plate') }}"
                                            placeholder="KA6969CH">
                                 </label>
 
                                 <label class="field @error('car.personalized_license_plate') fail  @enderror">
                                     <span>Індивідуальний номер</span>
-                                    <input name="car[personalized_license_plate]" type="text" value="{{ old('car.personalized_license_plate') }}"
+                                    <input name="car[personalized_license_plate]" type="text"
+                                           value="{{ old('car.personalized_license_plate') }}"
                                            placeholder="UGROZA">
                                 </label>
 

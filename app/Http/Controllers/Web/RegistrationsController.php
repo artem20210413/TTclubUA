@@ -28,6 +28,11 @@ class RegistrationsController extends Controller
         return view('welcome.welcome');
     }
 
+    public function thankYou()
+    {
+        return view('welcome.thankYou');
+    }
+
     public function register()
     {
         return view('welcome.register');
@@ -57,8 +62,7 @@ class RegistrationsController extends Controller
         }
 
         new RegistrationSandToTo($r);
-
-        return back()->with('status', 'Заявка відправлена! Ми зв’яжемося з вами.');
+        return Redirect::route('web.thank-you');
     }
 
     public function registration(RegiserFormRequestOLD $request)

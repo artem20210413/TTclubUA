@@ -7,12 +7,12 @@
     display:flex;
     color:var(--c-text);
 
-    background:center/cover no-repeat url('/media/images/banner_1.webp');
+    //background:center/cover no-repeat url('/media/images/banner_1.webp');
 
     //background-image: url('/media/images/banner_1.webp');
-    //background-position: center;
-    //background-size: cover;
-    //background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 .hero__gradient{
     display:flex;

@@ -1,18 +1,18 @@
 @extends('layouts.layouts')
 
-@section('title','Ласкаво просимо')
+@section('title',' Дякуємо')
 @section('body_class','page-home')
 
 @section('body')
 
     <style>
         .hero {
-            background-image: url('/media/images/banner_1.webp');
+            background-image: url('/media/images/banner_3.webp');
         }
 
         @media (max-width: 1024px) {
             .hero {
-                background-image: url('/media/images/banner_compressed_1.webp');
+                background-image: url('/media/images/banner_compressed_3.webp');
             }
         }
     </style>
@@ -24,21 +24,17 @@
                 <div class="hero__intro">
                     <div class="hero__stack">
                         <img class="logo" src="{{ asset('media/images/logo.webp') }}" alt="Логотип Audi TT Club UA">
-                        <p class="header">Вітаємо! У спільноті фанатів Audi TT</p>
+                        <p class="header">Дякуємо! Ваша заявка прийнята. </p>
                         <p class="basis">
-                            Нас об'єднує стиль, динаміка і любов до легендарної Audi TT. Атмосфера, підтримка,
-                            спільні поїздки та справжні знайомства. Спільнота — об’єднати власників і фанатів Audi TT
-                            для спілкування, підтримки та обміну досвідом. Події — організація зустрічей, поїздок
-                            і заходів для учасників клубу.
+                            Ми обов’язково повернемося з зворотнім зв’язком.
                         </p>
-                        <button type="button" class="btn"  onclick="window.location.href='{{route('web.register')}}';">Хочу до вас!</button>
                     </div>
                 </div>
 
-{{--                <div class="hero__media" aria-label="Відеозапрошення голови клубу">--}}
-{{--                    @include('components.svg.play')--}}
-{{--                    <p class="media-text">Дивись запрошення від голови клубу</p>--}}
-{{--                </div>--}}
+                {{--                <div class="hero__media" aria-label="Відеозапрошення голови клубу">--}}
+                {{--                    @include('components.svg.play')--}}
+                {{--                    <p class="media-text">Дивись запрошення від голови клубу</p>--}}
+                {{--                </div>--}}
 
             </div>
         </div>
@@ -117,7 +113,6 @@
 {{--        }--}}
 
 {{--    </style>--}}
-
 
 
 {{--    <main class="banner">--}}

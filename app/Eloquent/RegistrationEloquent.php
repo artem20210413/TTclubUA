@@ -72,8 +72,8 @@ class RegistrationEloquent
         $imageUrls = $registration->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value);
         $profileImage = $registration->getMedia(EnumTypeMedia::PROFILE_PICTURE->value)->first();
         $data = json_decode($registration->json, true);
-        $car = $data['car'] ?? $data['cars'][0] ?? null;
-
+        $carData = $data['car'] ?? $data['cars'][0] ?? null;
+//        dd($car);
         $user = new User();
         $user->name = $data['name'];
         $user->setPhone($data['phone']);
@@ -85,21 +85,11 @@ class RegistrationEloquent
         $user->mail_address = $data['mail_address'] ?? null;
         $user->instagram_nickname = $data['instagram_nickname'];
         $user->occupation_description = $data['occupation_description'];
-        $user->is_tt = isset($data['is_tt']) ? true : false;
+        $user->is_tt = isset($carData) ? true : false;
 
         $user->save();
-        $user->cities()->sync($data['cities'] ?? []);
-        $user = $user->refresh();
 
-        if ($profileImage) {
-            $user->addMedia($profileImage->getPath())
-                ->preservingOriginal()
-                ->toMediaCollection(EnumTypeMedia::PROFILE_PICTURE->value);
-
-            $profileImage->delete();
-        }
-
-        if ($car) {
+        if ($carData) {
             $img = $imageUrls[0] ?? null;
             $car = new Car();
             $car->user_id = $user->id;

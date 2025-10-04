@@ -71,6 +71,7 @@ class Registration extends Model implements HasMedia
             $car['model'] = CarModel::query()->select(['id', 'name'])->where('id', $car['model_id'])->first()->toArray();
             $car['gene'] = CarGene::query()->select(['id', 'name'])->where('id', $car['gene_id'])->first()->toArray();
             $car['color'] = Color::query()->where('id', $car['color_id'])->first()->toArray();
+            $json['car'] = $car;
         }
 
         $this->json = json_encode($json);

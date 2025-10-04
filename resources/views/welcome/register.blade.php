@@ -91,7 +91,7 @@
 
                     <label class="field @error('instagram_nickname') fail  @enderror">
                         <span>Нік в Instagram</span>
-                        <input name="instagram_nickname" type="text" placeholder="@nickname" value="{{ old('instagram_nickname') }}">
+                        <input name="instagram_nickname" type="text" placeholder="@nickname" required value="{{ old('instagram_nickname') }}">
                     </label>
 
                     <label class="field field--wide @error('mail_address') fail  @enderror">
@@ -160,7 +160,7 @@
                         <div class="grid grid-2" id="carSection">
                             <div class="grid grid-2">
 
-                                <label class="field @error('car[model_id]') fail  @enderror">
+                                <label class="field @error('car.model_id') fail  @enderror">
                                     <span>Модель</span>
                                     <select name="car[model_id]" required>
                                         <option value="">Оберіть…</option>
@@ -171,7 +171,7 @@
                                     </select>
                                 </label>
 
-                                <label class="field @error('car[gene_id]') fail  @enderror">
+                                <label class="field @error('car.gene_id.') fail  @enderror">
                                     <span>Генерація</span>
                                     <select name="car[gene_id]" required>
                                         <option value="">Оберіть...</option>
@@ -182,13 +182,15 @@
                                     </select>
                                 </label>
 
-                                <label class="field @error('car[license_plate]') fail  @enderror">
+                                <label class="field @error('car.license_plate') fail  @enderror">
                                     <span>Державний номер</span>
-                                    <input name="car[license_plate]" type="text" required value="{{ old('car.license_plate') }}"
+                                    <input name="car[license_plate]" type="text"
+                                           pattern="^[A-Za-zА-Яа-яІіЇїЄє]{2}\d{4}[A-Za-zА-Яа-яІіЇїЄє]{2}$"
+                                           title="Формат: 2 літери, 4 цифри, 2 літери (наприклад KA6969CH)" required value="{{ old('car.license_plate') }}"
                                            placeholder="KA6969CH">
                                 </label>
 
-                                <label class="field @error('car[personalized_license_plate]') fail  @enderror">
+                                <label class="field @error('car.personalized_license_plate') fail  @enderror">
                                     <span>Індивідуальний номер</span>
                                     <input name="car[personalized_license_plate]" type="text" value="{{ old('car.personalized_license_plate') }}"
                                            placeholder="UGROZA">
@@ -196,7 +198,7 @@
 
                                 <label class="field field--full @error('car.year') fail  @enderror">
                                     <span>Рік випуску</span>
-                                    <select name="car[year]">
+                                    <select name="car.year">
                                         <option value="">Оберіть...</option>
                                         @for($y = now()->year; $y >= 1998; $y--)
                                             <option
@@ -246,7 +248,7 @@
                            id="no_tt_friend"
                            name="no_tt_friend"
                            value="1"
-                           data-toggle-car="#carSection" @checked(old('no_tt_friend'))>
+                           data-toggle-car="#carSection" @checked(old('no_tt_friend')) disabled>
                     <span class="friend-check__box"></span>
                     <span class="friend-check__label">Немаю Audi TT, але хочу бути другом клубу</span>
                 </label>

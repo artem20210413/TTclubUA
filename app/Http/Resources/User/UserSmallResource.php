@@ -36,6 +36,9 @@ class UserSmallResource extends JsonResource
             'name' => $this->name,
             'instagram_nickname' => $this->instagram_nickname,
             'profile_image' => $profileImage,
+            'is_birthday_today' => $this->birth_date
+                ? \Carbon\Carbon::parse($this->birth_date)->isBirthday()
+                : false,
         ];
     }
 }

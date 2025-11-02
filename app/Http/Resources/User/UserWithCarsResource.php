@@ -51,6 +51,9 @@ class UserWithCarsResource extends JsonResource
             'updated_at' => $this->updated_at?->diffForHumans(),
             'created_at' => $this->created_at?->diffForHumans(),
             'cars' => CarResource::collection($this->cars),
+            'is_birthday_today' => $this->birth_date
+                ? \Carbon\Carbon::parse($this->birth_date)->isBirthday()
+                : false,
         ];
     }
 }

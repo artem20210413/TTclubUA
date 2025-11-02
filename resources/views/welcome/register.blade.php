@@ -133,7 +133,7 @@
                     <div class="field pass @error('password') fail  @enderror">
                         <span>Вигадати пароль</span>
                         <div class="pass__wrap">
-                            <input id="password" name="password" type="password" required minlength="6">
+                            <input id="password" name="password" type="password" required minlength="4">
                             <button type="button" class="icon-btn" aria-label="Показати пароль"
                                     data-toggle-password="#password">
                                 <span class="eye eye-open">@include('components.svg.eye')</span>
@@ -146,7 +146,7 @@
                         <span>Підтвердження паролю</span>
                         <div class="pass__wrap">
                             <input id="password_confirmation" name="password_confirmation" type="password" required
-                                   minlength="6">
+                                   minlength="4">
                             <button type="button" class="icon-btn" aria-label="Показати пароль"
                                     data-toggle-password="#password_confirmation">
                                 <span class="eye eye-open">@include('components.svg.eye')</span>

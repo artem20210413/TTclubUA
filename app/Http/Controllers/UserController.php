@@ -19,7 +19,7 @@ class UserController extends Controller
 
     public function user(Request $request)
     {
-        return success(data: ['user' => new UserResource($request->user())]);
+        return success(data: ['user' => new UserWithCarsResource($request->user())]);
     }
 
     public function getUser(User $user, Request $request)

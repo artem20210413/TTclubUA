@@ -36,7 +36,7 @@ Route::post('/user', [UserController::class, 'update'])->middleware(['auth:sanct
 Route::get('/user', [UserController::class, 'user'])->middleware('auth:sanctum');
 Route::post('/user/{user}/change-active', [UserController::class, 'userChangeActive'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/{id}/update', [UserController::class, 'updateById'])->middleware(['auth:sanctum', 'role:admin']);
-Route::get('/user/{user}', [UserController::class, 'getUser'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/user/{user}', [UserController::class, 'getUser'])->middleware(['auth:sanctum']);
 Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswordByUser'])->middleware(['auth:sanctum', 'role:admin']);
 
 Route::post('/finance/user/{user}', [\App\Http\Controllers\FinanceController::class, 'set'])->middleware(['auth:sanctum', 'role:admin']);

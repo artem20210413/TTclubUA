@@ -130,10 +130,10 @@ class TelegramCommandHandler
 
         $password = trim($password);
 
-        if (strlen($password) < 8) {
+        if (strlen($password) < 4) {
             Telegram::sendMessage([
                 'chat_id' => $this->chatId,
-                'text' => "❗ Пароль має містити щонайменше 8 символів.",
+                'text' => "❗ Пароль має містити щонайменше 4 символів.",
             ]);
             return;
         }

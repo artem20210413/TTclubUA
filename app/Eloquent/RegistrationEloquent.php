@@ -88,6 +88,13 @@ class RegistrationEloquent
         $user->is_tt = isset($carData) ? true : false;
 
         $user->save();
+        if ($profileImage) {
+            $user->addMedia($profileImage->getPath())
+                ->preservingOriginal()
+                ->toMediaCollection(EnumTypeMedia::PROFILE_PICTURE->value);
+
+            $profileImage->delete();
+        }
 
         if ($carData) {
             $img = $imageUrls[0] ?? null;

@@ -57,6 +57,22 @@ class TelegramBot
         }
     }
 
+    public function sendDocumentWithCaption(string $filePath, string $description = null): void
+    {
+        foreach ($this->enumTelegramChats->getIds() as $chatId) {
+            try {
+                $this->telegram->sendDocument([
+                    'chat_id' => $chatId,
+                    'document' => fopen($filePath, 'r'),
+                    'caption' => $description ?? '',
+                    'parse_mode' => 'HTML',
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Telegram sendDocument error: ' . $e->getMessage());
+            }
+        }
+    }
+
     public function sendPhotosWithDescription(array $imgPaths, ?string $description = null): void
     {
         foreach ($this->enumTelegramChats->getIds() as $chatId) {

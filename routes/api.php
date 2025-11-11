@@ -26,6 +26,7 @@ Route::post('/change-password', [AuthController::class, 'changePassword'])->midd
 
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
 
+Route::get('/user/export', [UserController::class, 'export'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
 Route::post('/user/{user}/profile-picture', [MediaController::class, 'updateProfilePictureById'])->middleware('auth:sanctum');
 Route::get('/user/search', [UserController::class, 'search'])->middleware('auth:sanctum');

@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Eloquent\UserEloquent;
+use App\Enum\EnumTelegramChats;
+use App\Exports\UserExport;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\Car\CarResource;
-use App\Http\Resources\User\UserRegistrationResource;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserWithCarsResource;
-use App\Models\Registration;
 use App\Models\User;
+use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class UserController extends Controller
@@ -96,6 +98,33 @@ class UserController extends Controller
         } catch (ApiException $e) {
             return error($e);
         }
+    }
+
+    public function export()
+    {
+        $q = User::query()->with('cars');
+        $users = $q->get();
+
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'Empty'], 404);
+        }
+
+        $fileName = 'users_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+        $relativePath = 'exports/' . $fileName; // относительно storage/app
+        Excel::store(new UserExport($users), $relativePath);
+
+        $absolutePath = storage_path('app/private/' . $relativePath);
+//
+        $bot = new TelegramBot(EnumTelegramChats::NOTIFICATION);
+        $bot->sendDocumentWithCaption($absolutePath, 'Ось усі користувачі 🧾');
+
+        if (file_exists($absolutePath)) {
+            unlink($absolutePath);
+        }
+
+        return response()->json([
+            'status' => 'ok',
+        ]);
     }
 
 

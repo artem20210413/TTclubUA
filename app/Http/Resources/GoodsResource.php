@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Enum\EnumTypeMedia;
 use App\Models\Event;
+use App\Models\Goods;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +17,7 @@ class GoodsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /** @var Event $this */
+        /** @var Goods $this */
         $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_GOODS->value)->map(function ($media) {
             return [
                 'id' => $media->id,
@@ -28,7 +29,7 @@ class GoodsResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'place' => $this->price,
+            'price' => $this->price,
             'images' => $imageUrls,
             'active' => $this->active,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),

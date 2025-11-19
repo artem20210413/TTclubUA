@@ -51,7 +51,6 @@ Route::post('/costs', [\App\Http\Controllers\CostsController::class, 'set'])->mi
 Route::post('/costs/{costs}', [\App\Http\Controllers\CostsController::class, 'edit'])->middleware(['auth:sanctum', 'role:admin']);
 Route::delete('/costs/{costs}', [\App\Http\Controllers\CostsController::class, 'delete'])->middleware(['auth:sanctum', 'role:admin']);
 
-
 Route::get('/registration/list', [\App\Http\Controllers\RegistrationController::class, 'list'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/registration/count', [\App\Http\Controllers\RegistrationController::class, 'count'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/registration/{registration}/validator', [\App\Http\Controllers\RegistrationController::class, 'validator'])->middleware(['auth:sanctum', 'role:admin']);
@@ -71,7 +70,6 @@ Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteC
 
 Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
 
-
 Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {
     Route::get('/', [EventController::class, 'list']);
     Route::post('/', [EventController::class, 'create'])->middleware(['role:admin']);
@@ -86,7 +84,7 @@ Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static fun
 });
 
 Route::group(['prefix' => 'goods', 'middleware' => ['auth:sanctum']], static function () {
-    Route::get('/', [GoodsController::class, 'lists']);
+    Route::get('/', [GoodsController::class, 'lists']); //TODO  added filter active and search
     Route::post('/', [GoodsController::class, 'create'])->middleware(['role:admin']);
     Route::put('/{goods}', [GoodsController::class, 'update'])->middleware(['role:admin']);
     Route::patch('/{goods}/active/{active}', [GoodsController::class, 'changeActive'])->middleware(['role:admin']);

@@ -200,7 +200,7 @@
                                 </label>
 
                                 <label class="field @error('car.personalized_license_plate') fail  @enderror">
-                                    <span>Індивідуальний номер</span>
+                                    <span>Іменний номер</span>
                                     <input name="car[personalized_license_plate]" type="text"
                                            value="{{ old('car.personalized_license_plate') }}"
                                            placeholder="UGROZA">

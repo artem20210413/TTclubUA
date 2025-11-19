@@ -30,6 +30,7 @@ class GoodsResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'price' => $this->price,
+            'priority' => $this->priority,
             'images' => $imageUrls,
             'active' => $this->active,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),

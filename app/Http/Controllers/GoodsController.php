@@ -50,6 +50,7 @@ class GoodsController extends Controller
         $goods->title = $request->input('title');
         $goods->description = $request->input('description');
         $goods->price = $request->input('price');
+        $goods->active = $request->input('active');
         $goods->priority = $request->input('priority');
         $goods->save();
 

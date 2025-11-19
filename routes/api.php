@@ -84,7 +84,7 @@ Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static fun
 });
 
 Route::group(['prefix' => 'goods', 'middleware' => ['auth:sanctum']], static function () {
-    Route::get('/', [GoodsController::class, 'lists']); //TODO  added filter active and search
+    Route::get('/', [GoodsController::class, 'lists']);
     Route::post('/', [GoodsController::class, 'create'])->middleware(['role:admin']);
     Route::put('/{goods}', [GoodsController::class, 'update'])->middleware(['role:admin']);
     Route::patch('/{goods}/active/{active}', [GoodsController::class, 'changeActive'])->middleware(['role:admin']);

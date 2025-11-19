@@ -17,9 +17,15 @@ class GoodsController extends Controller
     public function lists(Request $request)
     {
         $q = Goods::query();
+
         if ($title = $request->input('title')) {
             $title = trim($title);
             $q->where('title', 'like', "%$title%");
+        }
+
+        $active = $request->input('active');
+        if ($active !== null) {
+            $q->where('active', $active);
         }
 
         $q->orderBy('priority', 'desc');

@@ -18,3 +18,10 @@ Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'inde
 Route::get('/thank-you', [\App\Http\Controllers\Web\RegistrationsController::class, 'thankYou'])->name('web.thank-you'); //->middleware('only.ua')
 Route::get('/register', [\App\Http\Controllers\Web\RegistrationsController::class, 'register'])->name('web.register'); //->middleware('only.ua')
 Route::post('/register', [\App\Http\Controllers\Web\RegistrationsController::class, 'apply'])->name('web.register.apply');
+
+Route::view('/app-download', 'app-download')
+    ->name('app.download');
+
+// страница политики конфиденциальности
+Route::view('/privacy', 'privacy')
+    ->name('privacy');

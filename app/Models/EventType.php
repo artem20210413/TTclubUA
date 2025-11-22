@@ -12,6 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  *
  * @property int id
  * @property string name
+ * @property string alias
  * @property int sort
  */
 class EventType extends Model implements HasMedia

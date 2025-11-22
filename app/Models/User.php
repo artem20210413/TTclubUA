@@ -88,7 +88,9 @@ class User extends Authenticatable implements HasMedia
         'password',
         'remember_token',
     ];
-
+    protected $casts = [
+        'birth_date' => 'date',
+    ];
     /**
      * The accessors to append to the model's array form.
      *

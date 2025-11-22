@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\Car\MentionController;
 use App\Http\Controllers\CityController;
@@ -70,6 +71,7 @@ Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteC
 
 Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
 
+Route::get('/calendar', [CalendarController::class, 'list']);
 Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {
     Route::get('/', [EventController::class, 'list']);
     Route::post('/', [EventController::class, 'create'])->middleware(['role:admin']);

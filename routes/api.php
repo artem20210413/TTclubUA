@@ -71,7 +71,7 @@ Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteC
 
 Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
 
-Route::get('/calendar', [CalendarController::class, 'list']);
+Route::get('/calendar', [CalendarController::class, 'list'])->middleware(['auth:sanctum']);
 Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {
     Route::get('/', [EventController::class, 'list']);
     Route::post('/', [EventController::class, 'create'])->middleware(['role:admin']);

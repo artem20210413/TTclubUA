@@ -72,8 +72,14 @@ class CalendarController extends Controller
                 $user->birth_date->day
             );
 
-            $profileImage = $user->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value);
-            $images = $profileImage ? [$profileImage] : [];
+            $images = $user->getMedia(EnumTypeMedia::PROFILE_PICTURE->value)->map(function ($media) {
+                return [
+                    'id' => $media->id,
+                    'url' => $media->getUrl(),
+                ];
+            });
+//            $profileImage = $user->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value);
+//            $images = $profileImage ? [$profileImage] : [];
 
             return [
                 'type' => 'birthday',

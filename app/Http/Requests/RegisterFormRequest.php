@@ -23,7 +23,8 @@ class RegisterFormRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|unique:users',
+            'phone' => 'required|string',
+//            'phone' => 'required|string|unique:users',
             'telegram_nickname' => 'nullable|string|unique:users',
             'instagram_nickname' => 'nullable|string|unique:users',
             'cities' => 'nullable|array',

@@ -65,6 +65,13 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        if (!$user->active) {
+            Auth::logout();
+            return error(new ApiException('Invalid login details', 0, 401));
+//            return error(new ApiException('Your account is deactivated', 0, 403));
+        }
+
+        $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return success('Login successful', [
@@ -83,6 +90,11 @@ class AuthController extends Controller
 
         $user->setPassword($request->new_password);
         $user->save();
+
+        $currentTokenId = $user->currentAccessToken()->id;
+        $user->tokens()
+            ->where('id', '!=', $currentTokenId)
+            ->delete();
 
         return success('Пароль успішно оновлено');
     }

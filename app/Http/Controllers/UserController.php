@@ -45,6 +45,18 @@ class UserController extends Controller
         return success(data: ['users' => UserResource::collection(User::all())]);
     }
 
+    public function deleteAccount(Request $request)
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $user->active = false;
+        $user->save();
+
+        $user->tokens()->delete();
+
+        return success(data: new UserResource($user));
+    }
+
     public function myCars(Request $request)
     {
         /** @var User $user */

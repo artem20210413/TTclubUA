@@ -24,6 +24,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
+Route::delete('/delete-account', [UserController::class, 'deleteAccount'])->middleware(['auth:sanctum']);
 
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
 

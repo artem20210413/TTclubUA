@@ -54,7 +54,7 @@ class UserController extends Controller
 
         $user->tokens()->delete();
 
-        return success(data: new UserResource($user));
+        return success(message:  'account deleted');
     }
 
     public function myCars(Request $request)

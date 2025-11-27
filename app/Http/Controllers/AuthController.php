@@ -134,6 +134,7 @@ class AuthController extends Controller
 
             $phone = $request->phone;
             $user = User::findByPhone($phone);
+            $code = trim($request->code);
 
             if (!$user) {
                 throw new ApiException('Користувача не знайдено.', 404);
@@ -141,7 +142,7 @@ class AuthController extends Controller
 
             $cachedCode = $user->getLoginCodeFromCache();
 
-            if (!$cachedCode) {
+            if (!$cachedCode || $code !== $cachedCode) {
                 throw new ApiException('Код не знайдено або термін дії минув..', 400);
             }
 

@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
-Route::post('/login/tg/send-code', [AuthController::class, 'sendCode'])->middleware('throttle:1,1');
+Route::post('/login/tg/send-code', [AuthController::class, 'sendCode'])->middleware('params.throttle:60');
 Route::post('/login/tg/verify', [AuthController::class, 'verifyCode'])->middleware('throttle:5,2');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:admin']);

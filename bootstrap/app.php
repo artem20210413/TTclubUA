@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'only.ua' => \App\Http\Middleware\OnlyFromUkraine::class,
+            'params.throttle' => \App\Http\Middleware\ParamsThrottleMiddleware::class,
         ]);
 //        $middleware->alias(['permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class]);
     })

@@ -170,7 +170,7 @@
 
         <section class="cta" aria-label="Кнопки завантаження">
             <!-- iOS App (App Store) -->
-            <a class="btn btn-primary" href="https://apps.apple.com/app/idXXXXXXXXX" target="_blank"
+            <a class="btn btn-primary" href="https://apps.apple.com/app/tt-club-ua/id6746709217" target="_blank"
                rel="noopener noreferrer" aria-label="Завантажити в App Store">
 {{--              <span class="icon" aria-hidden="true">--}}
                 <!-- Apple glyph -->

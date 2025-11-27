@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\EnumTelegramChats;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\ChangePasswordByUserRequest;
 use App\Http\Requests\User\ChangePasswordRequest;
@@ -9,10 +10,13 @@ use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
+use App\Services\Telegram\TelegramBot;
+use App\Services\Telegram\TelegramBotHelpers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -79,6 +83,81 @@ class AuthController extends Controller
             'user' => new UserResource($user),
         ]);
     }
+
+
+    public function sendCode(Request $request)
+    {
+        $data = $request->validate([
+            'phone' => ['required', 'string', 'min:5', 'max:32'], // подправишь под свой формат
+        ]);
+
+        $phone = $data['phone'];
+
+        /** @var User|null $user */
+        $user = User::findByPhone($phone);
+        try {
+
+            if (!$user) {
+                throw new ApiException('Користувача з таким номером не знайдено.', 404);
+            }
+
+            if (empty($user->telegram_id)) {
+                throw new ApiException('Будь ласка, підтвердіть номер телефону через Telegram-бот, перш ніж входити.', 400);
+            }
+
+            // генерируем и сохраняем код в кеш
+            $code = $user->generateAndStoreLoginCode();
+            Auth::login($user);
+            $text = TelegramBotHelpers::generationTextAuthCode($code, 10);
+            $bot = new TelegramBot(EnumTelegramChats::MY);
+            $bot->sendMessage($text);
+            Auth::logout();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Код для входу відправлено в Telegram.',
+            ]);
+
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
+
+    public function verifyCode(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+            'code' => 'required|string'
+        ]);
+
+        try {
+
+            $phone = $request->phone;
+            $user = User::findByPhone($phone);
+
+            if (!$user) {
+                throw new ApiException('Користувача не знайдено.', 404);
+            }
+
+            $cachedCode = $user->getLoginCodeFromCache();
+
+            if (!$cachedCode) {
+                throw new ApiException('Код не знайдено або термін дії минув..', 400);
+            }
+
+            $user->clearCode();
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return success("Авторизація успішна", [
+                'token' => $token,
+                'user' => new UserResource($user),
+            ]);
+
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
+
 
     public function changePassword(ChangePasswordRequest $request)
     {

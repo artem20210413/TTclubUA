@@ -13,15 +13,16 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
-use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
 
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
+Route::post('/login/tg/send-code', [AuthController::class, 'sendCode'])->middleware('throttle:1,1');
+Route::post('/login/tg/verify', [AuthController::class, 'verifyCode'])->middleware('throttle:5,2');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
 Route::delete('/delete-account', [UserController::class, 'deleteAccount'])->middleware(['auth:sanctum']);

@@ -86,4 +86,14 @@ class TelegramBotHelpers
 
         return $user . "\n\n" . $cars;
     }
+
+    public static function generationTextAuthCode(string $code, int $minutes): string
+    {
+        // шаблон сообщения
+        return "<b>Ваш код для входу</b>\n"
+            . "<code>$code</code>\n\n"
+            . "Код діє $minutes хвилин.";
+
+    }
+
 }

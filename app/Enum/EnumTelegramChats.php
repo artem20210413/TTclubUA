@@ -2,12 +2,15 @@
 
 namespace App\Enum;
 
+use Illuminate\Support\Facades\Auth;
+
 enum EnumTelegramChats
 {
 
     case NOTIFICATION;
     case MENTION;
     case TEST;
+    case MY;
 
     public function getName(): string
     {
@@ -15,6 +18,7 @@ enum EnumTelegramChats
             self::NOTIFICATION => 'Notification TT_club',
             self::MENTION => 'fa-fa',
             self::TEST => 'test',
+            self::MY => 'test',
         };
     }
 
@@ -27,6 +31,7 @@ enum EnumTelegramChats
             self::NOTIFICATION => [-1002693142471],
             self::MENTION => [-4706815074],
             self::TEST => [-4706815074],
+            self::MY => [Auth::user()->telegram_id],
         };
     }
 

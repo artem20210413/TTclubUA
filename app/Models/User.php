@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -110,6 +111,7 @@ class User extends Authenticatable implements HasMedia
         'updated_at'
     ];
 
+
     /**
      * Get the attributes that should be cast.
      *
@@ -123,6 +125,12 @@ class User extends Authenticatable implements HasMedia
             'is_tt' => 'boolean',
         ];
     }
+
+    public function getLoginCodeCacheKey(): string
+    {
+        return 'login_code:user:' . $this->id;
+    }
+
 
     public function cities(): BelongsToMany
     {
@@ -158,6 +166,7 @@ class User extends Authenticatable implements HasMedia
 
         return $user;
     }
+
     public function finances()
     {
         return $this->hasMany(Finance::class);
@@ -203,4 +212,43 @@ class User extends Authenticatable implements HasMedia
         return "{$this->birth_date} {$this->name} - @{$this->telegram_nickname} ({$this->phone})";
 
     }
+
+    public static function findByPhone(string $phone): ?self
+    {
+        // пример: убираем пробелы, скобки, дефисы
+        $normalized = formatPhoneNumber($phone);
+
+        return static::where('phone', $normalized)->first();
+    }
+
+    /**
+     * Сгенерировать и сохранить код в кеш на 10 минут.
+     */
+    public function generateAndStoreLoginCode(int $time = 10, int $length = 6): string
+    {
+
+        $code = str_pad((string)random_int(0, 10 ** $length - 1), $length, '0', STR_PAD_LEFT);
+
+        Cache::put(
+            $this->getLoginCodeCacheKey(),
+            $code,
+            now()->addMinutes($time) // TTL кода
+        );
+
+        return $code;
+    }
+
+    public function clearCode()
+    {
+        Cache::delete($this->getLoginCodeCacheKey());
+    }
+
+    /**
+     * Получить код из кеша (если понадобится потом).
+     */
+    public function getLoginCodeFromCache(): ?string
+    {
+        return Cache::get($this->getLoginCodeCacheKey());
+    }
+
 }

@@ -98,11 +98,11 @@ class AuthController extends Controller
         try {
 
             if (!$user) {
-                throw new ApiException('Користувача з таким номером не знайдено.', 404);
+                throw new ApiException('Користувача з таким номером не знайдено.', 0, 404);
             }
 
             if (empty($user->telegram_id)) {
-                throw new ApiException('Будь ласка, підтвердіть номер телефону через Telegram-бот, перш ніж входити.', 400);
+                throw new ApiException('Будь ласка, підтвердіть номер телефону через Telegram-бот, перш ніж входити.', 0, 400);
             }
 
             // генерируем и сохраняем код в кеш
@@ -137,13 +137,13 @@ class AuthController extends Controller
             $code = trim($request->code);
 
             if (!$user) {
-                throw new ApiException('Користувача не знайдено.', 404);
+                throw new ApiException('Користувача не знайдено.', 0, 404);
             }
 
             $cachedCode = $user->getLoginCodeFromCache();
 
             if (!$cachedCode || $code !== $cachedCode) {
-                throw new ApiException('Код не знайдено або термін дії минув..', 400);
+                throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
             }
 
             $user->clearCode();

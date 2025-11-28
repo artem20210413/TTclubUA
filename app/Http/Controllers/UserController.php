@@ -24,7 +24,6 @@ class UserController extends Controller
 
     public function user(Request $request)
     {
-        dd(GeminiService::generate(Prompt::buildBirthdayPrompt(User::find(1)))->getText());
         return success(data: ['user' => new UserWithCarsResource($request->user())]);
     }
 

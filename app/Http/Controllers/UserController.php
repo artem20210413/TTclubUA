@@ -11,6 +11,9 @@ use App\Http\Resources\Car\CarResource;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserWithCarsResource;
 use App\Models\User;
+use App\Services\Gemini\GeminiService;
+use App\Services\Gemini\Prompt\BirthdayGreetingData;
+use App\Services\Gemini\Prompt\Prompt;
 use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -21,6 +24,7 @@ class UserController extends Controller
 
     public function user(Request $request)
     {
+        dd(GeminiService::generate(Prompt::buildBirthdayPrompt(User::find(1)))->getText());
         return success(data: ['user' => new UserWithCarsResource($request->user())]);
     }
 
@@ -54,7 +58,7 @@ class UserController extends Controller
 
         $user->tokens()->delete();
 
-        return success(message:  'account deleted');
+        return success(message: 'account deleted');
     }
 
     public function myCars(Request $request)

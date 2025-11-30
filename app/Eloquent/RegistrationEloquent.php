@@ -84,8 +84,12 @@ class RegistrationEloquent
         $user->instagram_nickname = $data['instagram_nickname'];
         $user->occupation_description = $data['occupation_description'];
         $user->is_tt = isset($carData) ? true : false;
-
         $user->save();
+
+        if (isset($data['cities_model'][0])) {
+            $user->cities()->sync([$data['cities_model'][0]['id']]);
+        }
+
         if ($profileImage) {
             $user->addMedia($profileImage->getPath())
                 ->preservingOriginal()

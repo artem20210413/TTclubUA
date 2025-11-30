@@ -24,7 +24,9 @@ class MentionController extends Controller
             ? Storage::put('temporary-files/mentions', $request->file('file'))
             : 'nane';
 
-        SandMention::dispatch($car, $path, $request->description, $request->user(), Carbon::now());
+//        SandMention::dispatch($car, $path, $request->description, $request->user(), Carbon::now());
+        $x = new SandMention($car, $path, $request->description, $request->user(), Carbon::now());
+        $x->handle();
 
 //        $description = $request->description;
 //        $user = $request->user();

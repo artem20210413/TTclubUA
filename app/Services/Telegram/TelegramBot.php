@@ -2,7 +2,7 @@
 
 namespace App\Services\Telegram;
 
-use App\Enum\EnumTelegramChats;
+use App\Enum\EnumTelegramEvents;
 use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Telegram\Bot\Api;
@@ -16,7 +16,7 @@ class TelegramBot
     /**
      * @throws TelegramSDKException
      */
-    public function __construct(readonly ?EnumTelegramChats $enumTelegramChats = null)
+    public function __construct(readonly EnumTelegramEvents $enumTelegramEvents)
     {
         $this->telegram = new Api(config('services.telegram.token'));
     }
@@ -25,7 +25,7 @@ class TelegramBot
     public function sendMessage(?string $message)
     {
         if (!$message) return;
-        foreach ($this->enumTelegramChats->getIds() as $chatId) {
+        foreach ($this->enumTelegramEvents->getIds() as $chatId) {
             try {
                 $this->telegram->sendMessage([
                     'chat_id' => $chatId,
@@ -40,7 +40,7 @@ class TelegramBot
 
     public function sendPhotoAndDescription(string $imgPath, ?string $description)
     {
-        foreach ($this->enumTelegramChats->getIds() as $chatId) {
+        foreach ($this->enumTelegramEvents->getIds() as $chatId) {
             try {
 
                 $this->telegram->sendPhoto([
@@ -59,7 +59,7 @@ class TelegramBot
 
     public function sendDocumentWithCaption(string $filePath, string $description = null): void
     {
-        foreach ($this->enumTelegramChats->getIds() as $chatId) {
+        foreach ($this->enumTelegramEvents->getIds() as $chatId) {
             try {
                 $this->telegram->sendDocument([
                     'chat_id' => $chatId,
@@ -75,7 +75,7 @@ class TelegramBot
 
     public function sendPhotosWithDescription(array $imgPaths, ?string $description = null): void
     {
-        foreach ($this->enumTelegramChats->getIds() as $chatId) {
+        foreach ($this->enumTelegramEvents->getIds() as $chatId) {
             try {
                 $media = [];
 
@@ -105,8 +105,8 @@ class TelegramBot
 
     public function test()
     {
-//        $response = $this->telegram->getMe();
-//        dd($response);
+        $response = $this->telegram->getMe();
+        dd($response);
     }
 
     public function getTelegram(): Api

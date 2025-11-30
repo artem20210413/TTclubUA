@@ -2,8 +2,6 @@
 
 namespace App\Events\Trigger\Registration;
 
-use App\Enum\EnumTelegramChats;
-use App\Enum\EnumTypeMedia;
 use App\Models\Registration;
 use App\Services\Telegram\TelegramBot;
 use App\Services\Telegram\TelegramBotHelpers;

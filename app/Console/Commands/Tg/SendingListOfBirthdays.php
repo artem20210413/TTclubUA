@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Tg;
 
 use App\Eloquent\UserEloquent;
-use App\Enum\EnumTelegramChats;
+use App\Enum\EnumTelegramEvents;
 use App\Models\User;
 use App\Services\Command\ListOfBirthdays;
 use App\Services\Telegram\TelegramBot;
@@ -36,7 +36,7 @@ class SendingListOfBirthdays extends Command
         Log::info('search ListOfBirthdays nextDays: ' . $nextDays);
 
         $birthdayPeople = UserEloquent::getBirthdayPeople($nextDays);
-        $botT = new TelegramBot(EnumTelegramChats::NOTIFICATION);
+        $botT = new TelegramBot(EnumTelegramEvents::LIST_BIRTHDAYS);
         $botT->sendMessage($this->getFormatStringBirthdayPeople($birthdayPeople, $nextDays));
 
         Log::info('finish ListOfBirthdays Count:' . $birthdayPeople->count());

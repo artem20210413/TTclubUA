@@ -2,8 +2,6 @@
 
 namespace App\Eloquent;
 
-use App\Enum\EnumImageQuality;
-use App\Enum\EnumTelegramChats;
 use App\Enum\EnumTypeMedia;
 use App\Http\Requests\MentionRequest;
 use App\Models\Car;

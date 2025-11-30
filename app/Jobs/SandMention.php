@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Eloquent\MentionEloquent;
-use App\Enum\EnumTelegramChats;
+use App\Enum\EnumTelegramEvents;
 use App\Enum\EnumTypeMedia;
 use App\Http\Requests\MentionRequest;
 use App\Models\Car;
@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Services\Telegram\TelegramBot;
 use App\Services\Telegram\TelegramBotHelpers;
 use Carbon\Carbon;
-use GuzzleHttp\Psr7\Request;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\UploadedFile;
@@ -55,7 +54,7 @@ class SandMention implements ShouldQueue
 
         $imageUrl = $mention->getFirstMedia(EnumTypeMedia::PHOTO_MENTION->value)?->getPath();
         $text = TelegramBotHelpers::generationTextMention($this->user, $this->car, $this->description, $this->time);
-        $bot = new TelegramBot(EnumTelegramChats::MENTION);
+        $bot = new TelegramBot(EnumTelegramEvents::FA_FA);
 
         if ($imageUrl) {
             $bot->sendPhotoAndDescription($imageUrl, $text);

@@ -6,6 +6,7 @@ use App\Eloquent\FinanceEloquent;
 use App\Eloquent\UserEloquent;
 use App\Enum\EnumMonoAccount;
 use App\Enum\EnumMonoStatus;
+use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\FinanceRequest;
 use App\Http\Resources\FinanceWithUserResource;
@@ -58,51 +59,9 @@ class TelegramController extends Controller
 
     public function test(Request $request)
     {
-        dd('test');
-//        $chatId = 550488516;
 
-//        Telegram::sendMessage([
-//            'chat_id' => $chatId,
-//            'text' => 'Привет!',
-//        ]);
-
-//        $bot = Telegram::getMe();
-//        Telegram::sendMessage([
-//            'chat_id' => $chatId,
-//            'text' => 'Привет!',
-//        ]);
-
-        Telegram::sendMessage([
-            'chat_id' => $chatId,
-            'text' => 'Нажмите кнопку ниже:',
-            'reply_markup' => json_encode([
-                'keyboard' => [
-                    [['text' => '📞 Отправить номер', 'request_contact' => true]],
-                ],
-                'resize_keyboard' => true,
-                'one_time_keyboard' => true,
-            ]),
-        ]);
-
-//        Telegram::sendMessage([
-//            'chat_id' => $chatId,
-//            'text' => 'Выберите:',
-//            'reply_markup' => json_encode([
-//                'inline_keyboard' => [
-//                    [
-//                        ['text' => 'Открыть сайт', 'url' => 'https://example.com'],
-//                        ['text' => 'Поздороваться', 'callback_data' => 'hi'],
-//                    ],
-//                ],
-//            ]),
-//        ]);
-
-//        Telegram::sendPhoto([
-//            'chat_id' => -1002693142471,
-//            'photo' => fopen("https://tt.tishchenko.kiev.ua/storage/236/profile_picture.webp", 'r'),
-//            'caption' => "ТЕСТ!!! Привет, @olha_mo! Это изображение с веба ️",
-//        ]);
-
+        $bot = new TelegramBot(EnumTelegramEvents::TEST);
+        $bot->sendMessage('LIST_BIRTHDAYS');
 
         return success();
     }

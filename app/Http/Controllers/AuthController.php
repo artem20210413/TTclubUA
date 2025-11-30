@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\EnumTelegramChats;
+use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\ChangePasswordByUserRequest;
 use App\Http\Requests\User\ChangePasswordRequest;
@@ -109,7 +109,7 @@ class AuthController extends Controller
             $code = $user->generateAndStoreLoginCode();
             Auth::login($user);
             $text = TelegramBotHelpers::generationTextAuthCode($code, 10);
-            $bot = new TelegramBot(EnumTelegramChats::MY);
+            $bot = new TelegramBot(EnumTelegramEvents::MY);
             $bot->sendMessage($text);
             Auth::logout();
 

@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Enum\EnumTelegramChats;
-use App\Enum\EnumTypeMedia;
 use App\Models\Car;
 use App\Models\Registration;
 use App\Services\Telegram\Sand\RegistrationSandToTo;

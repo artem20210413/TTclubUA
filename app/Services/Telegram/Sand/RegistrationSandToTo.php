@@ -2,7 +2,7 @@
 
 namespace App\Services\Telegram\Sand;
 
-use App\Enum\EnumTelegramChats;
+use App\Enum\EnumTelegramEvents;
 use App\Enum\EnumTypeMedia;
 use App\Models\Registration;
 use App\Services\Telegram\TelegramBot;
@@ -23,7 +23,7 @@ class RegistrationSandToTo
         if ($profileImage != null)
             $imageUrls[] = $profileImage;
 
-        $bot = new TelegramBot(EnumTelegramChats::NOTIFICATION);
+        $bot = new TelegramBot(EnumTelegramEvents::REGISTRATION);
 
         if (empty($imageUrls)) {
             $bot->sendMessage($text);

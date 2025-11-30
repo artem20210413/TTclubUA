@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Car;
 
-use App\Eloquent\MentionEloquent;
-use App\Enum\EnumTelegramChats;
-use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MentionRequest;
 use App\Jobs\SandMention;
@@ -53,24 +50,24 @@ class MentionController extends Controller
     }
 
 
-    public function mentionOld(Car $car, MentionRequest $request)
-    {
-        $mention = MentionEloquent::create($car, $request->user(), $request->description, $request->file('file'));
-        $imageUrl = $mention->getFirstMedia(EnumTypeMedia::PHOTO_MENTION->value)?->getPath();
-
-        $text = TelegramBotHelpers::generationTextMention($request->user(), $car, $request->description, Carbon::now());
-        $bot = new TelegramBot(EnumTelegramChats::MENTION);
-
-        if ($imageUrl) {
-            $bot->sendPhotoAndDescription($imageUrl, $text);
-        } else {
-            $bot->sendMessage($text);
-        }
-
-
-        return success();
-
-    }
+//    public function mentionOld(Car $car, MentionRequest $request)
+//    {
+//        $mention = MentionEloquent::create($car, $request->user(), $request->description, $request->file('file'));
+//        $imageUrl = $mention->getFirstMedia(EnumTypeMedia::PHOTO_MENTION->value)?->getPath();
+//
+//        $text = TelegramBotHelpers::generationTextMention($request->user(), $car, $request->description, Carbon::now());
+//        $bot = new TelegramBot(EnumTelegramChats::MENTION);
+//
+//        if ($imageUrl) {
+//            $bot->sendPhotoAndDescription($imageUrl, $text);
+//        } else {
+//            $bot->sendMessage($text);
+//        }
+//
+//
+//        return success();
+//
+//    }
 }
 
 class SimpleTimer

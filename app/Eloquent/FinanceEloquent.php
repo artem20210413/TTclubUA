@@ -2,11 +2,6 @@
 
 namespace App\Eloquent;
 
-use App\Enum\EnumImageQuality;
-use App\Enum\EnumTelegramChats;
-use App\Enum\EnumTypeMedia;
-use App\Http\Requests\MentionRequest;
-use App\Models\Car;
 use App\Models\Finance;
 use App\Models\Mention;
 use App\Models\MonoTransaction;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Eloquent\UserEloquent;
-use App\Enum\EnumTelegramChats;
+use App\Enum\EnumTelegramEvents;
 use App\Exports\UserExport;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\UpdateUserRequest;
@@ -130,7 +130,7 @@ class UserController extends Controller
 
         $absolutePath = storage_path('app/private/' . $relativePath);
 //
-        $bot = new TelegramBot(EnumTelegramChats::NOTIFICATION);
+        $bot = new TelegramBot(EnumTelegramEvents::EXPORT_USERS);
         $bot->sendDocumentWithCaption($absolutePath, 'Ось усі користувачі 🧾');
 
         if (file_exists($absolutePath)) {

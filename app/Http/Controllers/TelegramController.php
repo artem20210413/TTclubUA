@@ -38,7 +38,7 @@ class TelegramController extends Controller
 
         if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
 
-
+//TODO сохранить в БД
         try {
             new TelegramCommandHandler($telegramMessageDto);
         } catch (ApiException $e) {

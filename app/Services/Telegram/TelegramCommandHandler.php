@@ -2,18 +2,21 @@
 
 namespace App\Services\Telegram;
 
+use App\Models\TelegramLogger;
 use App\Models\User;
+use App\Services\Telegram\Dto\TelegramMessageDto;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramCommandHandler
 {
-    public function __construct(readonly array $message, readonly int $chatId, readonly ?User $user)
+    public function __construct(readonly TelegramMessageDto $telegramMessageDto)
     {
-        $text = $message['text'] ?? '';
+//        $text = $message['text'] ?? '';
+        $text = $telegramMessageDto->getText() ?? '';
 
-        if (!$user) return $this->commandGetPhone();
-        if (!$user->active) return $this->commandUserNotActive();
-        if (isset($message['contact'])) return $this->commandContactSuccessfully();
+        if (!$this->telegramMessageDto->getUser()) return $this->commandGetPhone();
+        if (!$this->telegramMessageDto->getUser()->active) return $this->commandUserNotActive();
+        if ($this->telegramMessageDto->getContact()) return $this->commandContactSuccessfully();
 //
 //        if (!$this->user) {
 //            $this->commandGetPhone();
@@ -55,8 +58,8 @@ class TelegramCommandHandler
                 \n/changePassword {new-password} або /CP {new-password} — змінити пароль до вашого акаунта 🔐
                 \nБільше можливостей з'явиться скоро. Якщо виникли питання — звертайтесь до підтримки.";
 
-        Telegram::sendMessage([
-            'chat_id' => $this->chatId,
+        TelegramLogger::sendMessage([
+            'chat_id' => $this->telegramMessageDto->getChat()->getId(),
             'text' => $text,
             'parse_mode' => 'Markdown',
         ]);
@@ -64,9 +67,9 @@ class TelegramCommandHandler
 
     public function commandStart()
     {
-        Telegram::sendMessage([
-            'chat_id' => $this->chatId,
-            'text' => "Привіт {$this->user->name}!\nЯ Telegram-бот Клубу TT.\nЩоб дізнатися що я вмію напиши команду '/help'",
+        TelegramLogger::sendMessage([
+            'chat_id' => $this->telegramMessageDto->getChat()->getId(),
+            'text' => "Привіт {$this->telegramMessageDto->getUser()->name}!\nЯ Telegram-бот Клубу TT.\nЩоб дізнатися що я вмію напиши команду '/help'",
             'reply_markup' => json_encode([
                 'keyboard' => [
                     [
@@ -82,10 +85,10 @@ class TelegramCommandHandler
 
     }
 
-    public function commandGetPhone()
+    public function commandGetPhone(): void
     {
-        Telegram::sendMessage([
-            'chat_id' => $this->chatId,
+        TelegramLogger::sendMessage([
+            'chat_id' => $this->telegramMessageDto->getChat()->getId(),
             'text' => "👋 Привіт!\n\nДля продовження спілкування з ботом необхідно ідентифікувати себе.
             \n\nНатисни кнопку *«📞 Надіслати номер»* нижче, щоб поділитися своїм номером телефону. Це потрібно лише один раз і дозволить нам впевнено знати, хто ти 😊",
             'reply_markup' => json_encode([
@@ -98,11 +101,11 @@ class TelegramCommandHandler
         ]);
     }
 
-    public function commandContactSuccessfully()
+    public function commandContactSuccessfully(): void
     {
-        Telegram::sendMessage([
-            'chat_id' => $this->chatId,
-            'text' => "✅ Дякуємо {$this->user->name}!\nМожемо продовжити спілкування 👌",
+        TelegramLogger::sendMessage([
+            'chat_id' => $this->telegramMessageDto->getChat()->getId(),
+            'text' => "✅ Дякуємо {$this->telegramMessageDto->getUser()->name}!\nМожемо продовжити спілкування 👌",
             'reply_markup' => json_encode([
                 'remove_keyboard' => true, // убрать клавиатуру
             ]),
@@ -110,10 +113,10 @@ class TelegramCommandHandler
         $this->commandStart();
     }
 
-    public function commandUserNotActive()
+    public function commandUserNotActive(): void
     {
-        Telegram::sendMessage([
-            'chat_id' => $this->chatId,
+        TelegramLogger::sendMessage([
+            'chat_id' => $this->telegramMessageDto->getChat()->getId(),
             'text' => "⚠️ Ваш обліковий запис неактивний.\n\nЗверніться до адміністратора або служби підтримки, щоб активувати доступ.",
         ]);
     }
@@ -121,8 +124,8 @@ class TelegramCommandHandler
     public function commandChangePassword(?string $password)
     {
         if (!$password) {
-            Telegram::sendMessage([
-                'chat_id' => $this->chatId,
+            TelegramLogger::sendMessage([
+                'chat_id' => $this->telegramMessageDto->getChat()->getId(),
                 'text' => "❗ Пароль не було вказано після команди",
             ]);
             return;
@@ -131,26 +134,27 @@ class TelegramCommandHandler
         $password = trim($password);
 
         if (strlen($password) < 4) {
-            Telegram::sendMessage([
-                'chat_id' => $this->chatId,
+            TelegramLogger::sendMessage([
+                'chat_id' => $this->telegramMessageDto->getChat()->getId(),
                 'text' => "❗ Пароль має містити щонайменше 4 символів.",
             ]);
             return;
         }
         // Сменить пароль
-        $this->user->setPassword($password);
-        $this->user->save();
+        $user = $this->telegramMessageDto->getUser();
+        $user->setPassword($password);
+        $user->save();
 
-        Telegram::sendMessage([
-            'chat_id' => $this->chatId,
+        TelegramLogger::sendMessage([
+            'chat_id' => $this->telegramMessageDto->getChat()->getId(),
             'text' => "✅ Пароль успішно змінено.",
         ]);
     }
 
     public function commandDefault()
     {
-        Telegram::sendMessage([
-            'chat_id' => $this->chatId,
+        TelegramLogger::sendMessage([
+            'chat_id' => $this->telegramMessageDto->getChat()->getId(),
             'text' => "🤖 Невідома команда. Введіть /help, щоб переглянути список доступних команд.",
         ]);
     }

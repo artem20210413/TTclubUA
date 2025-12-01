@@ -4,6 +4,8 @@ namespace App\Eloquent;
 
 use App\Http\Controllers\Api\ApiException;
 use App\Models\User;
+use App\Services\Telegram\Dto\TelegramMessageDto;
+use App\Services\Telegram\Dto\TelegramUserDto;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -83,20 +85,20 @@ class UserEloquent
      * @return User|null
      * @throws ApiException
      */
-    public static function updateByTg(array $from, ?array $contact): ?User
+    public static function updateByTg(TelegramMessageDto $messageDto): ?User
     {
-        $user = User::query()->where('telegram_id', $from['id'])->first();
+        $user = User::query()->where('telegram_id', $messageDto->getFrom()->getId())->first();
         if ($user) return $user;
-        if (!$contact) return null;
+        if (!$messageDto->getContact()) return null;
 
-        $phone = str_replace('+', '', $contact['phone_number']);
+        $phone = str_replace('+', '', $messageDto->getContact()['phone_number']);
         $user = User::query()->where('phone', $phone)->first();
 
         if (!$user) throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
 
-        $user->telegram_id = $contact['user_id'];
-        if (isset($from['username']))
-            $user->telegram_nickname = $from['username'];
+        $user->telegram_id = $messageDto->getContact()['user_id'];
+        if ($messageDto->getFrom()->getFirstName() !== null)
+            $user->telegram_nickname = $messageDto->getFrom()->getFirstName();
         $user->phone_verified_at = Carbon::now();
         $user->save();
 

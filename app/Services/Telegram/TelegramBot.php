@@ -2,7 +2,9 @@
 
 namespace App\Services\Telegram;
 
+use App\Eloquent\TelegramLoggerEloquent;
 use App\Enum\EnumTelegramEvents;
+use App\Enum\EnumTelegramLoggerDirection;
 use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Telegram\Bot\Api;
@@ -25,13 +27,16 @@ class TelegramBot
     public function sendMessage(?string $message)
     {
         if (!$message) return;
+
         foreach ($this->enumTelegramEvents->getIds() as $chatId) {
             try {
-                $this->telegram->sendMessage([
+                $params = [
                     'chat_id' => $chatId,
                     'text' => $message,
                     'parse_mode' => 'HTML',
-                ]);
+                ];
+                $this->telegram->sendMessage($params);
+                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }
@@ -42,15 +47,17 @@ class TelegramBot
     {
         foreach ($this->enumTelegramEvents->getIds() as $chatId) {
             try {
-
-                $this->telegram->sendPhoto([
+                $params = [
                     'chat_id' => $chatId,
                     'photo' => fopen($imgPath, 'r'),
 //                'photo' => fopen("https://tt.tishchenko.kiev.ua/storage/9/profile_image.webp", 'r'),
 //                'photo' => fopen($file->getRealPath(), 'r'),
                     'caption' => $description ?? '',
                     'parse_mode' => 'HTML',
-                ]);
+                ];
+
+                $this->telegram->sendPhoto($params);
+                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }
@@ -61,12 +68,15 @@ class TelegramBot
     {
         foreach ($this->enumTelegramEvents->getIds() as $chatId) {
             try {
-                $this->telegram->sendDocument([
+                $params = [
                     'chat_id' => $chatId,
                     'document' => fopen($filePath, 'r'),
                     'caption' => $description ?? '',
                     'parse_mode' => 'HTML',
-                ]);
+                ];
+
+                $this->telegram->sendDocument($params);
+                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
             } catch (\Exception $e) {
                 Log::error('Telegram sendDocument error: ' . $e->getMessage());
             }
@@ -92,10 +102,13 @@ class TelegramBot
 
                     $media[] = $item;
                 }
-                $this->telegram->sendMediaGroup([
+                $params = [
                     'chat_id' => $chatId,
                     'media' => json_encode($media),
-                ]);
+                ];
+
+                $this->telegram->sendMediaGroup($params);
+                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
             } catch (\Exception $e) {
                 Log::error("Telegram send error: " . $e->getMessage());
             }

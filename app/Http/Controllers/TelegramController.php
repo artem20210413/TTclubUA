@@ -12,7 +12,10 @@ use App\Http\Requests\FinanceRequest;
 use App\Http\Resources\FinanceWithUserResource;
 use App\Models\Finance;
 use App\Models\MonoTransaction;
+use App\Models\TelegramLogger;
 use App\Models\User;
+use App\Services\Telegram\Dto\TelegramImportDto;
+use App\Services\Telegram\Dto\TelegramMessageDto;
 use App\Services\Telegram\TelegramBot;
 use App\Services\Telegram\TelegramCommandHandler;
 use Illuminate\Http\Request;
@@ -31,25 +34,21 @@ class TelegramController extends Controller
 
         $message = $request->message ?? $request->edited_message ?? null;
         if (!$message) return success();
-        $chatId = $message['chat']['id'];
-        $chatType = $message['chat']['type']??null;
-        $isPrivet = $chatType=== 'private';
-//        $fromId = $message['from']['id'];
-        if (!$isPrivet) return success();
+        $telegramMessageDto = new TelegramMessageDto($request->all()['message'] ?? []);
 
-        $contact = $message['contact'] ?? null;
+        if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
+
 
         try {
-            $user = UserEloquent::updateByTg($message['from'], $contact);
-            new TelegramCommandHandler($message, $chatId, $user);
+            new TelegramCommandHandler($telegramMessageDto);
         } catch (ApiException $e) {
-            Telegram::sendMessage([
-                'chat_id' => $chatId,
+            TelegramLogger::sendMessage([
+                'chat_id' => $telegramMessageDto->getChat()->getId(),
                 'text' => $e->getMessage(),
             ]);
         } catch (\Throwable $e) {
-            Telegram::sendMessage([
-                'chat_id' => $chatId,
+            TelegramLogger::sendMessage([
+                'chat_id' => $telegramMessageDto->getChat()->getId(),
                 'text' => "❗ Виникла непередбачена помилка.\nЧас: " . now()->format('Y-m-d H:i:s') . "\n\nБудь ласка, спробуйте пізніше або зверніться до підтримки.",
             ]);
         }
@@ -59,7 +58,6 @@ class TelegramController extends Controller
 
     public function test(Request $request)
     {
-
         $bot = new TelegramBot(EnumTelegramEvents::TEST);
         $bot->sendMessage('LIST_BIRTHDAYS');
 

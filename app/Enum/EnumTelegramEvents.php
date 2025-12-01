@@ -14,13 +14,14 @@ enum EnumTelegramEvents
     case TEST;
     case MY;
     case USERS; // определенным пользователям
+    case CUSTOM; // произвольный
     case EXPORT_USERS; //експорт всех пользователей
     case REGISTRATION; // при регистрации уведомление
 
     /**
      * Получить разрешение для качества
      */
-    public function getIds(?Collection $users = null): array
+    public function getIds(?Collection $users = null, array $chantIds = []): array
     {
 
         $config = config("telegram.chats");
@@ -41,6 +42,7 @@ enum EnumTelegramEvents
 
             self::MY => $myIds,
             self::USERS => $usersIds,
+            self::CUSTOM => $chantIds,
         };
     }
 

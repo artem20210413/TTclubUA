@@ -36,7 +36,7 @@ class TelegramBot
                     'parse_mode' => 'HTML',
                 ];
                 $this->telegram->sendMessage($params);
-                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
+                TelegramLoggerEloquent::createOut($params);
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }
@@ -57,7 +57,7 @@ class TelegramBot
                 ];
 
                 $this->telegram->sendPhoto($params);
-                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
+                TelegramLoggerEloquent::createOut($params);
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }
@@ -76,7 +76,7 @@ class TelegramBot
                 ];
 
                 $this->telegram->sendDocument($params);
-                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
+                TelegramLoggerEloquent::createOut($params);
             } catch (\Exception $e) {
                 Log::error('Telegram sendDocument error: ' . $e->getMessage());
             }
@@ -108,7 +108,7 @@ class TelegramBot
                 ];
 
                 $this->telegram->sendMediaGroup($params);
-                TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
+                TelegramLoggerEloquent::createOut($params);
             } catch (\Exception $e) {
                 Log::error("Telegram send error: " . $e->getMessage());
             }

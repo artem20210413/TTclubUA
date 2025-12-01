@@ -13,7 +13,7 @@ class TelegramMessageDto
     private ?User $user;
 
     public function __construct(
-        private readonly array $json,
+        readonly array $json,
     )
     {
         if (!empty($json['from'])) {

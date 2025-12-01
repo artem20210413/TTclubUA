@@ -15,7 +15,7 @@ class TelegramLogger extends Model
         // 1. отправляем сообщение
         $response = Telegram::sendMessage($params);
 
-        TelegramLoggerEloquent::create($params, EnumTelegramLoggerDirection::OUT);
+        TelegramLoggerEloquent::createOut($params);
 
         return $response;
     }

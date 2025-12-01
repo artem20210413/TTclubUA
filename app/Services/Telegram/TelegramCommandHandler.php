@@ -2,38 +2,31 @@
 
 namespace App\Services\Telegram;
 
+use App\Eloquent\TelegramLoggerEloquent;
 use App\Models\TelegramLogger;
+use App\Models\TelegramMessage;
 use App\Models\User;
 use App\Services\Telegram\Dto\TelegramMessageDto;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramCommandHandler
 {
+
+    protected TelegramMessage $telegramMessage;
+
     public function __construct(readonly TelegramMessageDto $telegramMessageDto)
     {
-//        $text = $message['text'] ?? '';
+
+        $this->telegramMessage = TelegramLoggerEloquent::createIn($telegramMessageDto);
         $text = $telegramMessageDto->getText() ?? '';
 
-        if (!$this->telegramMessageDto->getUser()) return $this->commandGetPhone();
-        if (!$this->telegramMessageDto->getUser()->active) return $this->commandUserNotActive();
-        if ($this->telegramMessageDto->getContact()) return $this->commandContactSuccessfully();
-//
-//        if (!$this->user) {
-//            $this->commandGetPhone();
-//            return;
-//        }
-//        if (!$this->user->active) {
-//            $this->commandUserNotActive();
-//            return;
-//        }
-//
-//        $contact = $message['contact'] ?? null;
-//        if ($contact) {
-//            $this->commandContactSuccessfully();
-//            return;
-//        }
+        match (true) {
+            !$this->telegramMessageDto->getUser() => $this->commandGetPhone(),
+            !$this->telegramMessageDto->getUser()->active => $this->commandUserNotActive(),
+            $this->telegramMessageDto->getContact() !== null => $this->commandContactSuccessfully(),
+            default => $this->handleCommand($text)
+        };
 
-        $this->handleCommand($text);
     }
 
     private function handleCommand(string $text): void
@@ -43,10 +36,12 @@ class TelegramCommandHandler
 
         match ($command) {
             '/start', '/hi' => $this->commandStart(),
-            '/changePassword', '/CP' => $this->commandChangePassword($pieces[1] ?? null),
+            //TODO '/changePassword', '/CP' => $this->commandChangePassword($pieces[1] ?? null),
             '/help' => $this->commandHelp(),
             default => $this->commandDefault(),
         };
+
+        //TODO если предыдущее сообщение от пользователя была смена пароля и не прошло больше 10 минут и не совпадает ниодной команде, то меняем пароль и удаляем telegramMessage
     }
 
 

@@ -27,8 +27,13 @@ class EventController extends Controller
     {
         $q = Event::query();
 
-        if ($event_type_id = $request->event_type_id)
+        if ($event_type_id = $request->type)
             $q->where('event_type_id', $event_type_id);
+
+        if ($title = $request->search) {
+            $title = trim($title);
+            $q->where('title', 'like', "%$title%");
+        }
 
         if (!is_null($request->active)) {
             $q->where('active', (bool)$request->active);

@@ -46,4 +46,23 @@ class TelegramLoggerEloquent
         return new TelegramMessage();
     }
 
+    public static function createOutDelete(array $raw)
+    {
+        try {
+            $t = new TelegramMessage();
+            $t->chat_id = $raw['chat_id'] ?? null;
+            $t->direction = EnumTelegramLoggerDirection::DELETE->value;
+            $t->text = null;
+            $t->raw = $raw;
+            $t->save();
+
+            return $t;
+        } catch (\Throwable $exception) {
+            Log::error($exception->getMessage());
+        }
+
+        return new TelegramMessage();
+    }
+
+
 }

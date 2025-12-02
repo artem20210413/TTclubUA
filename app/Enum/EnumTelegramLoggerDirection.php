@@ -7,4 +7,5 @@ enum EnumTelegramLoggerDirection: string
 
     case OUT = 'out';
     case IN = 'in';
+    case DELETE = 'delete';
 }

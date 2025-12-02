@@ -29,6 +29,7 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
+//        dd($request->all());
         //https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://tt.tishchenko.kiev.ua/api/telegram/webhook
         Log::info("webhook request received", [$request->all()]);
 
@@ -38,7 +39,6 @@ class TelegramController extends Controller
 
         if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
 
-//TODO сохранить в БД
         try {
             new TelegramCommandHandler($telegramMessageDto);
         } catch (ApiException $e) {

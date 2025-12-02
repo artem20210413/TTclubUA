@@ -19,4 +19,15 @@ class TelegramLogger extends Model
 
         return $response;
     }
+
+    public static function deleteMessage(array $params)
+    {
+        try {
+            Telegram::deleteMessage($params);
+            TelegramLoggerEloquent::createOutDelete($params);
+
+        } catch (\Exception $e) {
+            Log::error('Telegram deleteMessage error: ' . $e->getMessage());
+        }
+    }
 }

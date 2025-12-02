@@ -16,7 +16,7 @@ return new class extends Migration
 //            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('message_id')->nullable();
             $table->string('chat_id');
-            $table->enum('direction', ['in', 'out']); // in=от пользователя, out=от бота
+            $table->string('direction'); // in=от пользователя, out=от бота
             $table->text('text')->nullable();
             $table->json('raw')->nullable(); // полный апдейт, если нужно
             $table->timestamps();
@@ -24,7 +24,6 @@ return new class extends Migration
             $table->index(['chat_id']);
 //            $table->index(['user_id']);
         });
-
     }
 
     /**

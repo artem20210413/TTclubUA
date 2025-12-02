@@ -112,7 +112,7 @@ Route::post('/import', [ImportController::class, 'importMain'])->middleware(['au
 Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
 Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
 
-Route::post('/telegram/webhook', [TelegramController::class, 'webhook']);
+Route::post('/telegram/webhook', [TelegramController::class, 'webhook']); // ->middleware('telegram.webhook');
 Route::get('/telegram/test', [TelegramController::class, 'test']);
 
 

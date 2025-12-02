@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'only.ua' => \App\Http\Middleware\OnlyFromUkraine::class,
             'params.throttle' => \App\Http\Middleware\ParamsThrottleMiddleware::class,
+            'telegram.webhook' => \App\Http\Middleware\VerifyTelegramWebhook::class,
         ]);
 //        $middleware->alias(['permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class]);
     })

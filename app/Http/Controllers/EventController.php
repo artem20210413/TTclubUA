@@ -10,7 +10,6 @@ use App\Http\Resources\EventResource;
 use App\Http\Resources\EventTypeResource;
 use App\Http\Resources\PublicationResource;
 use App\Http\Resources\PublicationTypeResource;
-use App\Models\Car;
 use App\Models\City;
 use App\Models\Event;
 use App\Models\EventType;
@@ -107,7 +106,14 @@ class EventController extends Controller
         return success(data: new EventResource($event));
     }
 
-    public function eventDeleteImages(Event $event, int $mediaId)
+    public function eventDeleteImages(Event $event)
+    {
+        $event->clearMediaCollection(EnumTypeMedia::PHOTO_EVENT->value);
+
+        return success(data: new EventResource($event));
+    }
+
+    public function eventDeleteImage(Event $event, int $mediaId)
     {
         $event->clearMediaCollection(EnumTypeMedia::PHOTO_EVENT->value);
 
@@ -117,7 +123,6 @@ class EventController extends Controller
 
         return success(data: new EventResource($event));
     }
-
 
     public function type()
     {

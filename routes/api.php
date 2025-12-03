@@ -80,6 +80,7 @@ Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static fun
     Route::put('/{event}/active/{active}', [EventController::class, 'changeActive'])->whereIn('active', [0, 1])->middleware(['role:admin']);
     Route::post('/{event}/image', [EventController::class, 'eventAddImage'])->middleware(['role:admin']);
     Route::delete('/{event}/image', [EventController::class, 'eventDeleteImages'])->middleware(['role:admin']);
+    Route::delete('/{event}/collections/{mediaId}', [EventController::class, 'eventDeleteImages'])->middleware(['role:admin']);
 
     Route::get('/type', [EventController::class, 'type']);
     Route::post('/type/{eventType}/image', [EventController::class, 'eventTypeAddImage'])->middleware(['role:admin']);

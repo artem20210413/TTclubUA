@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Enum\EnumImageQuality;
 use App\Enum\EnumTypeMedia;
+use App\Http\Controllers\Api\ApiException;
 use App\Http\Resources\CityResource;
 use App\Http\Resources\EventResource;
 use App\Http\Resources\EventTypeResource;
 use App\Http\Resources\PublicationResource;
 use App\Http\Resources\PublicationTypeResource;
+use App\Models\Car;
 use App\Models\City;
 use App\Models\Event;
 use App\Models\EventType;
@@ -105,9 +107,13 @@ class EventController extends Controller
         return success(data: new EventResource($event));
     }
 
-    public function eventDeleteImages(Event $event)
+    public function eventDeleteImages(Event $event, int $mediaId)
     {
         $event->clearMediaCollection(EnumTypeMedia::PHOTO_EVENT->value);
+
+        $media = $event->getMedia(EnumTypeMedia::PHOTO_EVENT->value)->firstWhere('id', $mediaId);
+        if (!$media) throw new ApiException('Фото не знайдено.', 0, 400);
+        $media->delete();
 
         return success(data: new EventResource($event));
     }

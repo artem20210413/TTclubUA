@@ -115,8 +115,6 @@ class EventController extends Controller
 
     public function eventDeleteImage(Event $event, int $mediaId)
     {
-        $event->clearMediaCollection(EnumTypeMedia::PHOTO_EVENT->value);
-
         $media = $event->getMedia(EnumTypeMedia::PHOTO_EVENT->value)->firstWhere('id', $mediaId);
         if (!$media) throw new ApiException('Фото не знайдено.', 0, 400);
         $media->delete();

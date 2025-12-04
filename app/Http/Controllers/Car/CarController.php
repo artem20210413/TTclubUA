@@ -57,11 +57,37 @@ class CarController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->search;
+        $search = trim((string)$request->input('search'));
+
         $q = Car::query();
         $q = CarEloquent::search($q, $search);
-        if (!$search)
+
+        $geneIds = $request->input('gene_ids');
+        $modelIds = $request->input('model_ids');
+        $colorIds = $request->input('color_ids');
+        $city = trim((string)$request->input('city'));
+
+        if (!$search && !$geneIds && !$modelIds && !$colorIds && !$city) {
             $q = CarEloquent::onlyActiveUser($q);
+        }
+
+        if ($city) {
+            $q->whereHas('user.cities', function ($cityQuery) use ($city) {
+                $cityQuery->where('cities.name', 'LIKE', "%{$city}%");
+            });
+        }
+
+        if ($geneIds) {
+            $q->whereIn('gene_id', explode(',', $geneIds));
+        }
+
+        if ($modelIds) {
+            $q->whereIn('model_id', explode(',', $modelIds));
+        }
+
+        if ($colorIds) {
+            $q->whereIn('color_id', explode(',', $colorIds));
+        }
         $q->orderBy('created_at', 'desc');
         $cars = $q->paginate($request->perPage ?? 15);
 

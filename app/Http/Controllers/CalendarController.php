@@ -99,8 +99,8 @@ class CalendarController extends Controller
         ->merge($eventItems)
             ->merge($birthdayItems)
             ->sortBy(function ($item) {
-                // time может быть null (для ДР) — подставим "00:00"
-                $time = $item['time'] ?? '00:00';
+                // time может быть null (для ДР) — подставим "23:59"
+                $time = $item['time'] ?? '23:59';
                 return $item['date'] . ' ' . $time;
             })
             ->values()

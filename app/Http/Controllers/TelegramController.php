@@ -36,11 +36,10 @@ class TelegramController extends Controller
 
         $message = $request->message ?? $request->edited_message ?? null;
         if (!$message) return success();
-        $telegramMessageDto = new TelegramMessageDto($request->all()['message'] ?? []);
-
-        if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
-
         try {
+        $telegramMessageDto = new TelegramMessageDto($request->all()['message'] ?? []);
+        if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
+//        try {
             new TelegramCommandHandler($telegramMessageDto);
         } catch (ApiException $e) {
             TelegramLogger::sendMessage([

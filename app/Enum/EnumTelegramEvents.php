@@ -27,6 +27,7 @@ enum EnumTelegramEvents
         $config = config("telegram.chats");
 
         $welcome = $config['welcome'] ?? '';
+        $ttChat = $config['tt_chat'] ?? '';
         $testBot2 = $config['test_bot_2'] ?? '';
 
         $myIds = Auth::user() ? [Auth::user()->telegram_id] : [];

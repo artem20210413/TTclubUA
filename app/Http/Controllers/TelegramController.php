@@ -29,6 +29,7 @@ class TelegramController extends Controller
 
     public function webhook(Request $request)
     {
+
 //        dd($request->all());
         //https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://tt.tishchenko.kiev.ua/api/telegram/webhook
         Log::info("webhook request received", [$request->all()]);
@@ -48,10 +49,11 @@ class TelegramController extends Controller
                 'text' => $e->getMessage(),
             ]);
         } catch (\Throwable $e) {
-            TelegramLogger::sendMessage([
-                'chat_id' => $telegramMessageDto?->getChat()?->getId() ?? null,
-                'text' => "❗ Виникла непередбачена помилка.\nЧас: " . now()->format('Y-m-d H:i:s') . "\n\nБудь ласка, спробуйте пізніше або зверніться до підтримки.",
-            ]);
+            Log::error($e->getMessage());
+//            TelegramLogger::sendMessage([
+//                'chat_id' => EnumTelegramEvents::LIST_BIRTHDAYS,
+//                'text' => "❗ Виникла непередбачена помилка.\nЧас: " . now()->format('Y-m-d H:i:s') . "\n\nБудь ласка, спробуйте пізніше або зверніться до підтримки.",
+//            ]);
         }
 
         return success();

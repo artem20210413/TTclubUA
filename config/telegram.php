@@ -34,6 +34,7 @@ return [
     'chats' => [
         'welcome' => env('TELEGRAM_CHAT_WELCOME'),
         'test_bot_2' => env('TELEGRAM_CHAT_TEST_BOT_2'),
+        'tt_club_ua' => env('TELEGRAM_CHAT_TT_CLUB'),
     ],
     'bots' => [
         'mybot' => [

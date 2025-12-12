@@ -98,7 +98,7 @@ class UserEloquent
 
         $user->telegram_id = $messageDto->getContact()['user_id'];
         if ($messageDto->getFrom()->getFirstName() !== null)
-            $user->telegram_nickname = $messageDto->getFrom()->getFirstName();
+            $user->telegram_nickname = $messageDto->getFrom()->getUsername();
         $user->phone_verified_at = Carbon::now();
         $user->save();
 

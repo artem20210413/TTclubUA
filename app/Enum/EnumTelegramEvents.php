@@ -27,13 +27,14 @@ enum EnumTelegramEvents
         $config = config("telegram.chats");
 
         $welcome = $config['welcome'] ?? '';
+        $ttChat = $config['tt_club_ua'] ?? '';
         $testBot2 = $config['test_bot_2'] ?? '';
 
         $myIds = Auth::user() ? [Auth::user()->telegram_id] : [];
         $usersIds = $users ? $users->pluck('telegram_id')->toArray() : [];
 
         return match ($this) {
-            self::FA_FA => [$welcome, $testBot2],
+            self::FA_FA => [$testBot2, $ttChat],
             self::EXPORT_USERS => [$welcome],
             self::LIST_BIRTHDAYS => [$welcome],
             self::REGISTRATION => [$welcome],

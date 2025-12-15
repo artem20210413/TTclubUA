@@ -24,7 +24,6 @@ class TelegramMessageDto
             $this->chat = new TelegramChatDto($json['chat']);
         }
 
-        $this->user = UserEloquent::updateByTg($this);
 
     }
 
@@ -66,5 +65,10 @@ class TelegramMessageDto
     public function getUser(): ?User
     {
         return $this->user;
+    }
+
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
     }
 }

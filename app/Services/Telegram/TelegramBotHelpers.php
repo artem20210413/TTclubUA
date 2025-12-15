@@ -52,11 +52,17 @@ class TelegramBotHelpers
 
     public static function generationTextSuggestion(User $user, string $description, ?string $environment): string
     {
-        $text = "<b>Нове звернення від користувача:</b>\n"
-            . "<b>Користувач:</b> {user}\n"
-            . "<b>Телефон:</b> {phone}\n"
-            . "<b>Середовище:</b> {environment_line}\n"
-            . "<b>Повідомлення:</b>\n{description}";
+        $text = "📢 <b>Нове звернення!</b>\n"
+            . "<b>Від:</b> {user}\n"
+            . "📞<b>:</b> {phone}\n"
+            . "⚙️<b>:</b> {environment_line}\n"
+            . "📄<b>:</b>\n{description}";
+//        $text = "📬 <b>Нове звернення!</b>\n\n"
+//            . "👨‍💻 <b>Від:</b> {user}\n"
+//            . "📞 <b>Телефон:</b> {phone}\n"
+//            . "⚙️ <b>Середовище:</b> {environment_line}\n\n"
+//            . "📄 <b>Повідомлення:</b>\n{description}";
+
 
         $text = str_replace("{user}", self::TryMentionPerson($user), $text);
         $text = str_replace("{phone}", $user->phone, $text);

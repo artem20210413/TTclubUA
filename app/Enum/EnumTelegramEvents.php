@@ -30,6 +30,7 @@ enum EnumTelegramEvents
         $welcome = $config['welcome'] ?? '';
         $ttChat = $config['tt_club_ua'] ?? '';
         $testBot2 = $config['test_bot_2'] ?? '';
+        $suggestions = $config['suggestions'] ?? '';
 
         $myIds = Auth::user() ? [Auth::user()->telegram_id] : [];
         $usersIds = $users ? $users->pluck('telegram_id')->toArray() : [];
@@ -39,7 +40,7 @@ enum EnumTelegramEvents
             self::EXPORT_USERS => [$welcome],
             self::LIST_BIRTHDAYS => [$welcome],
             self::REGISTRATION => [$welcome],
-            self::SUGGESTION => [$testBot2],
+            self::SUGGESTION => [$suggestions],
 
             self::TEST => [$testBot2],
 

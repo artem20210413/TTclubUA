@@ -25,7 +25,11 @@ class TelegramBotHelpers
     {
         if ($user?->telegram_id)
             return self::MentionPerson($user);
-        return self::LinkToPerson($user);
+
+        if ($user?->telegram_nickname)
+            return self::LinkToPerson($user);
+
+        return $user?->name;
     }
 
     public static function generationTextMention(User $owner, Car $car, ?string $description, ?Carbon $time = null): string
@@ -42,6 +46,22 @@ class TelegramBotHelpers
         if ($description) {
             $text = $text . "\n\n✍️: $description";
         }
+
+        return $text;
+    }
+
+    public static function generationTextSuggestion(User $user, string $description, ?string $environment): string
+    {
+        $text = "<b>Нове звернення від користувача:</b>\n"
+            . "<b>Користувач:</b> {user}\n"
+            . "<b>Телефон:</b> {phone}\n"
+            . "<b>Середовище:</b> {environment_line}\n"
+            . "<b>Повідомлення:</b>\n{description}";
+
+        $text = str_replace("{user}", self::TryMentionPerson($user), $text);
+        $text = str_replace("{phone}", $user->phone, $text);
+        $text = str_replace("{description}", $description, $text);
+        $text = str_replace("{environment_line}", $environment ?? '-', $text);
 
         return $text;
     }

@@ -17,6 +17,7 @@ enum EnumTelegramEvents
     case CUSTOM; // произвольный
     case EXPORT_USERS; //експорт всех пользователей
     case REGISTRATION; // при регистрации уведомление
+    case SUGGESTION;
 
     /**
      * Получить разрешение для качества
@@ -38,6 +39,7 @@ enum EnumTelegramEvents
             self::EXPORT_USERS => [$welcome],
             self::LIST_BIRTHDAYS => [$welcome],
             self::REGISTRATION => [$welcome],
+            self::SUGGESTION => [$testBot2],
 
             self::TEST => [$testBot2],
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
+use Telegram\Bot\FileUpload\InputFile;
 
 class TelegramBot
 {
@@ -106,6 +107,49 @@ class TelegramBot
                     'chat_id' => $chatId,
                     'media' => json_encode($media),
                 ];
+
+                $this->telegram->sendMediaGroup($params);
+                TelegramLoggerEloquent::createOut($params);
+            } catch (\Exception $e) {
+                Log::error("Telegram send error: " . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Sends a group of photos from local file paths or URLs.
+     */
+    public function sendPhotosPathOrUrlWithDescription(array $imgPathsOrUrls, ?string $description = null): void
+    {
+        foreach ($this->enumTelegramEvents->getIds() as $chatId) {
+            try {
+                $media = [];
+                $params = [
+                    'chat_id' => $chatId,
+                ];
+
+                foreach ($imgPathsOrUrls as $index => $path) {
+                    $attachmentName = 'photo' . $index;
+                    $mediaItem = [
+                        'type' => 'photo',
+                    ];
+
+                    if (filter_var($path, FILTER_VALIDATE_URL)) {
+                        $mediaItem['media'] = $path;
+                    } else {
+                        $mediaItem['media'] = 'attach://' . $attachmentName;
+                        $params[$attachmentName] = InputFile::create($path);
+                    }
+
+                    if ($index === 0 && $description) {
+                        $mediaItem['caption'] = $description;
+                        $mediaItem['parse_mode'] = 'HTML';
+                    }
+
+                    $media[] = $mediaItem;
+                }
+
+                $params['media'] = json_encode($media);
 
                 $this->telegram->sendMediaGroup($params);
                 TelegramLoggerEloquent::createOut($params);

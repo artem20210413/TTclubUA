@@ -10,6 +10,7 @@ use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\SuggestionsController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -71,6 +72,7 @@ Route::post('/car/{car}/change-active', [CarController::class, 'changeActive'])-
 Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteCollections'])->middleware(['auth:sanctum']);
 
 Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
+Route::post('suggestions/send', [SuggestionsController::class, 'send'])->middleware(['auth:sanctum']);
 
 Route::get('/calendar', [CalendarController::class, 'list'])->middleware(['auth:sanctum']);
 Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {

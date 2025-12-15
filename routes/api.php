@@ -12,6 +12,7 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\SuggestionsController;
 use App\Http\Controllers\TelegramController;
+use App\Http\Controllers\SystemController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,7 @@ Route::post('/change-password', [AuthController::class, 'changePassword'])->midd
 Route::delete('/delete-account', [UserController::class, 'deleteAccount'])->middleware(['auth:sanctum']);
 
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
+Route::get('/system/user-stats', [SystemController::class, 'systemUserStats'])->middleware(['auth:sanctum', 'role:admin']);
 
 Route::get('/user/export', [UserController::class, 'export'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
@@ -125,4 +127,3 @@ Route::get('/telegram/test', [TelegramController::class, 'test']);
 //->middleware('role:admin') Проверяет, что пользователь обладает определенной ролью, используя Spatie Permissions.
 //->middleware('permission:view-dashboard') Проверяет, что у пользователя есть конкретное разрешение для действия.
 //Route::group(['middleware' => ['permission:edit articles|publish articles']], function () {}); // маршруты для пользователей, у которых есть либо "edit articles", либо "publish articles"
-

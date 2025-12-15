@@ -193,16 +193,17 @@
                                 <label class="field @error('car.license_plate') fail  @enderror">
                                     <span>Державний номер</span>
                                     <input name="car[license_plate]" type="text"
-                                           pattern="^[A-Za-zА-Яа-яІіЇїЄє]{2}\d{4}[A-Za-zА-Яа-яІіЇїЄє]{2}$"
-                                           title="Формат: 2 літери, 4 цифри, 2 літери (наприклад KA6969CH)" required
+                                           pattern="^(?=.*[A-Za-zА-Яа-яІіЇїЄє])(?=.*\d)[A-Za-zА-Яа-яІіЇїЄє\d]{4,10}$"
+                                           title="Від 4 до 10 символів, мінімум 1 літера та 1 цифра" required
                                            value="{{ old('car.license_plate') }}"
                                            placeholder="KA6969CH">
                                 </label>
-
                                 <label class="field @error('car.personalized_license_plate') fail  @enderror">
                                     <span>Іменний номер</span>
                                     <input name="car[personalized_license_plate]" type="text"
                                            value="{{ old('car.personalized_license_plate') }}"
+                                           pattern="^[A-Za-zА-Яа-яІіЇїЄє\d]{3,8}$"
+                                           title="Від 3 до 8 символів"
                                            placeholder="UGROZA">
                                 </label>
 

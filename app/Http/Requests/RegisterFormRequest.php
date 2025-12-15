@@ -44,8 +44,9 @@ class RegisterFormRequest extends FormRequest
             'car.color_id' => 'exclude_if:no_tt_friend,1|required|exists:colors,id',
             'car.name' => 'exclude_if:no_tt_friend,1|nullable|string|max:255',
             'car.vin_code' => 'exclude_if:no_tt_friend,1|nullable|string|max:64|unique:cars,vin_code',
-            'car.license_plate' => 'exclude_if:no_tt_friend,1|required|string|regex:/^[A-Za-zА-Яа-яІіЇїЄє]{2}\d{4}[A-Za-zА-Яа-яІіЇїЄє]{2}$/u|unique:cars,license_plate',
-            'car.personalized_license_plate' => 'exclude_if:no_tt_friend,1|nullable|string|max:20|unique:cars,personalized_license_plate',
+//            'car.license_plate' => 'exclude_if:no_tt_friend,1|required|string|regex:/^[A-Za-zА-Яа-яІіЇїЄє]{2}\d{4}[A-Za-zА-Яа-яІіЇїЄє]{2}$/u|unique:cars,license_plate',
+            'car.license_plate' => 'exclude_if:no_tt_friend,1|required|string|unique:cars,license_plate',
+            'car.personalized_license_plate' => 'exclude_if:no_tt_friend,1|nullable|string|max:8|unique:cars,personalized_license_plate',
             'car.photo' => 'nullable|max:20480', // Макс. 20 MB |mimes:jpeg,png,jpg
         ];
     }

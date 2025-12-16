@@ -36,6 +36,11 @@ class SystemController extends Controller
             ->having('token_count', '>', 1)
             ->get();
 
+        // --- Количество уникальных авторизованных пользователей ---
+        $authorizedUniqueUsers = DB::table('personal_access_tokens')
+            ->distinct('tokenable_id')
+            ->count();
+
         // --- Распределение по статусу ---
         $activeUsersCount = User::query()->where('active', true)->count();
         $inactiveUsersCount = $totalUsers - $activeUsersCount;
@@ -46,6 +51,7 @@ class SystemController extends Controller
 
         return response()->json([
             'total_users' => $totalUsers,
+            'authorized_unique_users' => $authorizedUniqueUsers,
             'active_users_last_hour' => [
                 'count' => $activeUsersLastHourIds->count(),
                 'user_ids' => $activeUsersLastHourIds,

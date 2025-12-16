@@ -197,8 +197,14 @@ class AuthController extends Controller
 
     private function getDeviceType(Request $request): string
     {
+        Log::info('serve', $_SERVER);
         $userAgent = $request->userAgent();
-Log::info($userAgent);
+        Log::info('User-Agent for device detection: ' . ($userAgent ?? 'not set'));
+
+        if (empty($userAgent)) {
+            return 'unknown';
+        }
+
         if (preg_match('/(android)/i', $userAgent)) {
             return 'android';
         }

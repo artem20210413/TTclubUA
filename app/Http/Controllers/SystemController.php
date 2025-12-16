@@ -19,6 +19,8 @@ class SystemController extends Controller
         // --- Базовая статистика ---
         $totalUsers = User::query()->count();
         $newUsersToday = User::query()->whereDate('created_at', Carbon::today())->count();
+        $newUsersLast30Days = User::query()->where('created_at', '>=', Carbon::now()->subDays(30))->count();
+        $newUsersLast365Days = User::query()->where('created_at', '>=', Carbon::now()->subDays(365))->count();
         $newUsersThisMonth = User::query()->where('created_at', '>=', Carbon::now()->startOfMonth())->count();
         $newUsersThisYear = User::query()->where('created_at', '>=', Carbon::now()->startOfYear())->count();
 
@@ -58,6 +60,8 @@ class SystemController extends Controller
             ],
             'new_users' => [
                 'today' => $newUsersToday,
+                'last_30_days' => $newUsersLast30Days,
+                'last_365_days' => $newUsersLast365Days,
                 'this_month' => $newUsersThisMonth,
                 'this_year' => $newUsersThisYear,
             ],

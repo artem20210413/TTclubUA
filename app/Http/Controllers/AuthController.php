@@ -59,8 +59,8 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('password');
-
         $login = $request->input('login');
+
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         $credentials[$fieldType] = $login;
 
@@ -76,8 +76,8 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $deviceType = $this->getDeviceType($request);
-        $token = $user->createToken("auth_$deviceType")->plainTextToken;
+        $env = $this->getClientEnvironment($request);
+        $token = $user->createToken("auth_$env")->plainTextToken;
 
         return success('Login successful', [
             'token' => $token,
@@ -148,7 +148,7 @@ class AuthController extends Controller
             }
 
             $user->clearCode();
-            $deviceType = $this->getDeviceType($request);
+            $deviceType = $this->getClientEnvironment($request);
             $token = $user->createToken("tg_$deviceType")->plainTextToken;
 
             return success("Авторизація успішна", [
@@ -195,29 +195,36 @@ class AuthController extends Controller
         }
     }
 
-    private function getDeviceType(Request $request): string
+    private function getClientEnvironment(Request $request): string
     {
-        Log::info('serve', $_SERVER);
+        // 1. Check for a custom header first
+        $fromHeader = $request->header('X-Client-Platform');
+        Log::info("X-Client-Platform: " + $fromHeader);;
+        if ($fromHeader) {
+            return $fromHeader;
+        }
+
+        // 2. Check for an input parameter
+        $fromInput = $request->input('env');
+        if ($fromInput) {
+            return $fromInput;
+        }
+
+        // 3. Fallback to User-Agent parsing
         $userAgent = $request->userAgent();
-        Log::info('User-Agent for device detection: ' . ($userAgent ?? 'not set'));
-
-        if (empty($userAgent)) {
-            return 'unknown';
+        if (!empty($userAgent)) {
+            if (preg_match('/(android)/i', $userAgent)) {
+                return 'android';
+            }
+            if (preg_match('/(iphone|ipad|ipod)/i', $userAgent)) {
+                return 'ios';
+            }
+            if (preg_match('/(windows)/i', $userAgent)) {
+                return 'windows';
+            }
+            return 'web'; // Default for browsers
         }
 
-        if (preg_match('/(android)/i', $userAgent)) {
-            return 'android';
-        }
-
-        if (preg_match('/(iphone|ipad|ipod)/i', $userAgent)) {
-            return 'ios';
-        }
-
-        if (preg_match('/(windows)/i', $userAgent)) {
-            return 'windows';
-        }
-
-        return 'other';
+        return 'unknown';
     }
-
 }

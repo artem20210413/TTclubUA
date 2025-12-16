@@ -60,6 +60,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only('password');
         $login = $request->input('login');
+        $env = $request->header('X-Client-Platform','unknown');
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         $credentials[$fieldType] = $login;
@@ -76,8 +77,6 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-//        $env = $this->getClientEnvironment($request);
-        $env = '-';
         $token = $user->createToken("auth_$env")->plainTextToken;
 
         return success('Login successful', [
@@ -134,6 +133,7 @@ class AuthController extends Controller
 
         try {
 
+            $env = $request->header('X-Client-Platform','unknown');
             $phone = $request->phone;
             $user = User::findByPhone($phone);
             $code = trim($request->code);
@@ -149,8 +149,6 @@ class AuthController extends Controller
             }
 
             $user->clearCode();
-//            $env = $this->getClientEnvironment($request);
-            $env = '-';
             $token = $user->createToken("tg_$env")->plainTextToken;
 
             return success("Авторизація успішна", [
@@ -197,36 +195,4 @@ class AuthController extends Controller
         }
     }
 
-    private function getClientEnvironment(Request $request): string
-    {
-        // 1. Check for a custom header first
-        $fromHeader = $request->header('X-Client-Platform');
-        Log::info("X-Client-Platform: " + $fromHeader);;
-        if ($fromHeader) {
-            return $fromHeader;
-        }
-
-        // 2. Check for an input parameter
-        $fromInput = $request->input('env');
-        if ($fromInput) {
-            return $fromInput;
-        }
-
-        // 3. Fallback to User-Agent parsing
-        $userAgent = $request->userAgent();
-        if (!empty($userAgent)) {
-            if (preg_match('/(android)/i', $userAgent)) {
-                return 'android';
-            }
-            if (preg_match('/(iphone|ipad|ipod)/i', $userAgent)) {
-                return 'ios';
-            }
-            if (preg_match('/(windows)/i', $userAgent)) {
-                return 'windows';
-            }
-            return 'web'; // Default for browsers
-        }
-
-        return 'unknown';
-    }
 }

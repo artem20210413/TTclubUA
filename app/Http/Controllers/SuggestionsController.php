@@ -15,7 +15,7 @@ class SuggestionsController extends Controller
     {
         $user = Auth::user();
         $description = $request->input('description');
-        $environment = $request->input('environment');
+        $environment = $request->header('X-Client-Platform','unknown');
         $photos = $request->file('files');
 
         $bot = new TelegramBot(EnumTelegramEvents::SUGGESTION);

@@ -56,7 +56,7 @@ class TelegramBotHelpers
             . "<b>Від:</b> {user}\n"
             . "📞<b>:</b> {phone}\n"
             . "⚙️<b>:</b> {environment_line}\n"
-            . "📄<b>:</b>\n{description}";
+            . "📄<b>:</b> {description}";
 //        $text = "📬 <b>Нове звернення!</b>\n\n"
 //            . "👨‍💻 <b>Від:</b> {user}\n"
 //            . "📞 <b>Телефон:</b> {phone}\n"

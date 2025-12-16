@@ -76,7 +76,8 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $deviceType = $this->getDeviceType($request);
+        $token = $user->createToken("auth_$deviceType")->plainTextToken;
 
         return success('Login successful', [
             'token' => $token,
@@ -147,7 +148,8 @@ class AuthController extends Controller
             }
 
             $user->clearCode();
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $deviceType = $this->getDeviceType($request);
+            $token = $user->createToken("tg_$deviceType")->plainTextToken;
 
             return success("Авторизація успішна", [
                 'token' => $token,
@@ -191,6 +193,25 @@ class AuthController extends Controller
         } catch (ApiException $e) {
             return error($e);
         }
+    }
+
+    private function getDeviceType(Request $request): string
+    {
+        $userAgent = $request->userAgent();
+
+        if (preg_match('/(android)/i', $userAgent)) {
+            return 'android';
+        }
+
+        if (preg_match('/(iphone|ipad|ipod)/i', $userAgent)) {
+            return 'ios';
+        }
+
+        if (preg_match('/(windows)/i', $userAgent)) {
+            return 'windows';
+        }
+
+        return 'other';
     }
 
 }

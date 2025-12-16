@@ -76,7 +76,8 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $env = $this->getClientEnvironment($request);
+//        $env = $this->getClientEnvironment($request);
+        $env = '-';
         $token = $user->createToken("auth_$env")->plainTextToken;
 
         return success('Login successful', [
@@ -148,8 +149,9 @@ class AuthController extends Controller
             }
 
             $user->clearCode();
-            $deviceType = $this->getClientEnvironment($request);
-            $token = $user->createToken("tg_$deviceType")->plainTextToken;
+//            $env = $this->getClientEnvironment($request);
+            $env = '-';
+            $token = $user->createToken("tg_$env")->plainTextToken;
 
             return success("Авторизація успішна", [
                 'token' => $token,

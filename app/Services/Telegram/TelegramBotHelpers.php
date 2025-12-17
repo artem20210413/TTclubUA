@@ -108,7 +108,7 @@ class TelegramBotHelpers
                     . "Індивідуальний номер: " . ($car->personalized_license_plate ?? '—') . "\n\n";
             }
         }
-        $cars = $cars === "" ? 'Авто немає.' : $cars;
+        $cars = $cars === "" ? 'Немає Audi TT.' : $cars;
 
         return $user . "\n\n" . $cars;
     }

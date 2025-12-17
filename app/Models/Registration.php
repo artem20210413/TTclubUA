@@ -65,8 +65,8 @@ class Registration extends Model implements HasMedia
         unset($json['_token'], $json['password'], $json['confirm_password'], $json['password_confirmation']);
 
         $json['cities_model'] = City::query()->whereIn('id', [$json['city_id']])->get()->toArray();
-        if(isset($json['instagram_nickname']))
-        $json['instagram_nickname'] = str_replace("@", "", $json['instagram_nickname']);
+        if (isset($json['instagram_nickname']))
+            $json['instagram_nickname'] = str_replace("@", "", $json['instagram_nickname']);
 
         $car = $json['car'] ?? null;
         if (isset($car)) {

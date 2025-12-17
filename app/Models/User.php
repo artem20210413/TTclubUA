@@ -17,6 +17,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
@@ -52,13 +53,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \Illuminate\Database\Eloquent\Collection|Session[] $sessions
  * @property-read \Illuminate\Database\Eloquent\Collection|Car[] $cars
  */
-class User extends Authenticatable implements HasMedia, Auditable
+class User extends Authenticatable implements HasMedia, AuditableContract
 {
     use HasApiTokens;
     use HasRoles;
     use HasRoles;
     use InteractsWithMedia;
-    use AuditableTrait;
+    use \OwenIt\Auditing\Auditable;
 
 
     /** @use HasFactory<\Database\Factories\UserFactory> */

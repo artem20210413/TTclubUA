@@ -1,5 +1,7 @@
 <?php
 
+use App\Resolvers\UserResolver;
+
 return [
 
     'enabled' => env('AUDITING_ENABLED', true),
@@ -30,8 +32,9 @@ return [
             'web',
             'api',
         ],
-        'resolver' => OwenIt\Auditing\Resolvers\UserResolver::class,
+        'resolver' => UserResolver::class,
     ],
+
 
     /*
     |--------------------------------------------------------------------------

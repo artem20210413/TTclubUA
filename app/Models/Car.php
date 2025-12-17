@@ -4,13 +4,10 @@ namespace App\Models;
 
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\Car\UpdateCarRequest;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Jetstream\HasProfilePhoto;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -36,11 +33,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property \App\Models\CarModel $model
  * @property \App\Models\Color $color
  */
-class Car extends Model  implements HasMedia, Auditable
+class Car extends Model  implements HasMedia, AuditableContract
 {
     use HasProfilePhoto;
     use InteractsWithMedia;
-    use AuditableTrait;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'user_id',

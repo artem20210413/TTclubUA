@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Jetstream\HasProfilePhoto;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -19,11 +20,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int priority
  * @property bool $active
  */
-class Goods extends Model implements HasMedia, Auditable
+class Goods extends Model implements HasMedia, AuditableContract
 {
     use HasProfilePhoto;
     use InteractsWithMedia;
-    use AuditableTrait;
+    use \OwenIt\Auditing\Auditable;
 
     protected $casts = [
         'active' => 'boolean',

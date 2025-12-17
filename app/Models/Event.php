@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Jetstream\HasProfilePhoto;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -22,11 +24,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property \Carbon\Carbon|null created_at
  * @property \Carbon\Carbon|null updated_at
  */
-class Event extends Model implements HasMedia
+class Event extends Model implements HasMedia, Auditable
 {
-
     use HasProfilePhoto;
     use InteractsWithMedia;
+    use AuditableTrait;
 
 
     protected $fillable = [

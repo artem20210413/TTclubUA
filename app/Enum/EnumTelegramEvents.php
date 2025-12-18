@@ -36,7 +36,7 @@ enum EnumTelegramEvents
         $usersIds = $users ? $users->pluck('telegram_id')->toArray() : [];
 
         return match ($this) {
-            self::FA_FA => [$testBot2, $ttChat],
+            self::FA_FA => [$ttChat],
             self::EXPORT_USERS => [$welcome],
             self::LIST_BIRTHDAYS => [$welcome],
             self::REGISTRATION => [$welcome],

@@ -35,9 +35,7 @@ class TelegramBotHelpers
     public static function generationTextMention(User $owner, Car $car, ?string $description, ?Carbon $time = null): string
     {
 //        $text = "<b>Фа-фа!!!</b> {employee} - {car}! Тебе зловили в потоці, лови привітання від {owner}!";
-        $text = `<b>Фа-фа!</b> 🚗\n
-{employee}\n
-Привіт від {owner} 👋!`;
+        $text = "<b>Фа-фа!</b> 🚗\n{employee}\nПривіт від {owner} 👋!";
 
         $text = str_replace("{owner}", self::TryMentionPerson($owner), $text);
 //        $text = str_replace("{car}", $car->getGeneralShortInfo(), $text);

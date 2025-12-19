@@ -42,7 +42,7 @@ class TelegramBotHelpers
         $text = str_replace("{employee}", self::TryMentionPerson($car?->user), $text);
 
         if ($time) {
-            $text = $text . "\n🕒: " . $time->toDateTimeString();
+            $text = $text . "\n" . $time->toDateTimeString();
         }
         if ($description) {
             $text = $text . "\n\n✍️: $description";

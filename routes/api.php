@@ -73,7 +73,15 @@ Route::post('/car/{id}/collections', [CarController::class, 'addCollections'])->
 Route::post('/car/{car}/change-active', [CarController::class, 'changeActive'])->middleware(['auth:sanctum'])->middleware(['auth:sanctum', 'role:admin']);
 Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteCollections'])->middleware(['auth:sanctum']);
 
-Route::post('mention/car/{car}', [MentionController::class, 'mention'])->middleware(['auth:sanctum']);
+
+// ... остальной код файла
+
+Route::group(['prefix' => 'mention', 'middleware' => ['auth:sanctum']], static function () {
+    Route::post('/car/{car}', [MentionController::class, 'mention']);
+    Route::get('/sent/count', [MentionController::class, 'getSentMentionsCount']);
+    Route::get('/sent', [MentionController::class, 'getSentMentions']);
+});
+
 Route::post('suggestions/send', [SuggestionsController::class, 'send'])->middleware(['auth:sanctum']);
 
 Route::get('/calendar', [CalendarController::class, 'list'])->middleware(['auth:sanctum']);

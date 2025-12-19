@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Mentions;
 
 use App\Eloquent\MentionEloquent;
 use App\Models\Mention;
 use Illuminate\Console\Command;
 
-class ClearMentionsCommand extends Command
+class ClearMentionsMediaCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'clear:mention {days?}';
+    protected $signature = 'clear:mention-media {days?}';
 
     /**
      * The console command description.
@@ -32,10 +32,8 @@ class ClearMentionsCommand extends Command
         $days = $this->argument('days') ?? 14;
         $mentions = Mention::where('created_at', '<', now()->subDays($days))->get();
         $count = count($mentions);
-//        dd($mentions);
         foreach ($mentions as $mention) {
             MentionEloquent::fileDelete($mention);
-//            MentionEloquent::delete($mention);
         }
 
         $this->info("✅ Clear completed! Count: $count");

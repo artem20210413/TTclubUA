@@ -32,6 +32,7 @@ class DeployCommand extends Command
             'composer install',
             'php artisan migrate',
             'php artisan optimize',
+//            'php artisan queue:restart',
 //            'npm install && npm run build',
         ];
 

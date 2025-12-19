@@ -34,7 +34,44 @@ class MentionController extends Controller
         return success();
     }
 
+    /**
+     * Получить количество ПОЛУЧЕННЫХ упоминаний (где я владелец).
+     */
+    public function getReceivedMentionsCount(): JsonResponse
+    {
+        $user = Auth::user();
 
+        $count = Mention::query()
+            ->whereHas('carOwnerUser', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })
+            ->count();
+
+        return response()->json([
+            'mentions_count' => $count,
+        ]);
+    }
+
+    /**
+     * Получить список ПОЛУЧЕННЫХ упоминаний.
+     */
+    public function getReceivedMentions(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $mentions = Mention::query()
+            ->whereHas('carOwnerUser', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })
+            ->latest()
+            ->paginate(20);
+
+        return response()->json($mentions);
+    }
+
+    /**
+     * Получить количество ОТПРАВЛЕННЫХ упоминаний (где я автор).
+     */
     public function getSentMentionsCount(): JsonResponse
     {
         $user = Auth::user();
@@ -44,24 +81,22 @@ class MentionController extends Controller
             ->count();
 
         return response()->json([
-            'mentions_count' => $count,
+            'sent_mentions_count' => $count,
         ]);
     }
 
+    /**
+     * Получить список ОТПРАВЛЕННЫХ упоминаний.
+     */
     public function getSentMentions(): JsonResponse
     {
         $user = Auth::user();
 
-        // Предполагается, что в модели Mention есть отношения owner() и car()
         $mentions = Mention::query()
             ->where('owner_id', $user->id)
-            ->latest() // Сортируем по дате (сначала новые)
-            ->paginate(20); // Добавляем пагинацию
+            ->latest()
+            ->paginate(20);
 
-
-//        dd($mentions[1]->carOwnerUser);
         return response()->json($mentions);
     }
-
 }
-

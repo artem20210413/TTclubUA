@@ -78,8 +78,13 @@ Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteC
 
 Route::group(['prefix' => 'mention', 'middleware' => ['auth:sanctum']], static function () {
     Route::post('/car/{car}', [MentionController::class, 'mention']);
-    Route::get('/sent/count', [MentionController::class, 'getSentMentionsCount']);
+
+    ыRoute::get('/sent/count', [MentionController::class, 'getSentMentionsCount']);
     Route::get('/sent', [MentionController::class, 'getSentMentions']);
+
+    Route::get('/received/count', [MentionController::class, 'getReceivedMentionsCount']);
+    Route::get('/received', [MentionController::class, 'getReceivedMentions']);
+
 });
 
 Route::post('suggestions/send', [SuggestionsController::class, 'send'])->middleware(['auth:sanctum']);

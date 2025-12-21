@@ -8,14 +8,11 @@ use App\Jobs\SandMention;
 use App\Models\Car;
 use App\Models\Mention;
 use App\Models\User;
-use App\Services\Telegram\TelegramBot;
-use App\Services\Telegram\TelegramBotHelpers;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use SebastianBergmann\Timer\Timer;
 
 
 class MentionController extends Controller
@@ -23,7 +20,6 @@ class MentionController extends Controller
 
     public function mention(Car $car, MentionRequest $request)
     {
-
         $path = $request->file('file')
             ? Storage::put('temporary-files/mentions', $request->file('file'))
             : 'nane';
@@ -35,67 +31,81 @@ class MentionController extends Controller
     }
 
     /**
-     * Получить количество ПОЛУЧЕННЫХ упоминаний (где я владелец).
+     * Получить количество ПОЛУЧЕННЫХ упоминаний (где я владелец машины).
      */
-    public function getReceivedMentionsCount(): JsonResponse
+    public function getReceivedMentionsCount(Request $request, User $user): JsonResponse
     {
-        $user = Auth::user();
+        $days = $request->input('days');
 
-        $count = Mention::query()
+        $query = Mention::query()
             ->whereHas('carOwnerUser', function ($query) use ($user) {
                 $query->where('users.id', $user->id);
-            })
-            ->count();
+            });
+
+        if ($days) {
+            $query->where('created_at', '>=', Carbon::now()->subDays($days));
+        }
 
         return response()->json([
-            'mentions_count' => $count,
+            'mentions_count' => $query->count(),
         ]);
     }
 
     /**
      * Получить список ПОЛУЧЕННЫХ упоминаний.
      */
-    public function getReceivedMentions(): JsonResponse
+    public function getReceivedMentions(Request $request, User $user): JsonResponse
     {
-        $user = Auth::user();
+        $days = $request->input('days');
 
-        $mentions = Mention::query()
+        $query = Mention::query()
             ->whereHas('carOwnerUser', function ($query) use ($user) {
                 $query->where('users.id', $user->id);
-            })
-            ->latest()
-            ->paginate(20);
+            });
+
+        if ($days) {
+            $query->where('created_at', '>=', Carbon::now()->subDays($days));
+        }
+
+        $mentions = $query->latest()->paginate($request->input('per_page', 15));
 
         return response()->json($mentions);
     }
 
     /**
-     * Получить количество ОТПРАВЛЕННЫХ упоминаний (где я автор).
+     * Получить количество ОТПРАВЛЕННЫХ упоминаний (где я owner_id).
      */
-    public function getSentMentionsCount(): JsonResponse
+    public function getSentMentionsCount(Request $request, User $user): JsonResponse
     {
-        $user = Auth::user();
+        $days = $request->input('days');
 
-        $count = Mention::query()
-            ->where('owner_id', $user->id)
-            ->count();
+        $query = Mention::query()->where('owner_id', $user->id);
+
+        if ($days) {
+            $query->where('created_at', '>=', Carbon::now()->subDays($days));
+        }
 
         return response()->json([
-            'sent_mentions_count' => $count,
+            'sent_mentions_count' => $query->count(),
         ]);
     }
 
     /**
      * Получить список ОТПРАВЛЕННЫХ упоминаний.
      */
-    public function getSentMentions(): JsonResponse
+    public function getSentMentions(Request $request, User $user): JsonResponse
     {
-        $user = Auth::user();
+        $days = $request->input('days');
 
-        $mentions = Mention::query()
+        $query = Mention::query()
             ->where('owner_id', $user->id)
-            ->latest()
-            ->paginate(20);
+            ->with('carOwnerUser:id,name'); // Загружаем, КОМУ отправили (владельца машины)
+
+        if ($days) {
+            $query->where('created_at', '>=', Carbon::now()->subDays($days));
+        }
+
+        $mentions = $query->latest()->paginate($request->input('per_page', 15));
 
         return response()->json($mentions);
     }

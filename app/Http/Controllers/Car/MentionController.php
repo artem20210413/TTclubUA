@@ -47,7 +47,7 @@ class MentionController extends Controller
         }
 
         return response()->json([
-            'mentions_count' => $query->count(),
+            'count' => $query->count(),
         ]);
     }
 
@@ -86,7 +86,7 @@ class MentionController extends Controller
         }
 
         return response()->json([
-            'sent_mentions_count' => $query->count(),
+            'count' => $query->count(),
         ]);
     }
 

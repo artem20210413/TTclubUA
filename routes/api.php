@@ -10,6 +10,8 @@ use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\Partner\PartnerController;
+use App\Http\Controllers\Partner\PromotionController;
 use App\Http\Controllers\SuggestionsController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\SystemController;
@@ -87,6 +89,25 @@ Route::group(['prefix' => 'mention', 'middleware' => ['auth:sanctum']], static f
 });
 
 Route::post('suggestions/send', [SuggestionsController::class, 'send'])->middleware(['auth:sanctum']);
+
+Route::group(['prefix' => 'partners', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [PartnerController::class, 'index']);
+    Route::post('/', [PartnerController::class, 'store'])->middleware('role:admin');
+    Route::post('/{partner}', [PartnerController::class, 'update'])->middleware('role:admin');
+    Route::post('/{partner}/photos', [PartnerController::class, 'addPhotos'])->middleware('role:admin');
+    Route::delete('/{partner}/photos/{mediaId}', [PartnerController::class, 'deletePhoto'])->middleware('role:admin');
+
+    // Promotions
+    Route::group(['prefix' => '/{partner}/promotions'], function () {
+        Route::get('/', [PromotionController::class, 'index']);
+        Route::get('/{promotion}', [PromotionController::class, 'show']);
+        Route::post('/', [PromotionController::class, 'store'])->middleware('role:admin');
+        Route::post('/{promotion}', [PromotionController::class, 'update'])->middleware('role:admin');
+//        Route::delete('/{promotion}', [PromotionController::class, 'destroy'])->middleware('role:admin');
+        Route::post('/{promotion}/photos', [PromotionController::class, 'addPhotos'])->middleware('role:admin');
+        Route::delete('/{promotion}/photos/{mediaId}', [PromotionController::class, 'deletePhoto'])->middleware('role:admin');
+    });
+});
 
 Route::get('/calendar', [CalendarController::class, 'list'])->middleware(['auth:sanctum']);
 Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {

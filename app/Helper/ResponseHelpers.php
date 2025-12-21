@@ -27,7 +27,7 @@ if (!function_exists('success')) {
 }
 
 if (!function_exists('error')) {
-    function error(ApiException $e): Illuminate\Http\JsonResponse
+    function error(Throwable $e): Illuminate\Http\JsonResponse
     {
         return response()->json([
             'message' => $e->getMessage(),

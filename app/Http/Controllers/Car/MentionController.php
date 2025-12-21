@@ -98,8 +98,7 @@ class MentionController extends Controller
         $days = $request->input('days');
 
         $query = Mention::query()
-            ->where('owner_id', $user->id)
-            ->with('carOwnerUser:id,name'); // Загружаем, КОМУ отправили (владельца машины)
+            ->where('owner_id', $user->id);
 
         if ($days) {
             $query->where('created_at', '>=', Carbon::now()->subDays($days));

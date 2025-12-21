@@ -116,7 +116,7 @@ class PromotionController extends Controller
 
             $request->validate([
                 'photos' => 'required|array',
-                'photos.*' => 'image|mimes:jpeg,png,jpg,gif,heic,heif|max:20000',
+                'photos.*' => 'image|mimes:jpeg,png,jpg,gif,heic,heif|max:24576',
             ]);
 
             $imageWebp = new ImageWebpService(...$request->file('photos'));

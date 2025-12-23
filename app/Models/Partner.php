@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -51,5 +52,17 @@ class Partner extends Model implements HasMedia, AuditableContract
     public function promotions()
     {
         return $this->hasMany(Promotion::class);
+    }
+
+    public function promotions_actual()
+    {
+        $today = Carbon::today();
+
+        return $this->hasMany(Promotion::class)
+            ->where('is_active', true)
+            ->where(function ($query) use ($today) {
+                $query->WhereDate('start_date', '<=', $today)
+                      ->WhereDate('end_date', '>=', $today);
+            });
     }
 }

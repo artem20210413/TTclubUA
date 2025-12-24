@@ -29,7 +29,7 @@ class PartnerResource extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'has_promotions' => $this->when(isset($this->promotions_count), $this->promotions_count > 0),
-            'has_promotions_actual' => $this->when(isset($this->promotions_count), $this->promotions_actual_count > 0),
+            'has_promotions_actual' => $this->promotions_actual()->count() > 0,
             'promotions_count' => $this->when(isset($this->promotions_count), $this->promotions_count),
             'photos' => $imageUrls,
             'created_at' => $this->created_at,

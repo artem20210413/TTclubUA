@@ -60,6 +60,7 @@ class Partner extends Model implements HasMedia, AuditableContract
 
         return $this->promotions()
             ->where('is_active', true)
+            ->whereNull('end_date')
             ->where(function ($query) use ($today) {
                 $query->WhereDate('start_date', '<=', $today)
                       ->WhereDate('end_date', '>=', $today);

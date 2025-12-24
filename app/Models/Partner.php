@@ -54,16 +54,28 @@ class Partner extends Model implements HasMedia, AuditableContract
         return $this->hasMany(Promotion::class);
     }
 
-    public function promotions_actual()
-    {
-        $today = Carbon::today();
 
-        return $this->promotions()
-            ->where('is_active', true)
-            ->whereNull('end_date')
-            ->where(function ($query) use ($today) {
-                $query->WhereDate('start_date', '<=', $today)
-                      ->WhereDate('end_date', '>=', $today);
-            });
+    /**
+     * Скоуп для получения только активных на данный момент акций.
+     */
+    public function scopeCurrentlyActive($query)
+    {
+        $now = now();
+        $query->where(function ($q) use ($now) {
+            $q->whereNull('start_date')->orWhereDate('start_date', '<=', $now);
+        })->where(function ($q) use ($now) {
+            $q->whereNull('end_date')->orWhereDate('end_date', '>=', $now);
+        });
+
+        return $query;
     }
+
+    public function scopeIsActive($query, ?bool $active = null)
+    {
+        if ($active !== null)
+            $query->where('is_active', $active);
+
+        return $query;
+    }
+
 }

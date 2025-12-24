@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -53,8 +55,34 @@ class Promotion extends Model implements HasMedia, AuditableContract
         'end_date' => 'date',
     ];
 
+
     public function partner()
     {
         return $this->belongsTo(Partner::class);
     }
+
+
+    /**
+     * Скоуп для получения только активных на данный момент акций.
+     */
+    public function scopeCurrentlyActive($query)
+    {
+        $now = now();
+        $query->where(function ($q) use ($now) {
+            $q->whereNull('start_date')->orWhereDate('start_date', '<=', $now);
+        })->where(function ($q) use ($now) {
+            $q->whereNull('end_date')->orWhereDate('end_date', '>=', $now);
+        });
+
+        return $query;
+    }
+
+    public function scopeIsActive($query, ?bool $active = null)
+    {
+        if ($active !== null)
+            $query->where('is_active', $active);
+
+        return $query;
+    }
+
 }

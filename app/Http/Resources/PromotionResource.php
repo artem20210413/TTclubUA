@@ -16,7 +16,7 @@ class PromotionResource extends JsonResource
                 'url' => $media->getUrl(),
             ];
         });
-
+//dd($this->end_date);
         return [
             'id' => $this->id,
             'partner_id' => $this->partner_id,
@@ -27,8 +27,8 @@ class PromotionResource extends JsonResource
             'is_exclusive' => $this->is_exclusive,
             'is_active' => $this->is_active,
             'priority' => $this->priority,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
+            'start_date' => $this->start_date?->format('Y-m-d'),
+            'end_date' => $this->end_date?->format('Y-m-d'),
             'photos' => $imageUrls,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

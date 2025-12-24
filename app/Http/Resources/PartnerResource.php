@@ -3,13 +3,14 @@
 namespace App\Http\Resources;
 
 use App\Enum\EnumTypeMedia;
+use App\Models\Partner;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PartnerResource extends JsonResource
 {
     public function toArray($request): array
     {
-
+/** @var Partner $this */
         $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_PARTNER->value)->map(function ($media) {
             return [
                 'id' => $media->id,

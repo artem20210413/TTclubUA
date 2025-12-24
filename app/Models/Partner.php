@@ -58,7 +58,7 @@ class Partner extends Model implements HasMedia, AuditableContract
     {
         $today = Carbon::today();
 
-        return $this->hasMany(Promotion::class)
+        return $this->promotions()
             ->where('is_active', true)
             ->where(function ($query) use ($today) {
                 $query->WhereDate('start_date', '<=', $today)

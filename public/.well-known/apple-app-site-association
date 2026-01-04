@@ -1,0 +1,11 @@
+        {
+          "applinks": {
+            "apps": [],
+            "details": [
+              {
+                "appID": "TEAM_ID.BUNDLE_ID", // Например, "ABCDE12345.com.mycompany.myapp"
+                "paths": ["/news/*"] // Указываем, какие пути должны открываться в приложении
+              }
+            ]
+          }
+        }

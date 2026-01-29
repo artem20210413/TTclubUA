@@ -5,6 +5,7 @@ namespace App\Services\Telegram;
 use App\Models\Car;
 use App\Models\Registration;
 use App\Models\User;
+use App\Services\Telegram\Dto\TelegramUserDto;
 use Carbon\Carbon;
 use Monolog\Handler\IFTTTHandler;
 use function Laravel\Prompts\confirm;
@@ -146,6 +147,20 @@ class TelegramBotHelpers
             [$code, $minutes],
             $template
         );
+    }
+
+    public static function generationTextNewChatMembers(array $getNewChatMembers)
+    {
+        foreach ($getNewChatMembers as $member) {
+            /** @var TelegramUserDto $member */
+            $template = config('telegram.messages.new_member_welcome.text', '---');
+
+            return str_replace(
+                ['{member}'],
+                ["<a href='tg://user?id={$member->getId()}'>{$member->getFirstName()}</a>"],
+                $template
+            );
+        }
     }
 
 }

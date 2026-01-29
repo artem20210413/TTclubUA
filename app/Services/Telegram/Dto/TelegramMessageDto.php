@@ -9,6 +9,7 @@ use App\Models\User;
 class TelegramMessageDto
 {
     private ?TelegramUserDto $from = null;
+    private array $newChatMembers = [];
     private ?TelegramChatDto $chat = null;
     private ?User $user;
 
@@ -24,6 +25,11 @@ class TelegramMessageDto
             $this->chat = new TelegramChatDto($json['chat']);
         }
 
+        if (isset($json['new_chat_members']) && !empty($json['new_chat_members'])) {
+            foreach ($json['new_chat_members'] as $member) {
+                $this->newChatMembers[] = new TelegramUserDto($member);
+            }
+        }
 
     }
 
@@ -70,5 +76,13 @@ class TelegramMessageDto
     public function setUser(?User $user): void
     {
         $this->user = $user;
+    }
+
+    /**
+     * @return array|TelegramUserDto[]
+     */
+    public function getNewChatMembers(): array
+    {
+        return $this->newChatMembers;
     }
 }

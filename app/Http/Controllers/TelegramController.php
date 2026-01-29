@@ -18,6 +18,7 @@ use App\Services\Telegram\Dto\TelegramImportDto;
 use App\Services\Telegram\Dto\TelegramMessageDto;
 use App\Services\Telegram\TelegramBot;
 use App\Services\Telegram\TelegramCommandHandler;
+use App\Services\Telegram\TelegramCommandPublicHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -37,12 +38,20 @@ class TelegramController extends Controller
 
         $message = $request->message ?? $request->edited_message ?? null;
         if (!$message) return success();
+
+
         $telegramMessageDto = new TelegramMessageDto($request->all()['message'] ?? []);
+
         try {
             $user = UserEloquent::updateByTg($telegramMessageDto);
             $telegramMessageDto->setUser($user);
-            if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
-            new TelegramCommandHandler($telegramMessageDto);
+//            if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
+
+            if ($telegramMessageDto->getChat()->getType() !== 'private') {
+                new TelegramCommandPublicHandler($telegramMessageDto);
+            } else {
+                new TelegramCommandHandler($telegramMessageDto);
+            }
         } catch (ApiException $e) {
             TelegramLogger::sendMessage([
                 'chat_id' => $telegramMessageDto?->getChat()?->getId() ?? null,

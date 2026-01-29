@@ -37,6 +37,34 @@ return [
         'tt_club_ua' => env('TELEGRAM_CHAT_TT_CLUB'),
         'suggestions' => env('TELEGRAM_CHAT_SUGGESTIONS'),
     ],
+    'messages' => [
+        "new_suggestion" => "📢 <b>Нове звернення!</b>\n"
+            . "<b>Від:</b> {user}\n"
+            . "📞<b>:</b> {phone}\n"
+            . "⚙️<b>:</b> {environment_line}\n"
+            . "📄<b>:</b> {description}",
+        "registration" => [
+            'user' => "ім'я: {name}\n"
+                . "Телефон: {phone}\n"
+                . "Міста: {cities}\n"
+                . "Дата народження: {birth_date}\n"
+                . "ТГ: {telegram_nickname} \n"
+                . "Інста: {instagram_nickname}\n"
+                . "Рід діяльності: {occupation_description}\n"
+                . "Адреса НП (для подарунків): {mail_address}\n"
+                . "Чому саме ауді ТТ?: {why_tt}\n"
+                . "Дата створення: {created_at}\n",
+            'car' => "🚘 Авто {model} {gene}:\n"
+                . "Колір: {color}\n"
+                . "Номер: {license_plate}\n"
+                . "Індивідуальний номер: {personalized_license_plate}\n\n",
+            'without_car' => "Немає Audi TT.",
+        ],
+        "auth_code" => "<b>Ваш код для входу</b>\n"
+            . "<code>{code}</code>\n\n"
+            . "Код діє {minutes} хвилин."
+
+    ],
     'bots' => [
         'mybot' => [
             'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),

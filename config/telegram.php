@@ -96,7 +96,7 @@ return [
                 "TTCLUB_UA🇺🇦🙏",
 
             'links' => [
-                'Барахолка Audi TT' => 'https://www.instagram.com/markett_club_ua',
+                'Барахолка Audi TT' => 'https://t.me/+bncKfZLK4CszZWRi',
                 'Instagram TT Club UA' => 'https://www.instagram.com/ttclub_ua',
                 'Мерч TT Club UA' => 'https://www.instagram.com/markett_club_ua',
                 'Bot TT Club UA' => 'https://t.me/TTclubUaBot',

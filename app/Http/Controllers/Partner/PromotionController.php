@@ -23,18 +23,28 @@ class PromotionController extends Controller
     {
         $query = $partner->promotions()->getQuery();
 
+
+        // Фильтр по активности
         if ($request->has('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
+            $query->isActive($request->boolean('is_active'));
+        }
+        // Фильтр "активные сейчас"
+        if ($request->boolean('active_now')) {
+            $query->currentlyActive();
         }
 
-        if ($request->boolean('active_now')) {
-            $now = now();
-            $query->where(function ($q) use ($now) {
-                $q->whereNull('start_date')->orWhereDate('start_date', '<=', $now);
-            })->where(function ($q) use ($now) {
-                $q->whereNull('end_date')->orWhereDate('end_date', '>=', $now);
-            });
-        }
+//        if ($request->has('is_active')) {
+//            $query->where('is_active', $request->boolean('is_active'));
+//        }
+//
+//        if ($request->boolean('active_now')) {
+//            $now = now();
+//            $query->where(function ($q) use ($now) {
+//                $q->whereNull('start_date')->orWhereDate('start_date', '<=', $now);
+//            })->where(function ($q) use ($now) {
+//                $q->whereNull('end_date')->orWhereDate('end_date', '>=', $now);
+//            });
+//        }
 
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {

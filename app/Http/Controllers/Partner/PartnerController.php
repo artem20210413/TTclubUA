@@ -24,17 +24,18 @@ class PartnerController extends Controller
 
         // Фильтр по активности
         if ($request->has('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
+            $query->isActive($request->boolean('is_active'));
+//            $query->where('is_active', $request->boolean('is_active'));
         }
-
         // Фильтр "активные сейчас"
         if ($request->boolean('active_now')) {
-            $now = now();
-            $query->where(function ($q) use ($now) {
-                $q->whereNull('start_date')->orWhereDate('start_date', '<=', $now);
-            })->where(function ($q) use ($now) {
-                $q->whereNull('end_date')->orWhereDate('end_date', '>=', $now);
-            });
+            $query->currentlyActive();
+//            $now = now();
+//            $query->where(function ($q) use ($now) {
+//                $q->whereNull('start_date')->orWhereDate('start_date', '<=', $now);
+//            })->where(function ($q) use ($now) {
+//                $q->whereNull('end_date')->orWhereDate('end_date', '>=', $now);
+//            });
         }
 
         // Фильтр "только с акциями"

@@ -147,5 +147,16 @@ class EventController extends Controller
         return success(data: new EventTypeResource($eventType));
     }
 
+    /**
+     * Отображает публичную страницу события для шеринга.
+     *
+     * @param Event $event
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function showPublic(Event $event)
+    {
+        if (!$event->active) abort(404);
 
+        return view('events.show', ['event' => $event]);
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/', function () {
@@ -13,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/redirect-jar-monobank', [\App\Http\Controllers\FinanceController::class, 'redirectJarMonobank']);
 
 
-
 Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'index'])->name('web.welcome'); //->middleware('only.ua')
 Route::get('/thank-you', [\App\Http\Controllers\Web\RegistrationsController::class, 'thankYou'])->name('web.thank-you'); //->middleware('only.ua')
 Route::get('/register', [\App\Http\Controllers\Web\RegistrationsController::class, 'register'])->name('web.register'); //->middleware('only.ua')
@@ -25,3 +25,6 @@ Route::view('/app-download', 'app-download')
 // страница политики конфиденциальности
 Route::view('/privacy', 'privacy')
     ->name('privacy');
+
+
+Route::get('/events/{event}', [EventController::class, 'showPublic'])->name('events.show_public');

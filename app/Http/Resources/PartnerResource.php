@@ -3,13 +3,14 @@
 namespace App\Http\Resources;
 
 use App\Enum\EnumTypeMedia;
+use App\Models\Partner;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PartnerResource extends JsonResource
 {
     public function toArray($request): array
     {
-
+        /** @var Partner $this */
         $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_PARTNER->value)->map(function ($media) {
             return [
                 'id' => $media->id,
@@ -26,10 +27,10 @@ class PartnerResource extends JsonResource
             'google_maps_url' => $this->google_maps_url,
             'priority' => $this->priority,
             'is_active' => $this->is_active,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
+            'start_date' => $this->start_date?->format('Y-m-d'),
+            'end_date' => $this->end_date?->format('Y-m-d'),
             'has_promotions' => $this->when(isset($this->promotions_count), $this->promotions_count > 0),
-            'promotions_count' => $this->when(isset($this->promotions_count), $this->promotions_count),
+            'has_promotions_actual' => $this->promotions()->currentlyActive()->isActive(true)->count() > 0,
             'photos' => $imageUrls,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

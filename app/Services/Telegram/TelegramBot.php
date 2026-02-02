@@ -16,6 +16,8 @@ class TelegramBot
 
     protected Api $telegram;
 
+    private array $telegramIds = [];
+
     /**
      * @throws TelegramSDKException
      */
@@ -25,22 +27,40 @@ class TelegramBot
     }
 
 
-    public function sendMessage(?string $message)
+    public function sendMessage(?string $message, array $buttons = [])
     {
         if (!$message) return;
-
-        foreach ($this->enumTelegramEvents->getIds() as $chatId) {
+        $res = [];
+        foreach ($this->enumTelegramEvents->getIds(chantIds: $this->telegramIds) as $chatId) {
             try {
                 $params = [
                     'chat_id' => $chatId,
                     'text' => $message,
                     'parse_mode' => 'HTML',
                 ];
-                $this->telegram->sendMessage($params);
+
+                if (!empty($buttons)) {
+                    $inlineKeyboard = [];
+                    foreach ($buttons as $text => $url) {
+                        $inlineKeyboard[] = [
+                            [
+                                'text' => $text,
+                                'url' => $url
+                            ]
+                        ];
+                    }
+                    $params['reply_markup'] = json_encode([
+                        'inline_keyboard' => $inlineKeyboard
+                    ]);
+                }
+
+                $res[] = $this->telegram->sendMessage($params);
                 TelegramLoggerEloquent::createOut($params);
             } catch (\Exception $e) {
                 Log::error($e->getMessage());
             }
+
+            return $res;
         }
     }
 
@@ -169,6 +189,11 @@ class TelegramBot
     public function getTelegram(): Api
     {
         return $this->telegram;
+    }
+
+    public function setTelegramIds(...$telegramIds): void
+    {
+        $this->telegramIds = $telegramIds;
     }
 
 

@@ -48,6 +48,7 @@ class CalendarController extends Controller
             return [
                 'type' => $event->eventType->alias,
                 'id' => 'event-' . $event->id,
+                'model_id' => $event->id,
                 'title' => $event->title,
                 'description' => $event->description,
                 'date' => optional($event->event_date)->toDateString(),  // 2025-02-14
@@ -84,6 +85,7 @@ class CalendarController extends Controller
             return [
                 'type' => 'birthday',
                 'id' => 'birthday-' . $user->id,
+                'model_id' => $event->id,
                 'title' => $user->name,
                 'description' => 'День народження ' . $user->name,
                 'date' => $date->toDateString(), // 2025-02-03

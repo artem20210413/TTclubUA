@@ -125,11 +125,12 @@ class CalendarController extends Controller
             $e = explode("-", $eventCode);
             $code = $e[0];
             $id = $e[1];
-            $message = '';
+            $title = null;
             if ($code === 'event') {
                 $event = Event::find($id);
                 if (!$event) throw new ApiException('Подію не знайдено', 0, 404);
-                $message = "{title}\n\n{description}\n\nДата: {date}\nМісце: {place}\nКарта:{map}"; //\n\nДетальніше: {url}
+                $title = $event->title;
+                $message = "{title}\n\n{description}\n\nДата: {date}\nМісце: {place}\nКарта: {map}"; //\n\nДетальніше: {url}
                 $url = route('events.show_public', ['event' => $event->id]);
 
                 $message = str_replace('{title}', $event->title, $message);
@@ -148,7 +149,7 @@ class CalendarController extends Controller
                 $message = str_replace('{birthday}', $user->birth_date ? $user->birth_date->translatedFormat('j-го F') : 'Точну дату слід уточнити', $message);
             }
 
-            return success($message);
+            return success(data: ['message' => $message, 'title' => $title]);
 
         } catch (ApiException $e) {
             return error($e);

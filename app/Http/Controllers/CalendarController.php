@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enum\EnumTypeMedia;
+use App\Http\Controllers\Api\ApiException;
 use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -115,6 +116,42 @@ class CalendarController extends Controller
 //            'month' => $start->format('Y-m'),
 //            'items' => $items,
 //        ]);
+    }
+
+    public function calendarDescription($eventCode)
+    {
+        try {
+
+            $e = explode("-", $eventCode);
+            $code = $e[0];
+            $id = $e[1];
+            $message = '';
+            if ($code === 'event') {
+                $event = Event::find($id);
+                if (!$event) throw new ApiException('Подію не знайдено', 0, 404);
+                $message = "{title}\n\nДата: {date}\n Місце:{place}\n\n{description}"; //\n\nДетальніше: {url}
+                $url = route('events.show_public', ['event' => $event->id]);
+
+                $message = str_replace('{title}', $event->title, $message);
+                $message = str_replace('{date}', $event->event_date ? $event->event_date->format('d.m.Y H:i') : '', $message);
+                $message = str_replace('{place}', $event->place ?? '', $message);
+                $message = str_replace('{description}', $event->description ?? '', $message);
+                $message = str_replace('{url}', $url, $message);
+            } else {
+                $user = User::find($id);
+                if (!$user) throw new ApiException('Користувача не знайдено', 0, 404);
+
+                $message = "🎂 День народження у {name} буде {birthday}";
+
+                $message = str_replace('{name}', $user->name, $message);
+                $message = str_replace('{birthday}', $user->birth_date ? $user->birth_date->translatedFormat('j-го F') : 'Точну дату слід уточнити', $message);
+            }
+
+            return success($message);
+
+        } catch (ApiException $e) {
+            return error($e);
+        }
     }
 
 

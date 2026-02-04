@@ -38,6 +38,7 @@ return [
         'suggestions' => env('TELEGRAM_CHAT_SUGGESTIONS'),
     ],
     'messages' => [
+        "fa_fa" => "<b>Фа-фа!</b> 🚗\n{employee}\nПривіт від {owner} 👋",
         "new_suggestion" => "📢 <b>Нове звернення!</b>\n"
             . "<b>Від:</b> {user}\n"
             . "📞<b>:</b> {phone}\n"

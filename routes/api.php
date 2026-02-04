@@ -113,6 +113,7 @@ Route::group(['prefix' => 'partners', 'middleware' => ['auth:sanctum']], functio
 });
 
 Route::get('/calendar', [CalendarController::class, 'list'])->middleware(['auth:sanctum']);
+Route::get('/calendar/{event}/description', [CalendarController::class, 'calendarDescription'])->middleware(['auth:sanctum']);
 Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {
     Route::get('/', [EventController::class, 'list']);
     Route::post('/', [EventController::class, 'create'])->middleware(['role:admin']);

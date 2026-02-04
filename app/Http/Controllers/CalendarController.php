@@ -129,7 +129,7 @@ class CalendarController extends Controller
             if ($code === 'event') {
                 $event = Event::find($id);
                 if (!$event) throw new ApiException('Подію не знайдено', 0, 404);
-                $message = "{title}\n\nДата: {date}\nМісце:{place}\nКарта:{map}\n\n{description}"; //\n\nДетальніше: {url}
+                $message = "<b>{title}</b>\n\nДата: {date}\nМісце:{place}\nКарта:{map}\n\n{description}"; //\n\nДетальніше: {url}
                 $url = route('events.show_public', ['event' => $event->id]);
 
                 $message = str_replace('{title}', $event->title, $message);

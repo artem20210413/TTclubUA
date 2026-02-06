@@ -83,7 +83,7 @@ class SendingStatisticsMention extends Command
 
 
             $botT = new TelegramBot(EnumTelegramEvents::STATS_MENTION);
-            $botT->sendMessage($finalText);
+            $botT->sendMessage($finalText, disableWebPagePreview: true);
 
             $this->info('Статистика успешно отправлена в Telegram!');
 

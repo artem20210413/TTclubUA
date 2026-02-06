@@ -27,7 +27,7 @@ class TelegramBot
     }
 
 
-    public function sendMessage(?string $message, array $buttons = [])
+    public function sendMessage(?string $message, array $buttons = [], $disableWebPagePreview = false)
     {
         if (!$message) return;
         $res = [];
@@ -37,6 +37,7 @@ class TelegramBot
                     'chat_id' => $chatId,
                     'text' => $message,
                     'parse_mode' => 'HTML',
+                    'disable_web_page_preview' => $disableWebPagePreview,
                 ];
 
                 if (!empty($buttons)) {

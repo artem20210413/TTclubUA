@@ -10,6 +10,7 @@ enum EnumTelegramEvents
 
 //    case NOTIFICATION;
     case FA_FA;
+    case STATS_MENTION;
     case LIST_BIRTHDAYS; // Список ДР в очереди
     case TEST;
     case MY;
@@ -41,6 +42,8 @@ enum EnumTelegramEvents
             self::LIST_BIRTHDAYS => [$welcome],
             self::REGISTRATION => [$welcome],
             self::SUGGESTION => [$suggestions],
+
+            self::STATS_MENTION => [$ttChat],
 
             self::TEST => [$testBot2],
 

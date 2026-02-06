@@ -16,6 +16,7 @@ use App\Http\Controllers\Partner\PromotionController;
 use App\Http\Controllers\SuggestionsController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\SystemController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -148,7 +149,7 @@ Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum
 Route::post('/import', [ImportController::class, 'importMain'])->middleware(['auth:sanctum', 'role:admin']);
 
 //Route::post('/test/fa-fa', [TestController::class, 'fafa'])->middleware(['auth:sanctum', 'role:admin']);
-//Route::get('/test/getT', [TestController::class, 'get']);//->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/test', [TestController::class, 'test']);//->middleware(['auth:sanctum', 'role:admin']);
 
 
 Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);

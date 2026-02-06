@@ -33,7 +33,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property \App\Models\CarModel $model
  * @property \App\Models\Color $color
  */
-class Car extends Model  implements HasMedia, AuditableContract
+class Car extends Model implements HasMedia, AuditableContract
 {
     use HasProfilePhoto;
     use InteractsWithMedia;
@@ -114,6 +114,11 @@ class Car extends Model  implements HasMedia, AuditableContract
         $model = $this?->model->name ?? '-';
         $l = $this->getGeneralLicensePlate() ?? '-';
         return "$model $gen ($l)";
+    }
+
+    public function mentions()
+    {
+        return $this->hasMany(Mention::class, 'car_id');
     }
 
 }

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\DrawController;
+use App\Http\Controllers\Api\ParticipantController;
+use App\Http\Controllers\Api\PrizeController;
 use App\Http\Controllers\AppConfigController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
@@ -158,6 +161,30 @@ Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class,
 Route::post('/telegram/webhook', [TelegramController::class, 'webhook'])->middleware('telegram.webhook');
 Route::get('/telegram/test', [TelegramController::class, 'test']);
 
+Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [DrawController::class, 'index']);
+    Route::get('/{draw}', [DrawController::class, 'show']);
+    Route::post('/', [DrawController::class, 'store'])->middleware('role:admin');
+    Route::post('/{draw}', [DrawController::class, 'update'])->middleware('role:admin');
+    Route::post('/{draw}/deactivate', [DrawController::class, 'deactivate'])->middleware('role:admin');
+
+    // Prizes routes nested under draws
+    Route::group(['prefix' => '/{draw}/prizes'], function () {
+        Route::get('/', [PrizeController::class, 'index']);
+        Route::post('/', [PrizeController::class, 'store'])->middleware('role:admin');
+        Route::post('/{prize}', [PrizeController::class, 'update'])->middleware('role:admin');
+        Route::delete('/{prize}', [PrizeController::class, 'destroy'])->middleware('role:admin');
+    });
+
+    // Participants routes nested under draws
+    Route::group(['prefix' => '/{draw}/participants'], function () {
+        Route::get('/', [ParticipantController::class, 'index']);
+        Route::post('/register', [ParticipantController::class, 'registerSelf']);
+        Route::post('/register-manual', [ParticipantController::class, 'registerByAdmin'])->middleware('role:admin');
+        Route::post('/{participant}', [ParticipantController::class, 'update'])->middleware('role:admin');
+        Route::delete('/{participant}', [ParticipantController::class, 'destroy'])->middleware('role:admin');
+    });
+});
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
 //->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).
@@ -165,4 +192,3 @@ Route::get('/telegram/test', [TelegramController::class, 'test']);
 //->middleware('role:admin') Проверяет, что пользователь обладает определенной ролью, используя Spatie Permissions.
 //->middleware('permission:view-dashboard') Проверяет, что у пользователя есть конкретное разрешение для действия.
 //Route::group(['middleware' => ['permission:edit articles|publish articles']], function () {}); // маршруты для пользователей, у которых есть либо "edit articles", либо "publish articles"
-

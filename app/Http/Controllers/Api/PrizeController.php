@@ -40,6 +40,12 @@ class PrizeController extends Controller
     {
         $prize->update($request->validated());
 
+        if ($file = $request->file('file')) {
+            $imageWebp = new ImageWebpService($file);
+            $imageWebp->convert(EnumImageQuality::HD);
+            $imageWebp->save($prize, EnumTypeMedia::PHOTO_DRAW);
+        }
+
         return new PrizeResource($prize);
     }
 
@@ -50,16 +56,6 @@ class PrizeController extends Controller
         return response()->noContent();
     }
 
-    public function addImage(Prize $prize, Request $request)
-    {
-        if ($file = $request->file('file')) {
-            $imageWebp = new ImageWebpService($file);
-            $imageWebp->convert(EnumImageQuality::HD);
-            $imageWebp->save($prize, EnumTypeMedia::PHOTO_DRAW);
-        }
-
-        return success(data: new PrizeResource($prize));
-    }
 
     public function deleteImage(Draw $draw, Prize $prize)
     {

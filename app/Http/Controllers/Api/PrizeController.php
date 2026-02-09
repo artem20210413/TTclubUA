@@ -61,18 +61,10 @@ class PrizeController extends Controller
         return success(data: new PrizeResource($prize));
     }
 
-    public function deleteImage(Prize $prize, int $mediaId)
+    public function deleteImage(Draw $draw, Prize $prize)
     {
         try {
-//            $media = $prize->getMedia(EnumTypeMedia::PHOTO_DRAW->value)
-//                ->where('id', $mediaId)
-//                ->first();
-//
-//            if (!$media) {
-//                throw new ApiException('Фото не знайдено');
-//            }
-//
-//            $media->delete();
+            $prize->clearMediaCollection(EnumTypeMedia::PHOTO_DRAW->value);
 
             return success(data: new PrizeResource($prize));
         } catch (ApiException $e) {

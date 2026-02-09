@@ -6,7 +6,6 @@ use App\Enum\DrawStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Draw\StoreDrawRequest;
 use App\Http\Requests\Draw\UpdateDrawRequest;
-use App\Http\Requests\Draw\UpdateDrawStatusRequest;
 use App\Http\Resources\DrawResource;
 use App\Http\Resources\PrizeResource;
 use App\Models\Draw;
@@ -45,12 +44,6 @@ class DrawController extends Controller
         return new DrawResource($draw);
     }
 
-    public function updateStatus(UpdateDrawStatusRequest $request, Draw $draw): DrawResource
-    {
-        $draw->update(['status' => $request->status]);
-
-        return new DrawResource($draw);
-    }
 
     public function rollPrize(Draw $draw, Prize $prize): PrizeResource
     {

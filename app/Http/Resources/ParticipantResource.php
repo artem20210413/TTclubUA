@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enum\EnumTypeMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -9,6 +10,7 @@ class ParticipantResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $profileImage = $this?->user->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value) ?: null;
         return [
             'id' => $this->id,
             'draw_id' => $this->draw_id,
@@ -17,6 +19,7 @@ class ParticipantResource extends JsonResource
             'user_id' => $this->user_id,
             'user_name' => $this?->user->name ?? $this->name_manual,
             'contact_manual' => $this->contact_manual,
+            'profile_image' => $profileImage,
         ];
     }
 }

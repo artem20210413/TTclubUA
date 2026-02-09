@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Jetstream\HasProfilePhoto;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Prize
@@ -16,8 +19,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read Draw $draw
  * @property-read Participant|null $winner
  */
-class Prize extends Model
+class Prize extends Model implements HasMedia
 {
+    use HasProfilePhoto;
+    use InteractsWithMedia;
+
     protected $fillable = [
         'draw_id',
         'title',

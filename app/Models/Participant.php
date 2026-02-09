@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 /**
  * Class Participant
  *
@@ -19,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Participant extends Model
 {
+
     protected $fillable = [
         'draw_id',
         'user_id',

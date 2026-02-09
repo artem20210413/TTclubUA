@@ -4,6 +4,10 @@ namespace App\Models;
 
 use App\Enum\DrawStatus;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Jetstream\HasProfilePhoto;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Draw
@@ -19,8 +23,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|Prize[] $prizes
  * @property-read \Illuminate\Database\Eloquent\Collection|DrawResult[] $results
  */
-class Draw extends Model
+class Draw extends Model implements HasMedia
 {
+    use HasProfilePhoto;
+    use InteractsWithMedia;
+
 
     protected $fillable = [
         'title',

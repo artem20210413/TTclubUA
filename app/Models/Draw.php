@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $registration_until Дата та час, до якого відкрита реєстрація
  * @property-read \Illuminate\Database\Eloquent\Collection|Participant[] $participants
  * @property-read \Illuminate\Database\Eloquent\Collection|Prize[] $prizes
+ * @property-read \Illuminate\Database\Eloquent\Collection|DrawResult[] $results
  */
 class Draw extends Model
 {
@@ -45,5 +46,10 @@ class Draw extends Model
     public function prizes()
     {
         return $this->hasMany(Prize::class);
+    }
+
+    public function results()
+    {
+        return $this->hasMany(DrawResult::class);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Draw;
 
-use App\Enums\DrawStatus;
+use App\Enum\DrawStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 

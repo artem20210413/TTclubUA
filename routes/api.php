@@ -166,7 +166,9 @@ Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function (
     Route::get('/{draw}', [DrawController::class, 'show']);
     Route::post('/', [DrawController::class, 'store'])->middleware('role:admin');
     Route::post('/{draw}', [DrawController::class, 'update'])->middleware('role:admin');
-    Route::post('/{draw}/deactivate', [DrawController::class, 'deactivate'])->middleware('role:admin');
+    Route::post('/{draw}/update-status', [DrawController::class, 'updateStatus'])->middleware('role:admin');
+    Route::post('/{draw}/roll/{prize}', [DrawController::class, 'rollPrize'])->middleware('role:admin');
+    Route::post('/{draw}/reset/{prize}', [DrawController::class, 'resetPrize'])->middleware('role:admin');
 
     // Prizes routes nested under draws
     Route::group(['prefix' => '/{draw}/prizes'], function () {

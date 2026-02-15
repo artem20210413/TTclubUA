@@ -110,7 +110,7 @@ Route::group(['prefix' => 'partners', 'middleware' => ['auth:sanctum']], functio
         Route::get('/{promotion}', [PromotionController::class, 'show']);
         Route::post('/', [PromotionController::class, 'store'])->middleware('role:admin');
         Route::post('/{promotion}', [PromotionController::class, 'update'])->middleware('role:admin');
-//        Route::delete('/{promotion}', [PromotionController::class, 'destroy'])->middleware('role:admin');
+        Route::delete('/{promotion}', [PromotionController::class, 'destroy'])->middleware('role:admin');
         Route::post('/{promotion}/photos', [PromotionController::class, 'addPhotos'])->middleware('role:admin');
         Route::delete('/{promotion}/photos/{mediaId}', [PromotionController::class, 'deletePhoto'])->middleware('role:admin');
     });

@@ -107,14 +107,24 @@
                                value="{{ old('mail_address') }}">
                     </label>
 
-                    <label class="field field--wide @error('why_tt') fail  @enderror">
+{{--                    <label class="field field--wide @error('why_tt') fail  @enderror">--}}
+{{--                        <span>Чому саме Audi TT?</span>--}}
+{{--                        <textarea name="why_tt" required rows="3">{{ old('why_tt') }}</textarea>--}}
+{{--                    </label>--}}
+                    <label class="field field--wide @error('why_tt') fail @enderror" style="position: relative;">
                         <span>Чому саме Audi TT?</span>
-                        <textarea name="why_tt" required rows="3">{{ old('why_tt') }}</textarea>
+                        <textarea
+                            name="why_tt"
+                            data-counter="500"
+                            required
+                            rows="3"
+                        >{{ old('why_tt') }}</textarea>
                     </label>
 
                     <label class="field field--wide @error('occupation_description') fail  @enderror">
                         <span>Опис занять, роб. діяльності</span>
-                        <textarea name="occupation_description" required
+                        <textarea name="occupation_description"
+                                  data-counter="100" required
                                   rows="3">{{ old('occupation_description') }}</textarea>
                     </label>
 
@@ -476,6 +486,48 @@
 
                 // очищаем blob после загрузки
                 preview.onload = () => URL.revokeObjectURL(preview.src);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textareas = document.querySelectorAll('textarea[data-counter]');
+
+            textareas.forEach(textarea => {
+                const maxLength = textarea.getAttribute('data-counter');
+
+                // Создаем элемент счетчика
+                const counterDiv = document.createElement('div');
+                counterDiv.className = 'textarea-counter';
+                // Стили прямо в JS, чтобы не лезть в CSS файлы
+                Object.assign(counterDiv.style, {
+                    position: 'absolute',
+                    right: '20px',
+                    bottom: '10px',
+                    fontSize: '12px',
+                    opacity: '0.6',
+                    pointerEvents: 'none' // чтоб не мешал кликать по textarea
+                });
+
+                // Оборачиваем textarea, если у родителя нет relative
+                textarea.parentElement.style.position = 'relative';
+                textarea.parentElement.appendChild(counterDiv);
+
+                const update = () => {
+                    const current = textarea.value.length;
+                    counterDiv.textContent = `${current}/${maxLength}`;
+
+                    if (current > maxLength) {
+                        counterDiv.style.color = 'red';
+                        textarea.classList.add('fail');
+                    } else {
+                        counterDiv.style.color = 'inherit';
+                        // textarea.classList.remove('fail'); // Опционально
+                    }
+                };
+
+                textarea.addEventListener('input', update);
+                update(); // Инициализация
             });
         });
     </script>

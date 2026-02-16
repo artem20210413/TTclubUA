@@ -7,6 +7,7 @@ use App\Models\Registration;
 use App\Models\User;
 use App\Services\Telegram\Dto\TelegramUserDto;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Monolog\Handler\IFTTTHandler;
 use function Laravel\Prompts\confirm;
 
@@ -78,7 +79,8 @@ class TelegramBotHelpers
             ->implode(', ');
 
         $userTemplate = config('telegram.messages.registration.user', '---');
-
+        $why_tt_short = Str::limit($data->why_tt, 50, '...');
+        $occupation_short = Str::limit($data->occupation_description, 50, '...');
         $user = str_replace(
             [
                 '{name}',
@@ -99,9 +101,9 @@ class TelegramBotHelpers
                 $data->birth_date,
                 $data->telegram_nickname,
                 $data->instagram_nickname,
-                $data->occupation_description,
+                $occupation_short,
                 $data->mail_address,
-                $data->why_tt,
+                $why_tt_short,
                 $registration->created_at->format('d.m.Y H:i')
             ],
             $userTemplate

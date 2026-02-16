@@ -503,7 +503,7 @@
                 Object.assign(counterDiv.style, {
                     position: 'absolute',
                     right: '20px',
-                    bottom: '10px',
+                    top: '5px',
                     fontSize: '12px',
                     opacity: '0.6',
                     pointerEvents: 'none' // чтоб не мешал кликать по textarea

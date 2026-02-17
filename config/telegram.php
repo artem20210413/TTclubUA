@@ -101,6 +101,7 @@ return [
                 'Instagram TT Club UA' => 'https://www.instagram.com/ttclub_ua',
                 'Мерч TT Club UA' => 'https://www.instagram.com/markett_club_ua',
                 'Bot TT Club UA' => 'https://t.me/TTclubUaBot',
+                'Додаток TT Club UA' => 'https://www.ttclub.com.ua/app-download',
 
             ]
         ],

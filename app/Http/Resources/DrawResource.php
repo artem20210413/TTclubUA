@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enum\EnumTypeMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,12 @@ class DrawResource extends JsonResource
         if (Auth::check()) {
             $isParticipating = $this->participants()->where('user_id', Auth::id())->exists();
         }
-
+        $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_DRAW->value)->map(function ($media) {
+            return [
+                'id' => $media->id,
+                'url' => $media->getUrl(),
+            ];
+        });
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -26,6 +32,7 @@ class DrawResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'is_participating' => $isParticipating,
+            'images' => $imageUrls,
             'participants' => ParticipantResource::collection($this->participants),
             'prizes' => PrizeResource::collection($this->prizes),
         ];

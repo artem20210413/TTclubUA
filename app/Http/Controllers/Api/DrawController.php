@@ -19,21 +19,21 @@ use Illuminate\Validation\ValidationException;
 
 class DrawController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index()
     {
         $draws = Draw::orderBy('created_at', 'desc')->paginate(15);
 
-        return DrawResource::collection($draws);
+        return success(data: DrawResource::collection($draws));
     }
 
-    public function show(Draw $draw): DrawResource
+    public function show(Draw $draw)
     {
         $draw->with(['participants.user', 'prizes']);
 
-        return new DrawResource($draw);
+        return success(data: new DrawResource($draw));
     }
 
-    public function store(StoreDrawRequest $request): DrawResource
+    public function store(StoreDrawRequest $request)
     {
         $draw = Draw::create($request->validated());
 
@@ -43,10 +43,10 @@ class DrawController extends Controller
             $imageWebp->save($draw, EnumTypeMedia::PHOTO_DRAW);
         }
 
-        return new DrawResource($draw);
+        return success(data: new DrawResource($draw->refresh()));
     }
 
-    public function update(UpdateDrawRequest $request, Draw $draw): DrawResource
+    public function update(UpdateDrawRequest $request, Draw $draw)
     {
         $draw->update($request->validated());
 
@@ -57,11 +57,11 @@ class DrawController extends Controller
         }
 
 
-        return new DrawResource($draw);
+        return success(data: new DrawResource($draw->refresh()));
     }
 
 
-    public function rollPrize(Draw $draw, Prize $prize): PrizeResource
+    public function rollPrize(Draw $draw, Prize $prize)
     {
         try {
 
@@ -128,7 +128,7 @@ class DrawController extends Controller
                 }
             });
 
-            return new PrizeResource($prize->fresh());
+            return success(data: new PrizeResource($prize->fresh()));
         } catch (ApiException $e) {
             return error($e);
         }
@@ -164,7 +164,7 @@ class DrawController extends Controller
             if ($draw->status === DrawStatus::FINISHED) {
                 $draw->update(['status' => DrawStatus::ACTIVE]);
             }
-            return new PrizeResource($prize->fresh());
+            return success(data: new PrizeResource($prize->fresh()));
         } catch (ApiException $e) {
             return error($e);
         }

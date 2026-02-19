@@ -16,46 +16,45 @@ use Illuminate\Validation\ValidationException;
 
 class ParticipantController extends Controller
 {
-    public function index(Draw $draw): AnonymousResourceCollection
+    public function index(Draw $draw)
     {
         $participants = $draw->participants()->with('user')->paginate(50);
 
-        return ParticipantResource::collection($participants);
+        return success(data: ParticipantResource::collection($participants));
     }
 
-    public function registerSelf(Request $request, Draw $draw): ParticipantResource
+    public function registerSelf(Request $request, Draw $draw)
     {
-        if ($draw->status !== DrawStatus::ACTIVE && $draw->status !== DrawStatus::PLANNED) {
-             throw ValidationException::withMessages([
-                'draw' => ['Реєстрація на цей розіграш закрита.'],
+        try {
+
+            if ($draw->status !== DrawStatus::ACTIVE && $draw->status !== DrawStatus::PLANNED) {
+                throw new ApiException('Реєстрація на цей розіграш закрита.', 0, 403);
+            }
+
+            if (!$draw->is_public) {
+                throw new ApiException('Публічна реєстрація на цей розіграш заборонена.', 0, 403);
+            }
+
+            $user = $request->user();
+
+            // Перевірка на дублікат
+            $existingParticipant = $draw->participants()->where('user_id', $user->id)->first();
+            if ($existingParticipant) {
+                throw new ApiException('Ви вже зареєстровані у цьому розіграші.', 0, 400);
+            }
+
+            $participant = $draw->participants()->create([
+                'user_id' => $user->id,
+                'weight' => 1, // Дефолтна вага
             ]);
+
+            return success(data: new ParticipantResource($participant));
+        } catch (ApiException $e) {
+            return error($e);
         }
-
-        if (!$draw->is_public) {
-             throw ValidationException::withMessages([
-                'draw' => ['Публічна реєстрація на цей розіграш заборонена.'],
-            ]);
-        }
-
-        $user = $request->user();
-
-        // Перевірка на дублікат
-        $existingParticipant = $draw->participants()->where('user_id', $user->id)->first();
-        if ($existingParticipant) {
-             throw ValidationException::withMessages([
-                'user' => ['Ви вже зареєстровані у цьому розіграші.'],
-            ]);
-        }
-
-        $participant = $draw->participants()->create([
-            'user_id' => $user->id,
-            'weight' => 1, // Дефолтна вага
-        ]);
-
-        return new ParticipantResource($participant);
     }
 
-    public function registerByAdmin(StoreParticipantRequest $request, Draw $draw): ParticipantResource
+    public function registerByAdmin(StoreParticipantRequest $request, Draw $draw)
     {
         $participant = $draw->participants()->create([
             'name_manual' => $request->name_manual,
@@ -63,10 +62,10 @@ class ParticipantController extends Controller
             'weight' => $request->weight ?? 1,
         ]);
 
-        return new ParticipantResource($participant);
+        return success(data: new ParticipantResource($participant));
     }
 
-    public function update(UpdateParticipantRequest $request, Draw $draw, Participant $participant): ParticipantResource
+    public function update(UpdateParticipantRequest $request, Draw $draw, Participant $participant)
     {
         // Переконаємося, що учасник належить до цього розіграшу
         if ($participant->draw_id !== $draw->id) {
@@ -75,7 +74,7 @@ class ParticipantController extends Controller
 
         $participant->update($request->validated());
 
-        return new ParticipantResource($participant);
+        return success(data: new ParticipantResource($participant));
     }
 
     public function destroy(Draw $draw, Participant $participant): Response

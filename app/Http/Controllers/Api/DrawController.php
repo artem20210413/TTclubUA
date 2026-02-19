@@ -11,12 +11,10 @@ use App\Http\Requests\Draw\UpdateDrawRequest;
 use App\Http\Resources\DrawResource;
 use App\Http\Resources\PrizeResource;
 use App\Models\Draw;
-use App\Models\Goods;
+use Illuminate\Http\Request;
 use App\Models\Prize;
 use App\Services\Image\ImageWebpService;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 class DrawController extends Controller
 {
@@ -170,19 +168,6 @@ class DrawController extends Controller
             return error($e);
         }
     }
-
-    public function deleteImage(Draw $draw)
-    {
-        try {
-            $draw->clearMediaCollection(EnumTypeMedia::PHOTO_DRAW->value);
-
-            return success(data: new DrawResource($draw));
-        } catch (ApiException $e) {
-            return error($e->getCode());
-        }
-
-    }
-
     public function eventDeleteImage(Draw $draw, string $mediaId)
     {
         try {
@@ -200,5 +185,16 @@ class DrawController extends Controller
         } catch (ApiException $e) {
             return error($e->getCode());
         }
+    }
+
+    public function eventAddImage(Draw $draw, Request $request)
+    {
+        if ($file = $request->file('file')) {
+            $imageWebp = new ImageWebpService($file);
+            $imageWebp->convert(EnumImageQuality::HD);
+            $imageWebp->save($draw, EnumTypeMedia::PHOTO_DRAW);
+        }
+
+        return success(data: new DrawResource($draw));
     }
 }

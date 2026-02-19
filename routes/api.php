@@ -168,8 +168,8 @@ Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function (
     Route::put('/{draw}', [DrawController::class, 'update'])->middleware('role:admin');
     Route::post('/{draw}/roll/{prize}', [DrawController::class, 'rollPrize'])->middleware('role:admin');
     Route::post('/{draw}/reset/{prize}', [DrawController::class, 'resetPrize'])->middleware('role:admin');
-    Route::delete('/{draw}/image', [DrawController::class, 'deleteImage'])->middleware(['role:admin']);
     Route::delete('/{draw}/image/{mediaId}', [DrawController::class, 'eventDeleteImage'])->middleware(['role:admin']);
+    Route::post('/{draw}/images', action: [DrawController::class, 'eventAddImage'])->middleware(['role:admin']);
 
     // Prizes routes nested under draws
     Route::group(['prefix' => '/{draw}/prizes'], function () {
@@ -177,8 +177,8 @@ Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function (
         Route::post('/', [PrizeController::class, 'store'])->middleware('role:admin');
         Route::put('/{prize}', [PrizeController::class, 'update'])->middleware('role:admin');
         Route::delete('/{prize}', [PrizeController::class, 'destroy'])->middleware('role:admin');
-        Route::delete('/{prize}/image', [PrizeController::class, 'deleteImage'])->middleware(['role:admin']);
         Route::delete('/{prize}/image/{mediaId}', [PrizeController::class, 'eventDeleteImage'])->middleware(['role:admin']);
+        Route::post('/{prize}/images', action: [PrizeController::class, 'eventAddImage'])->middleware(['role:admin']);
     });
 
     // Participants routes nested under draws

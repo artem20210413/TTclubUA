@@ -7,6 +7,7 @@ use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Prize\StorePrizeRequest;
 use App\Http\Requests\Prize\UpdatePrizeRequest;
+use App\Http\Resources\DrawResource;
 use App\Http\Resources\PrizeResource;
 use App\Models\Draw;
 use App\Models\Prize;
@@ -26,11 +27,11 @@ class PrizeController extends Controller
     {
         $prize = $draw->prizes()->create($request->validated());
 
-        if ($file = $request->file('file')) {
-            $imageWebp = new ImageWebpService($file);
-            $imageWebp->convert(EnumImageQuality::HD);
-            $imageWebp->save($prize, EnumTypeMedia::PHOTO_DRAW);
-        }
+//        if ($file = $request->file('file')) {
+//            $imageWebp = new ImageWebpService($file);
+//            $imageWebp->convert(EnumImageQuality::HD);
+//            $imageWebp->save($prize, EnumTypeMedia::PHOTO_DRAW);
+//        }
 
 
         return new PrizeResource($prize);
@@ -40,12 +41,7 @@ class PrizeController extends Controller
     {
         $prize->update($request->validated());
 
-        if ($file = $request->file('file')) {
-            $imageWebp = new ImageWebpService($file);
-            $imageWebp->convert(EnumImageQuality::HD);
-            $imageWebp->save($prize, EnumTypeMedia::PHOTO_DRAW);
-        }
-
+//        if
         return new PrizeResource($prize);
     }
 
@@ -56,18 +52,6 @@ class PrizeController extends Controller
         return response()->noContent();
     }
 
-
-    public function deleteImage(Draw $draw, Prize $prize)
-    {
-        try {
-            $prize->clearMediaCollection(EnumTypeMedia::PHOTO_DRAW->value);
-
-            return success(data: new PrizeResource($prize));
-        } catch (ApiException $e) {
-            return error($e->getCode());
-        }
-
-    }
 
     public function eventDeleteImage(Draw $draw, Prize $prize, string $mediaId)
     {
@@ -86,6 +70,17 @@ class PrizeController extends Controller
         } catch (ApiException $e) {
             return error($e->getCode());
         }
+    }
+
+    public function eventAddImage(Draw $draw, Prize $prize, Request $request)
+    {
+        if ($file = $request->file('file')) {
+            $imageWebp = new ImageWebpService($file);
+            $imageWebp->convert(EnumImageQuality::HD);
+            $imageWebp->save($prize, EnumTypeMedia::PHOTO_DRAW);
+        }
+
+        return success(data: new PrizeResource($prize));
     }
 
 

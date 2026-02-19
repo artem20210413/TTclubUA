@@ -18,7 +18,7 @@ class StoreDrawRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'status' => ['sometimes', new Enum(DrawStatus::class)],
+            'status' => ['nullable', new Enum(DrawStatus::class)],
             'allow_multiple_wins' => ['sometimes', 'boolean'],
             'is_public' => ['sometimes', 'boolean'],
             'registration_until' => ['nullable', 'date'],

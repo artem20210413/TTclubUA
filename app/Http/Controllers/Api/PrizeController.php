@@ -69,5 +69,24 @@ class PrizeController extends Controller
 
     }
 
+    public function eventDeleteImage(Draw $draw, Prize $prize, string $mediaId)
+    {
+        try {
+            $media = $prize->getMedia(EnumTypeMedia::PHOTO_DRAW->value)
+                ->where('id', $mediaId)
+                ->first();
+
+            if (!$media) {
+                throw new ApiException('Фото не знайдено');
+            }
+
+            $media->delete();
+
+            return success(data: new PrizeResource($prize));
+        } catch (ApiException $e) {
+            return error($e->getCode());
+        }
+    }
+
 
 }

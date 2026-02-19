@@ -11,6 +11,7 @@ use App\Http\Requests\Draw\UpdateDrawRequest;
 use App\Http\Resources\DrawResource;
 use App\Http\Resources\PrizeResource;
 use App\Models\Draw;
+use App\Models\Goods;
 use App\Models\Prize;
 use App\Services\Image\ImageWebpService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -180,5 +181,24 @@ class DrawController extends Controller
             return error($e->getCode());
         }
 
+    }
+
+    public function eventDeleteImage(Draw $draw, string $mediaId)
+    {
+        try {
+            $media = $draw->getMedia(EnumTypeMedia::PHOTO_DRAW->value)
+                ->where('id', $mediaId)
+                ->first();
+
+            if (!$media) {
+                throw new ApiException('Фото не знайдено');
+            }
+
+            $media->delete();
+
+            return success(data: new DrawResource($draw));
+        } catch (ApiException $e) {
+            return error($e->getCode());
+        }
     }
 }

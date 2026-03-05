@@ -42,7 +42,7 @@ class Draw extends Model implements HasMedia
         'status' => DrawStatus::class,
         'allow_multiple_wins' => 'boolean',
         'is_public' => 'boolean',
-        'registration_until' => 'datetime',
+        'registration_until' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function participants()
@@ -60,8 +60,4 @@ class Draw extends Model implements HasMedia
         return $this->hasMany(DrawResult::class);
     }
 
-    protected function serializeDate(\DateTimeInterface $date): string
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
 }

@@ -180,22 +180,22 @@
             </a>
 
             <!-- Android App (Google Play) -->
-{{--            <a class="btn btn-secondary" href="https://play.google.com/store/apps/details?id=com.example.app"--}}
-{{--               target="_blank" rel="noopener noreferrer" aria-label="Завантажити в Google Play">--}}
-{{--              <span class="icon" aria-hidden="true">--}}
+            <a class="btn btn-secondary" href="https://play.google.com/store/apps/details?id=ua.com.ttclub.app"
+               target="_blank" rel="noopener noreferrer" aria-label="Завантажити в Google Play">
+              <span class="icon" aria-hidden="true">
 
-{{--              </span>--}}
-{{--                <span>Завантажити для Android</span>--}}
-{{--            </a>--}}
+              </span>
+                <span>Завантажити для Android</span>
+            </a>
 
             <!-- Android App (APK) -->
-            <a class="btn btn-secondary" href="/TT_club_UA.apk"
-               target="_blank" rel="noopener noreferrer" aria-label="Завантажити APK для Android">
-                {{--              <span class="icon" aria-hidden="true">--}}
+{{--            <a class="btn btn-secondary" href="/TT_club_UA.apk"--}}
+{{--               target="_blank" rel="noopener noreferrer" aria-label="Завантажити APK для Android">--}}
+{{--                --}}{{--              <span class="icon" aria-hidden="true">--}}
 
-                </span>
-                <span>Завантажити APK для Android</span>
-            </a>
+{{--                </span>--}}
+{{--                <span>Завантажити APK для Android</span>--}}
+{{--            </a>--}}
         </section>
 
         <div class="policy-wrap">

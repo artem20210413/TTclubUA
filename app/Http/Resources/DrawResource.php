@@ -29,7 +29,7 @@ class DrawResource extends JsonResource
             'allow_multiple_wins' => $this->allow_multiple_wins,
             'is_public' => $this->is_public,
 //            'registration_until' => $this->registration_until,
-            'registration_until' => $this->registration_until->format('Y-m-d H:i:s'),
+            'registration_until' => $this->registration_until?->format('Y-m-d H:i:s'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'is_participating' => $isParticipating,

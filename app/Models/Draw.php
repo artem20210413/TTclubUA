@@ -59,4 +59,9 @@ class Draw extends Model implements HasMedia
     {
         return $this->hasMany(DrawResult::class);
     }
+
+    protected function serializeDate(\DateTimeInterface $date): string
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 }

@@ -42,7 +42,7 @@ class Draw extends Model implements HasMedia
         'status' => DrawStatus::class,
         'allow_multiple_wins' => 'boolean',
         'is_public' => 'boolean',
-        'registration_until' => 'datetime:Y-m-d H:i:s',
+        'registration_until' => 'datetime',
     ];
 
     public function participants()
@@ -60,4 +60,5 @@ class Draw extends Model implements HasMedia
         return $this->hasMany(DrawResult::class);
     }
 
+    
 }

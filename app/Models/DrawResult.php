@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 class DrawResult extends Model
 {
     const UPDATED_AT = null;
+    const CREATED_AT = 'rolled_at';
 
     protected $fillable = [
         'prize_id',

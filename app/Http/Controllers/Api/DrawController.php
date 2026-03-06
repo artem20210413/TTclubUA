@@ -124,7 +124,6 @@ class DrawController extends Controller
                     'prize_id' => $prize->id,
                     'participant_id' => $winner->id,
                     'status' => 'confirmed',
-                    'rolled_at' => now(),
                 ]);
 
                 // Перевіряємо, чи залишились нерозіграні призи

@@ -11,6 +11,7 @@ use App\Http\Requests\Draw\UpdateDrawRequest;
 use App\Http\Resources\DrawResource;
 use App\Http\Resources\PrizeResource;
 use App\Models\Draw;
+use App\Models\DrawResult;
 use Illuminate\Http\Request;
 use App\Models\Prize;
 use App\Services\Image\ImageWebpService;
@@ -115,9 +116,11 @@ class DrawController extends Controller
                 }
 
                 // Логуємо результат
-                $draw->results()->create([
+                DrawResult::create([
                     'prize_id' => $prize->id,
                     'participant_id' => $winner->id,
+                    'status' => 'confirmed',
+                    'rolled_at' => now(),
                 ]);
 
                 // Перевіряємо, чи залишились нерозіграні призи

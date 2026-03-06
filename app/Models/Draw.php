@@ -55,10 +55,10 @@ class Draw extends Model implements HasMedia
         return $this->hasMany(Prize::class);
     }
 
-    public function results()
-    {
-        return $this->hasMany(DrawResult::class);
-    }
+//    public function results()
+//    {
+//        return $this->hasMany(DrawResult::class);
+//    }
 
-    
+
 }

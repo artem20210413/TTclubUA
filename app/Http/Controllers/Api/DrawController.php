@@ -73,7 +73,7 @@ class DrawController extends Controller
                 throw new ApiException('Цей приз вже було розіграно.', 100, 400);
             }
 
-            if ($draw->participants->count() > 0) {
+            if ($draw->participants->count() === 0) {
                 throw new ApiException('Потрібен щонайменше один учасник.', 100, 400);
             }
 

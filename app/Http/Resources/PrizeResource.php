@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Enum\EnumTypeMedia;
+use App\Models\Prize;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,6 +18,7 @@ class PrizeResource extends JsonResource
             ];
         });
 
+        /** @var Prize $this */
         return [
             'id' => $this->id,
             'draw_id' => $this->draw_id,
@@ -24,6 +26,7 @@ class PrizeResource extends JsonResource
             'quantity' => $this->quantity,
             'sort_order' => $this->sort_order,
             'winner_participant_id' => $this->winner_participant_id,
+            'winner' => new ParticipantResource($this->winner),
             'images' => $imageUrls,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

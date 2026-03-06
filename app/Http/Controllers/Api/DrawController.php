@@ -73,6 +73,10 @@ class DrawController extends Controller
                 throw new ApiException('Цей приз вже було розіграно.', 100, 400);
             }
 
+            if ($draw->participants->count() > 0) {
+                throw new ApiException('Потрібен щонайменше один учасник.', 100, 400);
+            }
+
             $participantsQuery = $draw->participants();
 
             // Якщо не дозволено вигравати кілька разів, виключаємо переможців
@@ -171,6 +175,7 @@ class DrawController extends Controller
             return error($e);
         }
     }
+
     public function eventDeleteImage(Draw $draw, string $mediaId)
     {
         try {

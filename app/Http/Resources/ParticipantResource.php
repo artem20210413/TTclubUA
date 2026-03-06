@@ -10,7 +10,7 @@ class ParticipantResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $profileImage = $this?->user->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value) ?: null;
+        $profileImage = $this?->user?->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value) ?: null;
         return [
             'id' => $this->id,
             'draw_id' => $this->draw_id,

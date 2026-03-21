@@ -166,6 +166,7 @@ Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function (
     Route::get('/{draw}', [DrawController::class, 'show']);
     Route::post('/', [DrawController::class, 'store'])->middleware('role:admin');
     Route::put('/{draw}', [DrawController::class, 'update'])->middleware('role:admin');
+    Route::delete('/{draw}', [DrawController::class, 'destroy'])->middleware('role:admin');
     Route::post('/{draw}/roll/{prize}', [DrawController::class, 'rollPrize'])->middleware('role:admin');
     Route::post('/{draw}/reset/{prize}', [DrawController::class, 'resetPrize'])->middleware('role:admin');
     Route::delete('/{draw}/image/{mediaId}', [DrawController::class, 'eventDeleteImage'])->middleware(['role:admin']);

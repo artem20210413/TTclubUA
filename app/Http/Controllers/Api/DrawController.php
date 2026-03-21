@@ -204,4 +204,12 @@ class DrawController extends Controller
 
         return success(data: new DrawResource($draw));
     }
+
+    public function destroy(Draw $draw)
+    {
+        $draw->delete();
+
+        return response()->noContent();
+    }
+
 }

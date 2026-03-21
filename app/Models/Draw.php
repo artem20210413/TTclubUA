@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\DrawStatus;
+use App\Enum\EnumTypeMedia;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Jetstream\HasProfilePhoto;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -53,6 +54,16 @@ class Draw extends Model implements HasMedia
     public function prizes()
     {
         return $this->hasMany(Prize::class);
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function (Draw $draw) {
+            $medias = $draw->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
+            foreach ($medias as $media) {
+                $media->delete();
+            }
+        });
     }
 
 //    public function results()

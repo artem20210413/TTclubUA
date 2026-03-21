@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\EnumTypeMedia;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\MediaLibrary\HasMedia;
@@ -36,6 +37,16 @@ class Prize extends Model implements HasMedia
         'quantity' => 'integer',
         'sort_order' => 'integer',
     ];
+
+    protected static function booted()
+    {
+        static::deleting(function (Prize $prize) {
+            $medias = $prize->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
+            foreach ($medias as $media) {
+                $media->delete();
+            }
+        });
+    }
 
     public function draw()
     {

@@ -33,10 +33,10 @@ class Participant extends Model
         'is_winner' => 'boolean',
     ];
 
-    public function draw()
-    {
-        return $this->belongsTo(Draw::class);
-    }
+//    public function draw()
+//    {
+//        return $this->belongsTo(Draw::class);
+//    }
 
     public function user()
     {

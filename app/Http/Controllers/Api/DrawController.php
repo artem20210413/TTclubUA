@@ -207,7 +207,7 @@ class DrawController extends Controller
 
     public function destroy(Draw $draw)
     {
-        foreach ($draw->prizes ?? [] as $prize) {
+        foreach (($draw->prizes ?? []) as $prize) {
             $prize->delete();
         }
 

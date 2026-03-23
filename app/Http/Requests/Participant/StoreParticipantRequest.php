@@ -14,9 +14,9 @@ class StoreParticipantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_manual' => ['required', 'string', 'max:255'],
-            'contact_manual' => ['nullable', 'string', 'max:255'],
-            'weight' => ['sometimes', 'integer', 'min:1'],
+            'weight' => ['required', 'integer', 'min:1'],
+            'name_manual' => ['required', 'string'],
+            'contact_manual' => ['nullable', 'string'],
         ];
     }
 }

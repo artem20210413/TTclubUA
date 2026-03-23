@@ -62,7 +62,7 @@ class ParticipantController extends Controller
             'weight' => $request->weight ?? 1,
         ]);
 
-        return success(data: new ParticipantResource($participant));
+        return success(data: new ParticipantResource($participant->refresh()));
     }
 
     public function update(UpdateParticipantRequest $request, Draw $draw, Participant $participant)

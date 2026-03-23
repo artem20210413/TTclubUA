@@ -60,7 +60,7 @@ class Draw extends Model implements HasMedia
     {
         static::deleting(function (Draw $draw) {
             $medias = $draw->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
-            foreach ($medias as $media) {
+            foreach (($medias ?? []) as $media) {
                 $media->delete();
             }
         });

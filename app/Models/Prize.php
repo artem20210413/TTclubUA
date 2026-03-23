@@ -42,7 +42,7 @@ class Prize extends Model implements HasMedia
     {
         static::deleting(function (Prize $prize) {
             $medias = $prize->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
-            foreach ($medias as $media) {
+            foreach (($medias ?? []) as $media) {
                 $media->delete();
             }
         });

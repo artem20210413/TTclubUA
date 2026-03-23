@@ -83,7 +83,8 @@ class ParticipantController extends Controller
         if ($participant->draw_id !== $draw->id) {
             abort(404);
         }
-        $draw->participants()->where('id', $participant->id)->delete();
+
+        $participant->delete();
 
         return response()->noContent();
     }

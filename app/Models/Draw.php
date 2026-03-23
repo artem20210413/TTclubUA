@@ -59,10 +59,13 @@ class Draw extends Model implements HasMedia
     protected static function booted()
     {
         static::deleting(function (Draw $draw) {
-            $medias = $draw->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
-            foreach ($medias as $media) {
-                $media->delete();
-            }
+            $draw->prizes->each->delete();
+            $draw->clearMediaCollection(EnumTypeMedia::PHOTO_DRAW->value);
+
+//            $medias = $draw->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
+//            foreach ($medias as $media) {
+//                $media->delete();
+//            }
         });
     }
 

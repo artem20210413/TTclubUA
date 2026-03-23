@@ -15,6 +15,8 @@ class UpdateParticipantRequest extends FormRequest
     {
         return [
             'weight' => ['required', 'integer', 'min:1'],
+            'name_manual' => ['nullable', 'string'],
+            'contact_manual' => ['nullable', 'string'],
         ];
     }
 }

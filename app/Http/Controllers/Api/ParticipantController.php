@@ -18,7 +18,7 @@ class ParticipantController extends Controller
 {
     public function index(Draw $draw)
     {
-        $participants = $draw->participants()->with('user')->paginate(50);
+        $participants = $draw->participants()->with('user')->paginate(100);
 
         return success(data: ParticipantResource::collection($participants));
     }

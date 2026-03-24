@@ -20,6 +20,6 @@ app(Schedule::class)->command('clear:mono-prune 90')->dailyAt('03:06');
 app(Schedule::class)->command('tg:sending-list-of-birthdays 0')->dailyAt('09:00');
 app(Schedule::class)->command('tg:send-stats-mention')->monthlyOn(1, '10:00');
 app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->weeklyOn(0, '15:00');
-app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->everyMinute();
+//app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->everyMinute();
 
 //test

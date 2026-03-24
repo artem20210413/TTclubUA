@@ -24,7 +24,7 @@ if (!function_exists('formatNormalizePlateNumber')) {
     function formatNormalizePlateNumber(?string $plate): ?string
     {
         if (!$plate) return null;
-
+        $plate = str_replace(' ', '', $plate);
         $plate = trim($plate);
         // Словарь замены кириллических букв на латинские
         $replaceMap = [

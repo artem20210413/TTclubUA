@@ -13,6 +13,9 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'autoria' => [
+        'api_key' => env('AUTORIA_API_KEY'),
+    ],
     'gemini' => [
         'key' => env('GEMINI_API_KEY'),
     ],

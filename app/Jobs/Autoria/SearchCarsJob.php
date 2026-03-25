@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs\Autoria;
 
 use App\Models\ExternalCar;
@@ -24,7 +25,9 @@ class SearchCarsJob implements ShouldQueue
         $this->filters = array_merge([
             'category_id' => 1,
             'marka_id[0]' => 6,
-            'countpage'   => 200,
+            'marka_id[1]' => 6,
+            'marka_id[2]' => 6,
+            'countpage' => 200,
             'model_id[0]' => 1837,
             'model_id[1]' => 33483,
             'model_id[2]' => 3452,
@@ -50,7 +53,7 @@ class SearchCarsJob implements ShouldQueue
             return;
         }
         ExternalCar::whereIn('external_id', $externalIds)
-        ->update(['is_active' => true]);
+            ->update(['is_active' => true]);
 
         ExternalCar::whereNotIn('external_id', $externalIds)
             ->update(['is_active' => false]);

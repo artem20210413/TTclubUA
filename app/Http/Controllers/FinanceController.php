@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Eloquent\FinanceEloquent;
 use App\Enum\EnumMonoAccount;
 use App\Enum\EnumMonoStatus;
+use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\FinanceRequest;
 use App\Http\Resources\FinanceWithUserResource;
 use App\Models\Finance;
 use App\Models\MonoTransaction;
 use App\Models\User;
+use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -67,37 +69,48 @@ class FinanceController extends Controller
 
     public function webhookMonobank(Request $request)
     {
-        $monoAccount = EnumMonoAccount::LILIIA;
+        try {
+            $monoAccount = EnumMonoAccount::LILIIA;
 
 //        Log::info('webhookMonobank', ['body' => $request->all()]);
 //        Log::info('webhookMonobank', ['body' => $request->all(), 'headers' => $request->header(), 'ip' => $request->ip(), 'host' => $request->host()]);
-        $statementItem = $request->data['statementItem'] ?? null;
+            $statementItem = $request->data['statementItem'] ?? null;
 
-        if ($request->all() === [] || ($request->data['account'] ?? null) !== $monoAccount->getID() || !$statementItem)
-            return success();
+            if ($request->all() === [] || ($request->data['account'] ?? null) !== $monoAccount->getID() || !$statementItem)
+                return success();
 
-        $description = $statementItem['comment'] ?? '';
-        if (preg_match('/pay:([a-zA-Z0-9]+)/', $description, $matches)) {
-            $hash = $matches[1];
-            /** @var MonoTransaction $payment */
-            $payment = MonoTransaction::where('hash', $hash)->first() ?? new MonoTransaction();
-            $payment->source_ip = $request->ip();
-            $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
-            $payment->currency_code = $statementItem['currency_code'] ?? null;
-            $payment->amount = $statementItem['amount'] ?? null;
-            $payment->description = $statementItem['description'] ?? null;
-            $payment->comment = $statementItem['comment'] ?? null;
-            $payment->jar_id = $monoAccount->getID();
+            $description = $statementItem['comment'] ?? '';
+            if (preg_match('/pay:([a-zA-Z0-9]+)/', $description, $matches)) {
+                $hash = $matches[1];
+                /** @var MonoTransaction $payment */
+                $payment = MonoTransaction::where('hash', $hash)->first() ?? new MonoTransaction();
+                $payment->source_ip = $request->ip();
+                $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
+                $payment->currency_code = $statementItem['currency_code'] ?? null;
+                $payment->amount = $statementItem['amount'] ?? null;
+                $payment->description = $statementItem['description'] ?? null;
+                $payment->comment = $statementItem['comment'] ?? null;
+                $payment->jar_id = $monoAccount->getID();
 
-            if ($payment->id) {
-                FinanceEloquent::createByMono($payment);
+                if ($payment->id) {
+                    FinanceEloquent::createByMono($payment);
+                }
+
+                $payment->save();
             }
 
-            $payment->save();
+        } catch (\Throwable $e) {
+            $bot = new TelegramBot(EnumTelegramEvents::SYSTEM_ERRORS);
+            $bot->sendMessage('Monobank Webhook Critical Error:' . $e->getMessage());
+            Log::error('Monobank Webhook Critical Error:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'payload' => $request->all() // Додаємо дані, на яких "впав" код
+            ]);
         }
 
-
-        return success();
+        return response()->json(['status' => 'accepted'], 200);
     }
 
     public function redirectJarMonobank(Request $request)

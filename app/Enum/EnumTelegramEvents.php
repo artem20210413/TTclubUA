@@ -13,6 +13,7 @@ enum EnumTelegramEvents
     case STATS_MENTION;
     case LIST_BIRTHDAYS; // Список ДР в очереди
     case TEST;
+    case SYSTEM_ERRORS;
     case MY;
     case USERS; // определенным пользователям
     case CUSTOM; // произвольный
@@ -46,6 +47,7 @@ enum EnumTelegramEvents
             self::STATS_MENTION => [$ttChat],
 
             self::TEST => [$testBot2],
+            self::SYSTEM_ERRORS => [$testBot2],
 
             self::MY => $myIds,
             self::USERS => $usersIds,

@@ -29,6 +29,8 @@ class ExternalCarResource extends JsonResource
             'race' => $this->raw_data['autoData']['race'] ?? null,
             'fuelName' => $this->raw_data['autoData']['fuelName'] ?? null,
             'driveName' => $this->raw_data['autoData']['driveName'] ?? null,
+            'equipmentName' => $this->raw_data['autoData']['equipmentName'] ?? null,
+            'generationName' => $this->raw_data['autoData']['generationName'] ?? null,
             'gearboxName' => $this->raw_data['autoData']['gearboxName'] ?? null,
             'modificationName' => $this->raw_data['autoData']['modificationName'] ?? null,
             'year' => $this->year,

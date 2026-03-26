@@ -22,6 +22,7 @@ class ExternalCarResource extends JsonResource
             'description' => $this->raw_data['autoData']['description'] ?? null,
             'price_usd' => $this->price_usd,
             'city_name' => $this->city_name,
+            'cityLocative' => $this->raw_data['cityLocative'] ?? null,
             'regionName' => $this->raw_data['stateData']['regionName'] ?? null,
             'mark_name' => $this->mark_name,
             'model_name' => $this->model_name,

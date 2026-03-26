@@ -17,7 +17,7 @@ class SyncCarDetailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
-    public $backoff = 600; // 10 минут при неудаче
+    public $backoff = 3600; // 60 минут при неудаче
 
     protected $externalId;
 
@@ -41,6 +41,12 @@ class SyncCarDetailJob implements ShouldQueue
         }
 
         if ($response->failed()) {
+            Log::error("AUTO.RIA API Error", [
+                'id' => $this->externalId,
+                'status' => $response->status(),
+                'body' => $response->body() // Тут ми побачимо реальну причину від RIA
+            ]);
+
             throw new \Exception("Detail API failed for ID {$this->externalId}");
         }
 

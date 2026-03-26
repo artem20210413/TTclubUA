@@ -10,6 +10,7 @@ use App\Http\Requests\User\ChangePasswordRequest;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\User\UserResource;
+use App\Jobs\Autoria\SyncCarDetailJob;
 use App\Models\Mention;
 use App\Models\User;
 use App\Services\Telegram\TelegramBot;
@@ -24,7 +25,6 @@ class TestController extends Controller
 {
     public function test(Request $request)
     {
-
 
     }
 

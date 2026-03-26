@@ -79,8 +79,12 @@ class ExternalCarsController extends Controller
             $q->where('title', 'like', '%' . trim($search) . '%');
         }
 
-        if ($year = $request->year) {
-            $q->where('year', trim($year));
+        if ($year_from = $request->year_from) {
+            $q->where('year', '>=', (int)$year_from);
+        }
+
+        if ($year_to = $request->year_to) {
+            $q->where('year', '<=', (int)$year_to);
         }
 
         if ($sub_category = $request->sub_category) {

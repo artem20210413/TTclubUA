@@ -10,6 +10,7 @@ use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\Car\MentionController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ExternalCarsController;
 use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
@@ -26,6 +27,16 @@ use Illuminate\Support\Facades\Route;
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
+
+//Route::post('/test/fa-fa', [TestController::class, 'fafa'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/test', [TestController::class, 'test']);//->middleware(['auth:sanctum', 'role:admin']);
+
+
+Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
+Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
+
+Route::post('/telegram/webhook', [TelegramController::class, 'webhook'])->middleware('telegram.webhook');
+Route::get('/telegram/test', [TelegramController::class, 'test']);
 
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/login/tg/send-code', [AuthController::class, 'sendCode'])->middleware('params.throttle:15');
@@ -151,15 +162,6 @@ Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum
 
 Route::post('/import', [ImportController::class, 'importMain'])->middleware(['auth:sanctum', 'role:admin']);
 
-//Route::post('/test/fa-fa', [TestController::class, 'fafa'])->middleware(['auth:sanctum', 'role:admin']);
-Route::get('/test', [TestController::class, 'test']);//->middleware(['auth:sanctum', 'role:admin']);
-
-
-Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
-Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
-
-Route::post('/telegram/webhook', [TelegramController::class, 'webhook'])->middleware('telegram.webhook');
-Route::get('/telegram/test', [TelegramController::class, 'test']);
 
 Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [DrawController::class, 'index']);
@@ -190,6 +192,11 @@ Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function (
         Route::post('/{participant}', [ParticipantController::class, 'update'])->middleware('role:admin');
         Route::delete('/{participant}', [ParticipantController::class, 'destroy'])->middleware('role:admin');
     });
+});
+
+Route::group(['prefix' => 'external-cars', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/filters', [ExternalCarsController::class, 'getFilterOptions']);
+    Route::get('/list', [ExternalCarsController::class, 'list']);
 });
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.

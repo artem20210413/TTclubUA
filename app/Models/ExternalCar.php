@@ -103,7 +103,7 @@ class ExternalCar extends Model
         foreach ($data['photoData']['all'] as $photoId) {
             // Формат 'f' зазвичай означає Full Size (велике фото)
             // Можна також використовувати 'm' (medium) або 'b' (big)
-            $photos[] = "https://cdn0.riastatic.com/photosnew/auto/photo/{$mark}_{$model}__{$photoId}f.jpg";
+            $photos[] = "https://cdn0.riastatic.com/photosnew/auto/photo/{$mark}_{$model}__{$photoId}b.jpg";
         }
 
         return $photos;

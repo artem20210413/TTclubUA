@@ -59,12 +59,15 @@ class SyncCarDetailJob implements ShouldQueue
             $car = Car::query()->where('license_plate', $plateNumber)->first();
             $user_id = $car?->user_id ?? null;
         }
+
+
+        $title = ($data['title'] ?? '') . ' ' ($data['autoData']['year'] ?? '');
         ExternalCar::updateOrCreate(
             ['external_id' => $data['autoData']['autoId']],
             [
                 'plate_number' => $plateNumber,
                 'vin' => $data['VIN'] ?? null,
-                'title' => $data['title'] ?? null,
+                'title' => $title,
                 'price_usd' => $data['USD'] ?? null,
                 'city_name' => $data['locationCityName'] ?? null,
                 'mark_name' => $data['markName'] ?? null,

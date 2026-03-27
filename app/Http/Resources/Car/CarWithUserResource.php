@@ -32,6 +32,7 @@ class CarWithUserResource extends JsonResource
             'name' => $this->name,
             'user_id' => $this->user_id,
             'vin_code' => $this->vin_code,
+            'external_car_id' => $this?->external_car_id ?? null,
             'license_plate' => $this->license_plate,
             'personalized_license_plate' => $this->personalized_license_plate,
             'general_license_plate' => $this->getGeneralLicensePlate(),

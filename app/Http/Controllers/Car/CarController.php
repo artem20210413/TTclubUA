@@ -62,6 +62,24 @@ class CarController extends Controller
         $q = Car::query();
         $q = CarEloquent::search($q, $search);
 
+        $q->addSelect([
+            'external_car_id' => function ($query) {
+                $query->select('id')
+                    ->from('external_cars')
+                    ->whereColumn('external_cars.plate_number', 'cars.license_plate')
+                    ->where('external_cars.is_active', 1)
+                    ->where('external_cars.is_sold', 0)
+                    ->limit(1); // Обов'язково, щоб не було помилки Cardinality violation
+            }
+        ]);
+//        $q->addSelect([
+//            'is_sale' => \App\Models\ExternalCar::selectRaw('1')
+//                ->whereColumn('plate_number', 'cars.license_plate')
+//                ->where('is_active', true)
+//                ->where('is_sold', false)
+//                ->limit(1)
+//        ]);
+
         $geneIds = $request->input('gene_ids');
         $modelIds = $request->input('model_ids');
         $colorIds = $request->input('color_ids');
@@ -96,9 +114,7 @@ class CarController extends Controller
         try {
             $car = Car::findOrFail($id);
 
-            $isSale = $car->isSale();
-
-            return success(data: new CarResource($car, $isSale));
+            return success(data: new CarResource($car));
 
         } catch (ApiException $e) {
             return error($e);

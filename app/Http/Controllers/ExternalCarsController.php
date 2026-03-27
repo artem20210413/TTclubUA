@@ -75,6 +75,10 @@ class ExternalCarsController extends Controller
             $q->where('city_name', 'like', '%' . trim($city_name) . '%');
         }
 
+        if ($request->only_ours) {
+            $q->whereNotNull('user_id');
+        }
+
         if ($search = $request->search) {
             $q->where('title', 'like', '%' . trim($search) . '%');
         }

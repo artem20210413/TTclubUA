@@ -96,7 +96,9 @@ class CarController extends Controller
         try {
             $car = Car::findOrFail($id);
 
-            return success(data: new CarResource($car));
+            $isSale = $car->isSale();
+
+            return success(data: new CarResource($car, $isSale));
 
         } catch (ApiException $e) {
             return error($e);

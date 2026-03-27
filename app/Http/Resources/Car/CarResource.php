@@ -9,6 +9,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CarResource extends JsonResource
 {
+
+    protected $_isSale;
+
+    // Перевизначаємо конструктор
+    public function __construct($resource, $isSale = false)
+    {
+        parent::__construct($resource);
+        $this->_isSale = $isSale;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -38,6 +48,7 @@ class CarResource extends JsonResource
             'color' => new ColorResource($this->color),
             'imageUrls' => $imageUrls,
             'active' => $this->active,
+            'is_sale' => $this->_isSale,
             'updated_at' => $this->updated_at?->diffForHumans(),
             'created_at' => $this->created_at?->diffForHumans(),
         ];

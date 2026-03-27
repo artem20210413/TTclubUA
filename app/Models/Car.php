@@ -121,4 +121,11 @@ class Car extends Model implements HasMedia, AuditableContract
         return $this->hasMany(Mention::class, 'car_id');
     }
 
+
+    public function isSale()
+    {
+        return $this->license_plate === null
+            ? false
+            : ExternalCar::query()->where('plate_number', $this->license_plate)->where('is_active', true)->where('is_sold', false)->exists();
+    }
 }

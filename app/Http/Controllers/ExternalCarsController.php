@@ -99,10 +99,13 @@ class ExternalCarsController extends Controller
         if ($sub_category = $request->sub_category) {
             $q->where('sub_category', trim($sub_category));
         }
+        if ($color_hexs = $request->color_hex) {
+            // Перетворюємо в масив, якщо раптом прийшов рядок, і додаємо # до кожного
+            $colors = collect((array)$color_hexs)->map(function ($color) {
+                return '#' . ltrim($color, '#');
+            })->all();
 
-        if ($color_hex = $request->color_hex) {
-            $color_hex = '#' . ltrim($color_hex, '#');
-            $q->where('color_hex', $color_hex);
+            $q->whereIn('color_hex', $colors);
         }
         if ($model_name = $request->model_name) {
             $q->where('model_name', trim($model_name));

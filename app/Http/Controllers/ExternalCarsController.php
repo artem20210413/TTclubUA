@@ -75,6 +75,11 @@ class ExternalCarsController extends Controller
             $q->where('city_name', 'like', '%' . trim($city_name) . '%');
         }
 
+        if ($plate_number = $request->plate_number) {
+            $plate_number = formatNormalizePlateNumber($plate_number);
+            $q->where('plate_number', 'like', '%' . $plate_number . '%');
+        }
+
         if ($request->only_ours) {
             $q->whereNotNull('user_id');
         }

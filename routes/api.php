@@ -59,7 +59,7 @@ Route::delete('/user/profile-picture', [MediaController::class, 'deleteProfilePi
 Route::get('/user/my-cars', [UserController::class, 'myCars'])->middleware('auth:sanctum');
 Route::get('/user/all', [UserController::class, 'all'])->middleware('auth:sanctum');
 Route::post('/user', [UserController::class, 'update'])->middleware(['auth:sanctum']);
-Route::get('/user', [UserController::class, 'user'])->middleware('auth:sanctum')->middleware('update_app_version');
+Route::get('/user', [UserController::class, 'user'])->middleware('auth:sanctum')->middleware('app.attributes');
 Route::post('/user/{user}/change-active', [UserController::class, 'userChangeActive'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/{id}/update', [UserController::class, 'updateById'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/user/{user}', [UserController::class, 'getUser'])->middleware(['auth:sanctum']);

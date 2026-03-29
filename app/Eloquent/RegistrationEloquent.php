@@ -3,6 +3,7 @@
 namespace App\Eloquent;
 
 use App\Enum\EnumTypeMedia;
+use App\Enum\EnumUserRoles;
 use App\Http\Requests\MentionRequest;
 use App\Models\Car;
 use App\Models\Mention;
@@ -85,6 +86,8 @@ class RegistrationEloquent
         $user->occupation_description = $data['occupation_description'];
         $user->is_tt = isset($carData) ? true : false;
         $user->save();
+
+        if (isset($carData)) $user->addRoleEnum(EnumUserRoles::TTOWNER);
 
         if (isset($data['cities_model'][0])) {
             $user->cities()->sync([$data['cities_model'][0]['id']]);

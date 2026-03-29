@@ -6,6 +6,7 @@ use App\Eloquent\CarEloquent;
 use App\Eloquent\RemoteCarEloquent;
 use App\Enum\EnumImageQuality;
 use App\Enum\EnumTypeMedia;
+use App\Enum\EnumUserRoles;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Car\AddCollectionsCarRequest;
@@ -34,6 +35,8 @@ class CarController extends Controller
         $user = User::find($request->user_id);
         $user->is_tt = true;
         $user->save();
+
+        $user->addRoleEnum(EnumUserRoles::TTOWNER);
 
         $car = new Car();
         $car->user_id = $user->id;

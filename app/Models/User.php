@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\EnumTypeMedia;
+use App\Enum\EnumUserRoles;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\UpdateUserRequest;
 use Carbon\Carbon;
@@ -255,5 +256,34 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     {
         return Cache::get($this->getLoginCodeCacheKey());
     }
+
+
+
+    /**
+     * Перевірити, чи має користувач певну роль.
+     */
+    public function hasRoleEnum(EnumUserRoles $role): bool
+    {
+        return $this->hasRole($role->value);
+    }
+
+    /**
+     * Додати додаткову роль (не видаляючи старі).
+     */
+    public function addRoleEnum(EnumUserRoles $role): self
+    {
+        $this->assignRole($role->value);
+        return $this;
+    }
+
+    /**
+     * Видалити роль.
+     */
+    public function removeRoleEnum(EnumUserRoles $role): self
+    {
+        $this->removeRole($role->value);
+        return $this;
+    }
+
 
 }

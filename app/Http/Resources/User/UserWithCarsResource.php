@@ -46,6 +46,7 @@ class UserWithCarsResource extends JsonResource
             'roles' => $this->getRoleNames(),
             'active' => (bool)$this->active,
             'profile_image' => $profileImage,
+            'is_entry_paid' => true, //TODO implement the method
             'cities' => CityResource::collection($this->cities),
 //            'imageUrls' => $imageUrls,
             'updated_at' => $this->updated_at?->diffForHumans(),

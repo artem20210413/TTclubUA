@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('external_cars', function (Blueprint $table) {
-            $table->timestamp('synced_at')->nullable()->after('raw_data');
+            $table->timestamp('synced_at')->useCurrent()->after('raw_data');
         });
     }
 

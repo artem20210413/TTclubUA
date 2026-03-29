@@ -15,7 +15,7 @@ class TrackAppAttributesMiddleware
 
             $user = $request->user();
             $version = $request->header('X-App-Version');
-            $platform = $request->header('X-App-Platform');
+            $platform = $request->header('X-Client-Platform');
 
             // Перевіряємо, чи юзер авторизований і чи є хедер з версією
             if ($user && ($version || $platform)) {

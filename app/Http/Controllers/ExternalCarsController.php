@@ -67,9 +67,7 @@ class ExternalCarsController extends Controller
     public function list(Request $request)
     {
         $q = ExternalCar::query();
-        $q = $q->where('is_sold', false);
-        $q = $q->where('is_active', true);
-
+        $q = $q->available();
 
         if ($city_name = $request->city_name) {
             $q->where('city_name', 'like', '%' . trim($city_name) . '%');

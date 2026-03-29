@@ -40,6 +40,12 @@ class SyncCarDetailJob implements ShouldQueue
             return $this->release(600);
         }
 
+        if ($response->status() === 404) {
+            Log::info("Автомобіль {$this->externalId} не знайдено на RIA (видалено). Деактивація.");
+            ExternalCar::where('external_id', $this->externalId)->update(['is_active' => false]);
+            return; // Просто завершуємо роботу
+        }
+
         if ($response->failed()) {
             Log::error("AUTO.RIA API Error", [
                 'id' => $this->externalId,
@@ -55,13 +61,14 @@ class SyncCarDetailJob implements ShouldQueue
         $plateNumber = isset($data['plateNumber']) ? formatNormalizePlateNumber($data['plateNumber']) : null;
         $plateNumber = $plateNumber == '' ? null : $plateNumber;
 
+        $user_id = null;
         if ($plateNumber) {
             $car = Car::query()->where('license_plate', $plateNumber)->first();
             $user_id = $car?->user_id ?? null;
         }
 
 
-        $title = ($data['title'] ?? '') . ' ' ($data['autoData']['year'] ?? '');
+        $title = ($data['title'] ?? '') . ' ' . ($data['autoData']['year'] ?? '');
         ExternalCar::updateOrCreate(
             ['external_id' => $data['autoData']['autoId']],
             [
@@ -78,7 +85,8 @@ class SyncCarDetailJob implements ShouldQueue
                 'is_active' => $data['autoData']['active'] ?? true,
                 'is_sold' => $data['autoData']['isSold'] ?? false,
                 'raw_data' => $this->clearData($data),
-                'user_id' => $user_id ?? null,
+                'synced_at' => now(),
+                'user_id' => $user_id,
             ]
         );
 

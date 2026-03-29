@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
+
 /**
  * Class ExternalCar
  *
@@ -49,6 +51,7 @@ class ExternalCar extends Model
         'is_sold',
         'user_id',
         'raw_data',
+        'synced_at',
     ];
 
     /**
@@ -56,11 +59,12 @@ class ExternalCar extends Model
      */
     protected $casts = [
         'external_id' => 'integer',
-        'price_usd'   => 'decimal:2',
-        'year'        => 'integer',
-        'is_active'   => 'boolean',
-        'is_sold'     => 'boolean',
-        'raw_data'    => 'array', // Автоматично перетворює JSON у масив PHP і навпаки
+        'price_usd' => 'decimal:2',
+        'year' => 'integer',
+        'is_active' => 'boolean',
+        'is_sold' => 'boolean',
+        'raw_data' => 'array', // Автоматично перетворює JSON у масив PHP і навпаки
+        'synced_at' => 'datetime'
     ];
 
     /**
@@ -78,6 +82,7 @@ class ExternalCar extends Model
     {
         return $this->raw_data['photoData']['seoLinkM'] ?? null;
     }
+
     /**
      * Отримує масив посилань на всі фото автомобіля у високій якості (формат f - full).
      * * @return array
@@ -115,8 +120,13 @@ class ExternalCar extends Model
     /**
      * Скоуп (Scope) для отримання лише активних оголошень, які не продані.
      */
-    public function scopeAvailable($query)
+    public function scopeAvailable(Builder $query): Builder
     {
         return $query->where('is_active', true)->where('is_sold', false);
+    }
+
+    public function scopeStale(Builder $query, int $days = 3): Builder
+    {
+        return $query->where('synced_at', '<', now()->subDays($days));
     }
 }

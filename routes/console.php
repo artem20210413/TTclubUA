@@ -9,8 +9,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(1, '01:00');
-app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(4, '01:00');
+//app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(1, '01:00');
+//app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(4, '01:00');
+app(Schedule::class)->command('autoria_serch:sync')->dailyAt('06:00');
+app(Schedule::class)->command('autoria_serch:sync')->dailyAt('15:00');
 
 app(Schedule::class)->command('audit:prune --days=365')->dailyAt('02:55');
 //app(Schedule::class)->command('clear:mention 30')->dailyAt('03:00');

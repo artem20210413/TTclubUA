@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'only.ua' => \App\Http\Middleware\OnlyFromUkraine::class,
             'params.throttle' => \App\Http\Middleware\ParamsThrottleMiddleware::class,
             'telegram.webhook' => \App\Http\Middleware\VerifyTelegramWebhook::class,
+            'update_app_version' => \App\Http\Middleware\UpdateAppVersionMiddleware::class,
         ]);
 //        $middleware->alias(['permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class]);
     })

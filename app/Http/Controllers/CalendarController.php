@@ -23,12 +23,10 @@ class CalendarController extends Controller
     {
         // month в формате Y-m (например "2025-02")
         $monthParam = $request->query('month');
-
         // если не передан - берем текущий месяц
         $current = $monthParam
-            ? Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
+            ? Carbon::createFromFormat('Y-m|', $monthParam)->startOfMonth()
             : now()->startOfMonth();
-
         $start = $current->copy()->startOfMonth();
         $end = $current->copy()->endOfMonth();
 

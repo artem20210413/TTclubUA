@@ -303,6 +303,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
      */
     public function isSeasonPaid(): bool
     {
+        return true;
         if (!$this->hasRoleEnum(EnumUserRoles::TTOWNER)) return false;
         if ($this->hasRoleEnum(EnumUserRoles::ADMIN) || $this->hasRoleEnum(EnumUserRoles::TESTER)) return false;
 

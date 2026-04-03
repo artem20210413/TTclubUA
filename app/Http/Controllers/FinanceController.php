@@ -26,8 +26,13 @@ class FinanceController extends Controller
         $finance->user_id = $user->id;
         $finance->amount = $request->amount;
         $finance->description = $request->description;
-        if ($request->created_at)
-            $finance->created_at = Carbon::parse($request->created_at);
+        if ($request->filled('created_at')) {
+            $date = \Carbon\Carbon::parse($request->created_at)->setTime(10, 0, 0);
+
+            if (!$date->isToday()) {
+                $finance->created_at = $date;
+            }
+        }
         $finance->save();
 
         return new FinanceWithUserResource($finance);

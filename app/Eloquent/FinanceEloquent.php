@@ -21,7 +21,7 @@ class FinanceEloquent
         $f = new Finance();
         $f->user_id = $monoTransaction->user_id;
         $f->amount = $monoTransaction->amount / 100;
-        $f->description = 'Came from mono';
+        $f->description = 'Надходженя у банку';
         $f->save();
 
         return $f;

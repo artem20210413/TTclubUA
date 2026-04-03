@@ -22,7 +22,7 @@ class FinanceWithUserResource extends JsonResource
             'id' => $this->id,
             'amount' => $this->amount,
             'description' => $this->description,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'user' => new UserResource($this->user)
         ];
     }

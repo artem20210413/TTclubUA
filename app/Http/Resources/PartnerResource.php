@@ -32,8 +32,8 @@ class PartnerResource extends JsonResource
             'has_promotions' => $this->when(isset($this->promotions_count), $this->promotions_count > 0),
             'has_promotions_actual' => $this->promotions()->currentlyActive()->isActive(true)->count() > 0,
             'photos' => $imageUrls,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
     }
 }

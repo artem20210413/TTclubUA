@@ -28,8 +28,8 @@ class PrizeResource extends JsonResource
             'winner_participant_id' => $this->winner_participant_id,
             'winner' => new ParticipantResource($this->winner),
             'images' => $imageUrls,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
     }
 }

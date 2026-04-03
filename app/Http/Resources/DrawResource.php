@@ -30,12 +30,12 @@ class DrawResource extends JsonResource
             'is_public' => $this->is_public,
 //            'registration_until' => $this->registration_until,
             'registration_until' => $this->registration_until?->format('Y-m-d H:i:s'),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'is_participating' => $isParticipating,
             'images' => $imageUrls,
             'participants' => ParticipantResource::collection($this->participants),
             'prizes' => PrizeResource::collection($this->prizes),
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
     }
 }

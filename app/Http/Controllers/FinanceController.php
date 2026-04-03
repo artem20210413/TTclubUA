@@ -14,6 +14,7 @@ use App\Models\MonoTransaction;
 use App\Models\User;
 use App\Services\Telegram\TelegramBot;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class FinanceController extends Controller
@@ -25,6 +26,8 @@ class FinanceController extends Controller
         $finance->user_id = $user->id;
         $finance->amount = $request->amount;
         $finance->description = $request->description;
+        if ($request->created_at)
+            $finance->created_at = Carbon::parse($request->created_at);
         $finance->save();
 
         return new FinanceWithUserResource($finance);

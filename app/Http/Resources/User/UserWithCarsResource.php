@@ -23,14 +23,8 @@ class UserWithCarsResource extends JsonResource
 //        return parent::toArray($request);
 
         $birthDate = $this?->birth_date ? Carbon::parse($this->birth_date) : null;
-//        $clubEntryDate = $this->club_entry_date ? Carbon::parse($this->club_entry_date) : null;
-
         $default = asset("storage/default/" . EnumTypeMedia::PROFILE_PICTURE->value . ".webp");
         $profileImage = $this->getFirstMediaUrl(EnumTypeMedia::PROFILE_PICTURE->value) ?: $default;
-
-//        $imageUrls = $this->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value)->map(function ($media) {
-//            return $media->getUrl();
-//        });
 
         return [
             'id' => $this->id,
@@ -46,7 +40,7 @@ class UserWithCarsResource extends JsonResource
             'roles' => $this->getRoleNames(),
             'active' => (bool)$this->active,
             'profile_image' => $profileImage,
-            'is_entry_paid' => true, //TODO implement the method
+            'is_entry_paid' => $this->isSeasonPaid(),
             'cities' => CityResource::collection($this->cities),
 //            'imageUrls' => $imageUrls,
             'updated_at' => $this->updated_at?->diffForHumans(),

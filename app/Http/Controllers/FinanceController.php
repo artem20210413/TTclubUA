@@ -53,25 +53,31 @@ class FinanceController extends Controller
 
     public function statistics(User $user, Request $request)
     {
+        $startMonth = config('club.season_start_month', 9);
+        $seasonStart = Carbon::create(now()->month < $startMonth ? now()->year - 1 : now()->year, $startMonth, 1)->startOfDay();
         return success(data: [
-            'all_sum' => Finance::query()->where('user_id', $user->id)->sum('amount'),
-//            'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfYear())->sum('amount'),
+            'current_season_sum' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', $seasonStart)->sum('amount'),
             'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(365))->sum('amount'),
-//            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfMonth())->sum('amount'),
-            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(30))->sum('amount'),
-            'total_payments_count' => Finance::where('user_id', $user->id)->count(), // сколько всего платежей сделал пользователь
-            'average_payment' => number_format(
-                Finance::where('user_id', $user->id)->avg('amount') ?? 0,
-                2,
-                '.',
-                ''
-            ),
             'largest_payment' => Finance::where('user_id', $user->id)->max('amount'), // наибольший платёж
-            'smallest_payment' => Finance::where('user_id', $user->id)->min('amount'), // наименьший платёж
-            'last_payment_date' => Finance::where('user_id', $user->id)->latest()->value('created_at'), // дата последнего платежа
-            'first_payment_date' => Finance::where('user_id', $user->id)->oldest()->value('created_at'),// когда был сделан первый платёж
-
         ]);
+//        return success(data: [
+//            'all_sum' => Finance::query()->where('user_id', $user->id)->sum('amount'),
+////            'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfYear())->sum('amount'),
+//            'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(365))->sum('amount'),
+////            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfMonth())->sum('amount'),
+//            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(30))->sum('amount'),
+//            'total_payments_count' => Finance::where('user_id', $user->id)->count(), // сколько всего платежей сделал пользователь
+//            'average_payment' => number_format(
+//                Finance::where('user_id', $user->id)->avg('amount') ?? 0,
+//                2,
+//                '.',
+//                ''
+//            ),
+//            'largest_payment' => Finance::where('user_id', $user->id)->max('amount'), // наибольший платёж
+//            'smallest_payment' => Finance::where('user_id', $user->id)->min('amount'), // наименьший платёж
+//            'last_payment_date' => Finance::where('user_id', $user->id)->latest()->value('created_at'), // дата последнего платежа
+//            'first_payment_date' => Finance::where('user_id', $user->id)->oldest()->value('created_at'),// когда был сделан первый платёж
+//        ]);
     }
 
 

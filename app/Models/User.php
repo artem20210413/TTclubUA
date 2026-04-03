@@ -258,7 +258,6 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     }
 
 
-
     /**
      * Перевірити, чи має користувач певну роль.
      */
@@ -283,6 +282,31 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     {
         $this->removeRole($role->value);
         return $this;
+    }
+
+    /**
+     * Отримати суму поповнень за поточний сезон (з 1 вересня)
+     */
+    public function getSeasonPaymentsSum(): float
+    {
+        $startMonth = config('club.season_start_month', 9);
+        // Визначаємо 1 вересня поточного або минулого року
+        $seasonStart = Carbon::create(now()->month < $startMonth ? now()->year - 1 : now()->year, $startMonth, 1)->startOfDay();
+
+        return (float)$this->finances()
+            ->where('created_at', '>=', $seasonStart)
+            ->sum('amount');
+    }
+
+    /**
+     * Чи оплачено членство у поточному сезоні (сума >= 500 грн)
+     */
+    public function isSeasonPaid(): bool
+    {
+        if (!$this->hasRoleEnum(EnumUserRoles::TTOWNER)) return false;
+        if ($this->hasRoleEnum(EnumUserRoles::ADMIN) || $this->hasRoleEnum(EnumUserRoles::TESTER)) return false;
+
+        return $this->getSeasonPaymentsSum() >= config('club.min_payment', 500);
     }
 
 

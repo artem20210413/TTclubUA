@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\Car\UpdateCarRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Jetstream\HasProfilePhoto;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
@@ -38,6 +40,20 @@ class Car extends Model implements HasMedia, AuditableContract
     use HasProfilePhoto;
     use InteractsWithMedia;
     use \OwenIt\Auditing\Auditable;
+
+    protected static function booted()
+    {
+        /**
+         * Виконується перед видаленням моделі
+         */
+        static::deleting(function (Car $car) {
+
+            $media = $car->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value);
+            foreach ($media ?? [] as $item)
+                $item->delete();
+
+        });
+    }
 
     protected $fillable = [
         'user_id',
@@ -127,5 +143,10 @@ class Car extends Model implements HasMedia, AuditableContract
         return $this->license_plate === null
             ? false
             : ExternalCar::query()->where('plate_number', $this->license_plate)->where('is_active', true)->where('is_sold', false)->exists();
+    }
+
+    public function isMine(): bool
+    {
+        return $this->user_id === Auth::id();
     }
 }

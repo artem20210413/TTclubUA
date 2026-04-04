@@ -128,9 +128,21 @@ class CarController extends Controller
     {
         try {
             $car = Car::findOrFail($id);
-            $media = $car->getMedia(EnumTypeMedia::PHOTO_COLLECTION->value);
-            foreach ($media ?? [] as $item)
-                $item->delete();
+
+            $isDelete = $car->delete();
+            RemoteCarEloquent::create($car);
+
+            return success(data: ['isDelete' => $isDelete]);
+
+        } catch (ApiException $e) {
+            return error($e);
+        }
+    }
+
+    public function deleteMyCar(Car $car)
+    {
+        try {
+            if (!$car->isMine()) throw new ApiException('Авто не знайдено', 1, 404);
 
             $isDelete = $car->delete();
             RemoteCarEloquent::create($car);

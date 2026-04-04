@@ -60,7 +60,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only('password');
         $login = $request->input('login');
-        $env = $request->header('X-Client-Platform','unknown');
+        $env = $request->header('X-Client-Platform', 'unknown');
 
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         $credentials[$fieldType] = $login;
@@ -93,16 +93,31 @@ class AuthController extends Controller
         ]);
 
         $phone = $data['phone'];
+        $ip = $request->ip();
 
+        Log::info("Запит коду авторизації", [
+            'номер' => $phone,
+            'ip_адреса' => $ip,
+            'пристрій' => $request->userAgent()
+        ]);
         /** @var User|null $user */
         $user = User::findByPhone($phone);
         try {
 
             if (!$user) {
+                Log::warning("Спроба входу: користувача не знайдено", [
+                    'номер' => $phone,
+                    'ip_адреса' => $ip
+                ]);
                 throw new ApiException('Користувача з таким номером не знайдено.', 0, 404);
             }
 
             if (empty($user->telegram_id)) {
+                Log::notice("Спроба входу: Telegram ID відсутній", [
+                    'user_id' => $user->id,
+                    'імʼя' => $user->name,
+                    'ip_адреса' => $ip
+                ]);
                 throw new ApiException('Будь ласка, підтвердіть номер телефону через Telegram-бот, перш ніж входити.', 0, 400);
             }
 
@@ -114,6 +129,12 @@ class AuthController extends Controller
             $bot->sendMessage($text);
             Auth::logout();
 
+            Log::info("Код авторизації успішно надіслано в Telegram", [
+                'user_id' => $user->id,
+                'імʼя' => $user->name,
+                'ip_адреса' => $ip,
+                'час_відправки' => now()->toDateTimeString()
+            ]);
             return response()->json([
                 'success' => true,
                 'message' => 'Код для входу відправлено в Telegram.',
@@ -133,7 +154,7 @@ class AuthController extends Controller
 
         try {
 
-            $env = $request->header('X-Client-Platform','unknown');
+            $env = $request->header('X-Client-Platform', 'unknown');
             $phone = $request->phone;
             $user = User::findByPhone($phone);
             $code = trim($request->code);

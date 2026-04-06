@@ -305,7 +305,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     {
         return true;
         if (!$this->hasRoleEnum(EnumUserRoles::TTOWNER)) return true;
-        if ($this->hasRoleEnum(EnumUserRoles::ADMIN) || $this->hasRoleEnum(EnumUserRoles::TESTER)) return true;
+        if ($this->hasRoleEnum(EnumUserRoles::PRIVILEGED)) return true;
 
         return $this->getSeasonPaymentsSum() >= config('club.min_payment', 500);
     }

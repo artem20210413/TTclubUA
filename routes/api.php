@@ -17,6 +17,7 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Partner\PartnerController;
 use App\Http\Controllers\Partner\PromotionController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SuggestionsController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\SystemController;
@@ -38,6 +39,7 @@ Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class,
 Route::post('/telegram/webhook', [TelegramController::class, 'webhook'])->middleware('telegram.webhook');
 Route::get('/telegram/test', [TelegramController::class, 'test']);
 
+Route::get('/roles', [RoleController::class, 'index'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/login/tg/send-code', [AuthController::class, 'sendCode'])->middleware('params.throttle:15');
 Route::post('/login/tg/verify', [AuthController::class, 'verifyCode'])->middleware('throttle:5,2');

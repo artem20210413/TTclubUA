@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\User;
 
+use App\Enum\EnumUserRoles;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -34,6 +36,8 @@ class UpdateUserRequest extends FormRequest
 //            'birth_date' => 'nullable|date_format:d-m-Y',
 //            'club_entry_date' => 'nullable|date_format:d-m-Y',
             'occupation_description' => 'nullable|string',
+            'roles'   => 'nullable|array',
+            'roles.*' => [new Enum(EnumUserRoles::class)],
         ];
     }
 }

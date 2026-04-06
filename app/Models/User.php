@@ -58,7 +58,6 @@ class User extends Authenticatable implements HasMedia, AuditableContract
 {
     use HasApiTokens;
     use HasRoles;
-    use HasRoles;
     use InteractsWithMedia;
     use \OwenIt\Auditing\Auditable;
 
@@ -193,6 +192,17 @@ class User extends Authenticatable implements HasMedia, AuditableContract
 
         if ($request->filled('cities')) {
             $this->cities()->sync($request->cities);
+        }
+        if ($request->has('roles')) {
+            $newRoles = $request->input('roles'); // Массив строк из запроса
+
+            if ($this->id === auth()->id() && $this->hasRole(EnumUserRoles::ADMIN->value)) {
+                if (!in_array(EnumUserRoles::ADMIN->value, $newRoles)) {
+                    $newRoles[] = EnumUserRoles::ADMIN->value;
+                }
+            }
+
+            $this->syncRoles($newRoles);
         }
 
         return $this;

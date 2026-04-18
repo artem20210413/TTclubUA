@@ -28,7 +28,7 @@ class MentionEloquent
         $mention->car_id = $car->id;
         $mention->caught_user_id = $car->user_id;
         $mention->description = $description;
-        $mention->car_snapshot = json_encode($car);
+        $mention->car_snapshot = $car->toArray();
         $mention->save();
 
         if ($file) {

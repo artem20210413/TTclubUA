@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\MediaLibrary\HasMedia;
@@ -13,8 +14,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  *
  * @property int $id
  * @property int $owner_id
+ * @property int $caught_user_id
  * @property int $car_id
  * @property string $description
+ * @property array car_snapshot
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */
@@ -23,11 +26,17 @@ class Mention extends Model implements HasMedia
     use HasProfilePhoto;
     use InteractsWithMedia;
 
+    protected $casts = [
+        'car_snapshot' => 'array', // або 'object'
+    ];
     public function owner()
     {
         return $this->belongsTo(\App\Models\User::class, 'owner_id');
     }
-
+    public function caughtUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'caught_user_id');
+    }
     public function car()
     {
         return $this->belongsTo(\App\Models\Car::class, 'car_id');

@@ -88,7 +88,16 @@ class UserEloquent
     public static function updateByTg(TelegramMessageDto $messageDto): ?User
     {
         $user = User::query()->where('telegram_id', $messageDto->getFrom()->getId())->first();
-        if ($user) return $user;
+        if ($user) {
+            $newNickname = $messageDto->getFrom()->getUsername();
+
+            if ($user->telegram_nickname !== $newNickname) {
+                $user->telegram_nickname = $newNickname;
+                $user->save();
+            }
+
+            return $user;
+        }
         if (!$messageDto->getContact()) return null;
 
         $phone = str_replace('+', '', $messageDto->getContact()['phone_number']);
@@ -97,8 +106,8 @@ class UserEloquent
         if (!$user) throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
 
         $user->telegram_id = $messageDto->getContact()['user_id'];
-        if ($messageDto->getFrom()->getFirstName() !== null)
-            $user->telegram_nickname = $messageDto->getFrom()->getUsername();
+//        if ($messageDto->getFrom()->getFirstName() !== null)
+        $user->telegram_nickname = $messageDto->getFrom()->getUsername();
         $user->phone_verified_at = Carbon::now();
         $user->save();
 

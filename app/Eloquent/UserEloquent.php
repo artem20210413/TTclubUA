@@ -2,14 +2,18 @@
 
 namespace App\Eloquent;
 
+use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Models\User;
 use App\Services\Telegram\Dto\TelegramMessageDto;
 use App\Services\Telegram\Dto\TelegramUserDto;
+use App\Services\Telegram\TelegramBot;
+use App\Services\Telegram\TelegramBotHelpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class UserEloquent
 {
@@ -94,6 +98,7 @@ class UserEloquent
             if ($user->telegram_nickname !== $newNickname) {
                 $user->telegram_nickname = $newNickname;
                 $user->save();
+                self::sendInfoByChangeNickname($messageDto, $user->telegram_nickname, $newNickname);
             }
 
             return $user;
@@ -112,6 +117,18 @@ class UserEloquent
         $user->save();
 
         return $user;
+    }
+
+    private static function sendInfoByChangeNickname(TelegramMessageDto $messageDto, ?string $oldNickname, ?string $newNickname)
+    {
+        try {
+            $text = TelegramBotHelpers::generationTextChangeNickname($oldNickname, $newNickname);
+            $bot = new TelegramBot(EnumTelegramEvents::CUSTOM);
+            $bot->setTelegramIds($messageDto->getFrom()->getId());
+            $bot->sendMessage($text);
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+        }
     }
 
 

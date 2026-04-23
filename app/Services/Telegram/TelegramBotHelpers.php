@@ -165,4 +165,17 @@ class TelegramBotHelpers
         }
     }
 
+    public static function generationTextChangeNickname(?string $oldNickname, ?string $newNickname): string
+    {
+        $text = config('telegram.messages.change_nickname', 'Нікнейм оновлено: {old_nickname} -> {new_nickname}');
+
+        $oldDisplay = $oldNickname ?? 'відсутнього';
+        $newDisplay = $newNickname ?? 'порожній';
+
+        $text = str_replace("{old_nickname}", $oldDisplay, $text);
+        $text = str_replace("{new_nickname}", $newDisplay, $text);
+
+        return $text;
+    }
+
 }

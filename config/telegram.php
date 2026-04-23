@@ -38,6 +38,7 @@ return [
         'suggestions' => env('TELEGRAM_CHAT_SUGGESTIONS'),
     ],
     'messages' => [
+        'change_nickname' => "🔔 Я помітив, що ти змінив свій нікнейм у ТГ. Не переживай, я вже оновив його в системі: з **@{old_nickname}** на **@{new_nickname}** ✅",
         "fa_fa" => "<b>Фа-фа!</b> 🚗\n{employee}\nПривіт від {owner} 👋",
         "new_suggestion" => "📢 <b>Нове звернення!</b>\n"
             . "<b>Від:</b> {user}\n"

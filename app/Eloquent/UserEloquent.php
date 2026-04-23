@@ -98,7 +98,7 @@ class UserEloquent
             if ($user->telegram_nickname !== $newNickname) {
                 $user->telegram_nickname = $newNickname;
                 $user->save();
-                self::sendInfoByChangeNickname($messageDto, $user->telegram_nickname, $newNickname);
+//                self::sendInfoByChangeNickname($messageDto, $user->telegram_nickname, $newNickname);
             }
 
             return $user;

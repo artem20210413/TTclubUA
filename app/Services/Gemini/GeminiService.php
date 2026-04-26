@@ -41,13 +41,17 @@ class GeminiService
             ]);
 
         $duration = round(microtime(true) - $startTime, 2);
+
         if (!$response->ok()) {
             throw new \Exception("Gemini API error: " . $response->body());
         }
+
+        $dto = new GeminiRequestDto($response->json());
         Log::info("Gemini AI: Response received", [
             'duration' => $duration . 's',
-            'response_preview' => $data['candidates'][0]['content']['parts'][0]['text'] ?? ''
+            'response_preview' => $dto->getText()
         ]);
-        return new GeminiRequestDto($response->json());
+
+        return $dto;
     }
 }

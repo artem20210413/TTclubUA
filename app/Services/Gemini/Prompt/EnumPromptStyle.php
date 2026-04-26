@@ -6,6 +6,7 @@ enum EnumPromptStyle: string
 {
     case FORMAL = 'formal';
     case FRIENDLY = 'friendly';
+    case GARAGE = 'garage';
     case FUNNY = 'funny';
     case ROMANTIC = 'romantic';
     case CORPORATE = 'corporate';
@@ -15,6 +16,7 @@ enum EnumPromptStyle: string
         return match ($this) {
             self::FORMAL    => 'офіційне, стримане та ввічливе привітання',
             self::FRIENDLY  => 'тепле, дружнє та приємне привітання',
+            self::GARAGE  => 'гаражний, драйвовий, дружній, з автомобільним сленгом',
             self::FUNNY     => 'жартівливе привітання з легким гумором',
             self::ROMANTIC  => 'романтичне, щире та ніжне привітання',
             self::CORPORATE => 'офіційне корпоративне привітання без зайвих емоцій',

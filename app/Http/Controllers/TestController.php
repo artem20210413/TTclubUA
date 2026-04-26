@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Commands\Tg\SendingStatisticsMention;
 use App\Eloquent\MentionEloquent;
 use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
@@ -25,6 +26,10 @@ class TestController extends Controller
 {
     public function test(Request $request)
     {
+
+//        $h = new SendingStatisticsMention();
+//        $h->handle();
+//        dd(33);
 
     }
 

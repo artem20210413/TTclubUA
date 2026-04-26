@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Image;
 
 class MentionEloquent
@@ -103,10 +104,11 @@ class MentionEloquent
      * @param $startOfMonth
      * @return string
      */
-    public static function getMostActiveDay($startOfMonth): string
+    public static function getMostActiveDay(Carbon $periodStart, Carbon $periodEnd): string
     {
         // Шукаємо дату, в яку було зроблено найбільше записів
-        $result = Mention::where('created_at', '>=', $startOfMonth)
+        $result = Mention::where('created_at', '>=', $periodStart)
+            ->where('created_at', '<=', $periodEnd)
             ->select(\DB::raw('DATE(created_at) as date'), \DB::raw('count(*) as count'))
             ->groupBy('date')
             ->orderByDesc('count')
@@ -126,11 +128,12 @@ class MentionEloquent
      * @return mixed
      * Найпопулярніший колір
      */
-    public static function getMostSpottedColor($startOfMonth): ?Color
+    public static function getMostSpottedColor(Carbon $periodStart, Carbon $periodEnd): ?Color
     {
         // Отримуємо статистику по ID кольору
         $stat = Mention::join('cars', 'mentions.car_id', '=', 'cars.id')
-            ->where('mentions.created_at', '>=', $startOfMonth)
+            ->where('mentions.created_at', '>=', $periodStart)
+            ->where('mentions.created_at', '<=', $periodEnd)
             ->select('cars.color_id', \DB::raw('count(*) as count'))
             ->groupBy('cars.color_id')
             ->orderByDesc('count')
@@ -149,65 +152,152 @@ class MentionEloquent
         return $color;
     }
 
-    /**
-     * @param $startOfMonth
-     * @return mixed
-     * ТОП «Мисливець» (найактивніший споттер)
-     */
-    public static function getTopHunter($startOfMonth): ?User
+    public static function getTopHunters(Carbon $startOfMonth, Carbon $periodEnd, int $limit = 3): Collection
     {
-        // Отримуємо статистику
-        $stat = Mention::where('created_at', '>=', $startOfMonth)
-            ->select('owner_id', \DB::raw('count(*) as count'))
+        // 1. Отримуємо унікальні значення кількості УНІКАЛЬНИХ авто для ТОП-3 місць
+        $topCounts = Mention::where('created_at', '>=', $startOfMonth)
+            ->where('created_at', '<=', $periodEnd)
+            ->select(DB::raw('COUNT(DISTINCT car_id) as unique_cars_count'))
             ->groupBy('owner_id')
-            ->orderByDesc('count')
-            ->first();
+            ->orderByDesc('unique_cars_count')
+            ->distinct()
+            ->limit($limit)
+            ->pluck('unique_cars_count');
 
-        if (!$stat) return null;
-
-        // Отримуємо модель користувача
-        $user = $stat->owner;
-
-        if ($user) {
-            // Записуємо кількість прямо в об'єкт
-            $user->mentions_count = $stat->count;
+        if ($topCounts->isEmpty()) {
+            return new Collection();
         }
 
-        return $user;
-    }
 
-    /**
-     * ТОП-3 найпомітніших автомобілів за період
-     * @param $startOfMonth
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public static function getTopCars($startOfMonth, int $count = 3): Collection
+        $placeholders = implode(',', array_fill(0, count($topCounts), '?'));
+
+        // 2. Витягуємо мисливців, рахуючи ОБИДВА показника
+        return Mention::where('created_at', '>=', $startOfMonth)
+            ->where('created_at', '<=', $periodEnd)
+            ->select(
+                'owner_id',
+                DB::raw('COUNT(DISTINCT car_id) as unique_cars_count'), // Унікальні
+                DB::raw('COUNT(*) as total_mentions_count')             // Усі підряд
+            )
+            ->groupBy('owner_id')
+            ->havingRaw("COUNT(DISTINCT car_id) IN ($placeholders)", $topCounts->toArray())
+            ->orderByDesc('unique_cars_count')
+            ->with('owner')
+            ->get()
+            ->map(function ($stat) {
+                $user = $stat->owner;
+                if ($user) {
+                    // Додаємо обидва показника в об'єкт юзера
+                    $user->unique_cars_count = (int)$stat->unique_cars_count;
+                    $user->total_mentions_count = (int)$stat->total_mentions_count;
+                }
+                return $user;
+            })
+            ->filter();
+    }
+//    /**
+//     * @param $startOfMonth
+//     * @return mixed
+//     * ТОП «Мисливець» (найактивніший споттер)
+//     */
+//    public static function getTopHunter($startOfMonth): ?User
+//    {
+//        // Отримуємо статистику
+//        $stat = Mention::where('created_at', '>=', $startOfMonth)
+//            ->select('owner_id', \DB::raw('count(*) as count'))
+//            ->groupBy('owner_id')
+//            ->orderByDesc('count')
+//            ->first();
+//
+//        if (!$stat) return null;
+//
+//        // Отримуємо модель користувача
+//        $user = $stat->owner;
+//
+//        if ($user) {
+//            // Записуємо кількість прямо в об'єкт
+//            $user->mentions_count = $stat->count;
+//        }
+//
+//        return $user;
+//    }
+
+    public static function getTopCars(Carbon $startOfMonth, Carbon $periodEnd, int $limit = 3): Collection
     {
-        // Отримуємо статистику для топ-3
-        $stats = Mention::where('created_at', '>=', $startOfMonth)
-            ->select('car_id', \DB::raw('count(*) as mentions_count'))
+        // 1. Отримуємо унікальні значення кількості згадок для ТОП-3 балів
+        $topCounts = Mention::where('created_at', '>=', $startOfMonth)
+            ->where('created_at', '<=', $periodEnd)
+            ->select(DB::raw('count(*) as mentions_count'))
             ->groupBy('car_id')
             ->orderByDesc('mentions_count')
-            ->limit($count)
-            ->get();
+            ->distinct()
+            ->limit($limit)
+            ->pluck('mentions_count');
 
-        // Перетворюємо статистику в колекцію моделей Car з доданим показником count
-        return $stats->map(function ($stat) {
-            $car = $stat->car;
-            if ($car) {
-                $car->mentions_count = $stat->mentions_count;
-            }
-            return $car;
-        })->filter(); // filter прибере null, якщо раптом машина була видалена з бази
+        if ($topCounts->isEmpty()) {
+            return new Collection();
+        }
+
+        // 2. Витягуємо всі машини, які набрали таку кількість балів
+        // Оскільки ми використовуємо агрегатор count(*), нам потрібно
+        // порівняти результат через havingRaw
+        $placeholders = implode(',', array_fill(0, count($topCounts), '?'));
+
+        return Mention::where('created_at', '>=', $startOfMonth)
+            ->where('created_at', '<=', $periodEnd)
+            ->select('car_id', DB::raw('count(*) as mentions_count'))
+            ->groupBy('car_id')
+            ->havingRaw("count(*) IN ($placeholders)", $topCounts->toArray())
+            ->orderByDesc('mentions_count')
+            ->with(['car.user'])
+            ->get()
+            ->map(function ($stat) {
+                $car = $stat->car;
+                if ($car) {
+                    // Додаємо кількість згадок як динамічну властивість моделі Car
+                    $car->mentions_count = $stat->mentions_count;
+                }
+                return $car;
+            })
+            ->filter();
     }
+//    /**
+//     * ТОП-3 найпомітніших автомобілів за період
+//     * @param $startOfMonth
+//     * @return \Illuminate\Database\Eloquent\Collection
+//     */
+//    public static function getTopCars($startOfMonth, int $count = 3): Collection
+//    {
+//        // Отримуємо статистику для топ-3
+//        $stats = Mention::where('created_at', '>=', $startOfMonth)
+//            ->select('car_id', \DB::raw('count(*) as mentions_count'))
+//            ->groupBy('car_id')
+//            ->orderByDesc('mentions_count')
+//            ->limit($count)
+//            ->get();
+//
+//        // Перетворюємо статистику в колекцію моделей Car з доданим показником count
+//        return $stats->map(function ($stat) {
+//            $car = $stat->car;
+//            if ($car) {
+//                $car->mentions_count = $stat->mentions_count;
+//            }
+//            return $car;
+//        })->filter(); // filter прибере null, якщо раптом машина була видалена з бази
+//    }
 
     /**
      * @param $startOfMonth
      * @return mixed
      * Підрахунок загальної кількості згадок за місяць
      */
-    public static function getTotalMentions($startOfMonth)
+    public static function getTotalMentions(Carbon $periodStart, Carbon $periodEnd)
     {
-        return Mention::where('created_at', '>=', $startOfMonth)->count();
+        return Mention::where('created_at', '>=', $periodStart)->where('created_at', '<=', $periodEnd)->count();
+    }
+
+    public static function getTotalAllMentions()
+    {
+        return Mention::all()->count();
     }
 }

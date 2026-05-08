@@ -11,6 +11,7 @@ use App\Http\Controllers\Car\MentionController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExternalCarsController;
+use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\GoodsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\ImportController;
@@ -52,6 +53,7 @@ Route::get('/app-config/{platform}', [AppConfigController::class, 'check'])->mid
 
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
 Route::get('/system/user-stats', [SystemController::class, 'systemUserStats'])->middleware(['auth:sanctum', 'role:admin']);
+Route::post('/fcm', [SystemController::class, 'fcmUpdate'])->middleware(['auth:sanctum', 'role:admin']);
 
 Route::get('/user/export', [UserController::class, 'export'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
@@ -199,6 +201,11 @@ Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function (
 Route::group(['prefix' => 'external-cars', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/filters', [ExternalCarsController::class, 'getFilterOptions']);
     Route::get('/list', [ExternalCarsController::class, 'list']);
+});
+
+Route::group(['prefix' => 'fcm', 'middleware' => ['auth:sanctum']], function () {// Збереження або оновлення токена
+    Route::post('/token', [FcmTokenController::class, 'store']);
+    Route::patch('/toggle', [FcmTokenController::class, 'toggle']);
 });
 
 //->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.

@@ -8,6 +8,7 @@
         "php": "^8.2",
         "intervention/image": "^2",
         "irazasyed/telegram-bot-sdk": "^3.15",
+        "kreait/laravel-firebase": "^7.1",
         "laravel/framework": "^11.9",
         "laravel/jetstream": "^5.3",
         "laravel/sanctum": "^4.0",

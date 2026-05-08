@@ -53,7 +53,7 @@ Route::get('/app-config/{platform}', [AppConfigController::class, 'check'])->mid
 
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
 Route::get('/system/user-stats', [SystemController::class, 'systemUserStats'])->middleware(['auth:sanctum', 'role:admin']);
-Route::post('/fcm', [SystemController::class, 'fcmUpdate'])->middleware(['auth:sanctum', 'role:admin']);
+
 
 Route::get('/user/export', [UserController::class, 'export'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');

@@ -86,23 +86,4 @@ class SystemController extends Controller
 
     }
 
-    public function fcmUpdate(Request $request)
-    {
-        $request->validate([
-            'fcm_token' => 'required|string',
-        ]);
-
-        $platform = $request->header('X-Client-Platform');
-
-        $request->user()->fcmTokens()->updateOrCreate(
-            [],
-//            ['device_id' => $request->device_id], // Критерій пошуку
-            [
-                'fcm_token' => $request->fcm_token,
-                'device_type' => $platform, // або передавай явно з фронта
-            ]
-        );
-
-        return response()->json(['status' => 'Token updated']);
-    }
 }

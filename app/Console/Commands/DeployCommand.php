@@ -26,12 +26,12 @@ class DeployCommand extends Command
     public function handle()
     {
         $this->info('⏳ Starting deployment...');
-
+        $php = PHP_BINARY;
         $commands = [
             'git pull origin main', // Change "main" to your branch if needed
-            'composer install',
-            'php artisan migrate',
-            'php artisan optimize',
+            "$php /usr/local/bin/composer install",
+            "$php artisan migrate",
+            "$php artisan optimize",
 //            'php artisan queue:restart',
 //            'npm install && npm run build',
         ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Console\Commands\Tg\SendingStatisticsMention;
 use App\Eloquent\MentionEloquent;
 use App\Enum\EnumTelegramEvents;
+use App\Enum\NotificationsPushType;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\ChangePasswordByUserRequest;
 use App\Http\Requests\User\ChangePasswordRequest;
@@ -13,6 +14,7 @@ use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Jobs\Autoria\SyncCarDetailJob;
 use App\Models\Mention;
+use App\Models\Notification;
 use App\Models\User;
 use App\Services\Fcm\Fcm;
 use App\Services\Telegram\TelegramBot;
@@ -27,7 +29,26 @@ class TestController extends Controller
 {
     public function test(Request $request)
     {
-//        Fcm::sendPush('fuYEPdSPSUqY7oFiA8tCZF:APA91bESTWAT4ArtQKEsijsWzt6SZn6jLvOecj6MjopXOiuC0I36NeYhQo9oDjyNehlUPEDwM3TvwxNcprSl0L0ZxW15w9MH3YxRZlbY65RtC2WwLf2fNGI2');
+
+        $user = User::first();
+
+        if (!$user) return "Користувачів не знайдено!";
+
+        // 2. Створюємо сповіщення
+        // Це автоматично закине джобу SendPushNotificationJob у чергу
+        $notification = Notification::create([
+            'user_id' => $user->id,
+            'title'   => 'Тестовий заїзд! 🏎',
+            'body'    => 'Це перевірка черги та Firebase. Фа-фа!',
+            'type'    => NotificationsPushType::FA_FA,
+            'data'    => [
+                'car_id' => 1,
+                'test_mode' => true
+            ],
+        ]);
+
+        return "Сповіщення збережено в БД (ID: {$notification->id}). Чекаємо на обробку черги...";
+//        Fcm::sendPush('fw_omk1kQICdKUCgOPlm29:APA91bEgeMrA3FQ084NPkW0hxpg92KSQCWrVESR_kkgoPNJffcNh7pZFRVyKWCXd66Ym6AZqzwQ73OviSTqV7PYBPkhaj8OhOPcPHv_RUXMvwE88E16XYVE');
 //        $h = new SendingStatisticsMention();
 //        $h->handle();
 //        dd(33);

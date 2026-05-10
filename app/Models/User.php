@@ -319,9 +319,10 @@ class User extends Authenticatable implements HasMedia, AuditableContract
 
         return $this->getSeasonPaymentsSum() >= config('club.min_payment', 500);
     }
+
     public function fcmTokens()
     {
-        return $this->hasMany(FcmToken::class);
+        return $this->hasMany(FcmToken::class)->where('active', true);
     }
 
     /**
@@ -329,7 +330,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
      */
     public function routeNotificationForFcm()
     {
-        return $this->fcmTokens->pluck('fcm_token')->toArray();
+        return $this->fcmTokens->pluck('token')->toArray();
     }
 
 }

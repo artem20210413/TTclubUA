@@ -29,6 +29,19 @@ class Mention extends Model implements HasMedia
     protected $casts = [
         'car_snapshot' => 'array', // або 'object'
     ];
+
+    protected static function booted()
+    {
+        static::created(function ($mention) {
+            if ($mention->caught_user_id) {
+                // Викликаємо фабрику для отримання структури
+                $payload = \App\Factories\NotificationFactory::mentionCreated($mention);
+
+                // Створюємо нотифікацію в БД
+                \App\Models\Notification::create($payload);
+            }
+        });
+    }
     public function owner()
     {
         return $this->belongsTo(\App\Models\User::class, 'owner_id');

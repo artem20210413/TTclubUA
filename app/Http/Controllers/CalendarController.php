@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 
 class CalendarController extends Controller
@@ -135,7 +136,8 @@ class CalendarController extends Controller
                 $message = str_replace('{date}', $event->event_date ? $event->event_date->format('d.m.Y H:i') : '', $message);
                 $message = str_replace('{place}', $event->place ?? '', $message);
                 $message = str_replace('{map}', $event->google_maps_url ?? '', $message);
-                $message = str_replace('{description}', $event->description ?? '', $message);
+                $shortDescription = Str::limit($event->description ?? '', 1500, '...');
+                $message = str_replace('{description}', $shortDescription ?? '', $message);
                 $message = str_replace('{url}', $url, $message);
             } else {
                 $user = User::find($id);

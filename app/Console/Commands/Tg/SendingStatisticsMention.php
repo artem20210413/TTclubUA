@@ -19,7 +19,7 @@ class SendingStatisticsMention extends Command
 {
     /**
      * Имя и подпись команды в консоли.
-     * Запуск: php artisan tg:send-stats
+     * Запуск: php artisan tg:send-stats-mention
      */
     protected $signature = 'tg:send-stats-mention';
 
@@ -40,7 +40,7 @@ class SendingStatisticsMention extends Command
         $periodStart = now()->subMonth()->startOfMonth();
         $periodEnd = now()->subMonth()->endOfMonth();
         $monthName = $periodStart->translatedFormat('F'); // Для логов или заголовка
-
+        $periodKey = 'stats_mention_' . $periodStart->format('Y-m');
 
         try {
 
@@ -106,13 +106,9 @@ class SendingStatisticsMention extends Command
                 'COLOR_COUNT' => $topColor?->mentions_count ?? 0,
             ];
 
-            $this->info('Начинаю генерацію статистики...');
-            $finalText = GeminiService::generate(Prompt::buildStatisticsMentionPrompt($vars))->getText();
-//        $botT = new TelegramBot(EnumTelegramEvents::TEST);
-            $botT = new TelegramBot(EnumTelegramEvents::STATS_MENTION);
-            $botT->sendMessage($finalText, disableWebPagePreview: true);
+            \App\Jobs\GenerateAndSendStatsJob::dispatch($periodKey, $vars);
 
-            $this->info('Статистика успешно отправлена в Telegram!');
+            $this->info('Дані зібрано та відправлено в чергу обробки!');
 
 
         } catch (\Exception $e) {

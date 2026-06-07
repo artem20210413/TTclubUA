@@ -136,7 +136,7 @@ class CalendarController extends Controller
                 $message = str_replace('{date}', $event->event_date ? $event->event_date->format('d.m.Y H:i') : '', $message);
                 $message = str_replace('{place}', $event->place ?? '', $message);
                 $message = str_replace('{map}', $event->google_maps_url ?? '', $message);
-                $shortDescription = Str::limit($event->description ?? '', 1500, '...');
+                $shortDescription = Str::limit($event->description ?? '', 1300, '...');
                 $message = str_replace('{description}', $shortDescription ?? '', $message);
                 $message = str_replace('{url}', $url, $message);
             } else {

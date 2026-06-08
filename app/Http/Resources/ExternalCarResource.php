@@ -43,7 +43,7 @@ class ExternalCarResource extends JsonResource
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
             'synced_at' => $this->synced_at?->format('Y-m-d H:i:s'),
-            'addDate' => $this->raw_data['addDate'] ?? null,
+            'add_date' => $this->raw_data['addDate'] ?? null,
         ];
     }
 }

@@ -12,16 +12,18 @@ use App\Services\Telegram\Commands\Set\CommandStart;
 use App\Services\Telegram\Commands\Set\CommandUserNotActive;
 use App\Services\Telegram\Commands\TelegramCommands;
 use App\Services\Telegram\Dto\TelegramMessageDto;
+use App\Services\Telegram\Dto\TelegramWebhookDto;
 
 class TelegramCommandHandler
 {
 
     protected TelegramMessage $telegramMessage;
+    protected ?TelegramMessageDto $telegramMessageDto = null;
 
-    public function __construct(readonly TelegramMessageDto $telegramMessageDto)
+    public function __construct(readonly TelegramWebhookDto $telegramWebhookDto)
     {
-
-        $this->telegramMessage = TelegramLoggerEloquent::createIn($telegramMessageDto);
+        $this->telegramMessageDto = $telegramMessageDto = $telegramWebhookDto->getMessage();
+        $this->telegramMessage = TelegramLoggerEloquent::createIn($telegramWebhookDto);
         $text = $telegramMessageDto->getText() ?? '';
 
         if ($this->checkUser())

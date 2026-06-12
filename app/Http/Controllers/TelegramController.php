@@ -16,9 +16,10 @@ use App\Models\TelegramLogger;
 use App\Models\User;
 use App\Services\Telegram\Dto\TelegramImportDto;
 use App\Services\Telegram\Dto\TelegramMessageDto;
+use App\Services\Telegram\Dto\TelegramWebhookDto;
+use App\Services\Telegram\TelegramActionPublicHandler;
 use App\Services\Telegram\TelegramBot;
 use App\Services\Telegram\TelegramCommandHandler;
-use App\Services\Telegram\TelegramCommandPublicHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -31,38 +32,39 @@ class TelegramController extends Controller
     public function webhook(Request $request)
     {
 
-//        dd($request->all());
         //https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://tt.tishchenko.kiev.ua/api/telegram/webhook
         Log::info("webhook request received", [$request->all()]);
-//        Log::info("webhook headers received", [$request->header()]);
-
-        $message = $request->message ?? $request->edited_message ?? null;
-        if (!$message) return success();
 
 
-        $telegramMessageDto = new TelegramMessageDto($request->all()['message'] ?? []);
+//        $message = $request->message ?? $request->edited_message ?? null;
+//        if (!$message) return success();
+
+        $telegramWebhookDto = new TelegramWebhookDto($request->all() ?? []);
+
 
         try {
-            $user = UserEloquent::updateByTg($telegramMessageDto);
-            $telegramMessageDto->setUser($user);
-//            if ($telegramMessageDto->getChat()->getType() !== 'private') return success();
+            if ($telegramMessageDto = $telegramWebhookDto->getMessage()) {
+                $user = UserEloquent::updateByTg($telegramMessageDto);
+                $telegramMessageDto->setUser($user);
 
-            if ($telegramMessageDto->getChat()->getType() !== 'private') {
-                new TelegramCommandPublicHandler($telegramMessageDto);
-            } else {
-                new TelegramCommandHandler($telegramMessageDto);
+                if ($telegramMessageDto->getChat()->getType() === 'private') {
+                    new TelegramCommandHandler($telegramWebhookDto);
+                }
+//                else {
+//                    new TelegramCommandPublicHandler($telegramMessageDto);
+//                }
             }
+
+            $action = new TelegramActionPublicHandler($telegramWebhookDto);
+            $action->handler();
         } catch (ApiException $e) {
             TelegramLogger::sendMessage([
-                'chat_id' => $telegramMessageDto?->getChat()?->getId() ?? null,
+                'chat_id' => $telegramWebhookDto?->getSmartChat()?->getId() ?? null,
                 'text' => $e->getMessage(),
             ]);
         } catch (\Throwable $e) {
-            Log::error($e->getMessage());
-//            TelegramLogger::sendMessage([
-//                'chat_id' => EnumTelegramEvents::LIST_BIRTHDAYS,
-//                'text' => "❗ Виникла непередбачена помилка.\nЧас: " . now()->format('Y-m-d H:i:s') . "\n\nБудь ласка, спробуйте пізніше або зверніться до підтримки.",
-//            ]);
+            Log::error("TG webhook. {$e->getMessage()}");
+            throw $e;
         }
 
         return success();

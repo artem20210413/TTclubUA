@@ -119,6 +119,11 @@ class UserEloquent
         return $user;
     }
 
+    public static function searchUser(TelegramUserDto $telegramUserDto): ?User
+    {
+        return User::query()->where('telegram_id', $telegramUserDto->getId())->first();
+    }
+
     private static function sendInfoByChangeNickname(TelegramMessageDto $messageDto, ?string $oldNickname, ?string $newNickname)
     {
         try {

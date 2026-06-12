@@ -11,6 +11,7 @@ enum EnumTelegramEvents
 //    case NOTIFICATION;
     case FA_FA;
     case STATS_MENTION;
+    case CHANGE_USER;
     case LIST_BIRTHDAYS; // Список ДР в очереди
     case TEST;
     case SYSTEM_ERRORS;
@@ -42,6 +43,7 @@ enum EnumTelegramEvents
             self::EXPORT_USERS => [$welcome],
             self::LIST_BIRTHDAYS => [$welcome],
             self::REGISTRATION => [$welcome],
+            self::CHANGE_USER => [$welcome],
             self::SUGGESTION => [$suggestions],
 
             self::STATS_MENTION => [$ttChat],

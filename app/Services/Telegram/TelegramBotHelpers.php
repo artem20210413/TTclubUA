@@ -5,7 +5,9 @@ namespace App\Services\Telegram;
 use App\Models\Car;
 use App\Models\Registration;
 use App\Models\User;
+use App\Services\Telegram\Dto\ChatMember\EnumTelegramChatMemberStatus;
 use App\Services\Telegram\Dto\TelegramUserDto;
+use App\Services\Telegram\Dto\TelegramWebhookDto;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Monolog\Handler\IFTTTHandler;
@@ -151,7 +153,7 @@ class TelegramBotHelpers
         );
     }
 
-    public static function generationTextNewChatMembers(array $getNewChatMembers)
+    public static function generationTextNewUser(array $getNewChatMembers)
     {
         foreach ($getNewChatMembers as $member) {
             /** @var TelegramUserDto $member */
@@ -163,6 +165,29 @@ class TelegramBotHelpers
                 $template
             );
         }
+
+        return '';
+    }
+
+    public static function generationTextNewUserLog(TelegramWebhookDto $telegramWebhookDto)
+    {
+        $template = config('telegram.messages.new_member_welcome_log', 'generationTextNewUserLog');
+
+        $who = $telegramWebhookDto->getMessage()->getFrom();
+        foreach ($telegramWebhookDto->getMessage()->getNewChatMembers() as $member) {
+            $whom[] = "<a href='tg://user?id={$member->getId()}'>{$member->getFirstName()}</a>";
+        }
+        $whom = implode(', ', $whom ?? []);
+        $where = $telegramWebhookDto->getSmartChat()->getSmartTitle();
+
+
+        return str_replace(
+            ['{who}', '{whom}', '{where}'],
+            ["<a href='tg://user?id={$who->getId()}'>{$who->getFirstName()}</a>",
+                $whom,
+                $where],
+            $template
+        );
     }
 
     public static function generationTextChangeNickname(?string $oldNickname, ?string $newNickname): string
@@ -176,6 +201,30 @@ class TelegramBotHelpers
         $text = str_replace("{new_nickname}", $newDisplay, $text);
 
         return $text;
+    }
+
+    public static function generationTextUserLeftLog(TelegramWebhookDto $telegramWebhookDto)
+    {
+        if ($telegramWebhookDto->getChatMember()->getNewChatMember()->getStatus() === EnumTelegramChatMemberStatus::LEFT)
+            $template = config('telegram.messages.member_left_log', 'generationTextNewUserLog');
+        else
+            $template = config('telegram.messages.member_kicked_log', 'generationTextNewUserLog');
+
+
+        $who = $telegramWebhookDto->getChatMember()->getFromUser();
+
+        $member = $telegramWebhookDto->getChatMember()->getNewChatMember()->getUser();
+        $whom = "<a href='tg://user?id={$member->getId()}'>{$member->getFirstName()}</a>";
+
+        $where = $telegramWebhookDto->getSmartChat()->getSmartTitle();
+
+        return str_replace(
+            ['{who}', '{whom}', '{where}'],
+            ["<a href='tg://user?id={$who->getId()}'>{$who->getFirstName()}</a>",
+                $whom,
+                $where],
+            $template
+        );
     }
 
 }

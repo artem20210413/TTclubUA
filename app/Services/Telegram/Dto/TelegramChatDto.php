@@ -8,11 +8,19 @@ class TelegramChatDto
 {
     public function __construct(
         private readonly array $json,
-    ) {}
+    )
+    {
+    }
 
     public function getId(): ?int
     {
         return $this->json['id'] ?? null;
+    }
+
+
+    public function getTitle(): ?string
+    {
+        return $this->json['title'] ?? null;
     }
 
     public function getFirstName(): ?string
@@ -20,14 +28,14 @@ class TelegramChatDto
         return $this->json['first_name'] ?? null;
     }
 
-    public function getLastName(): ?string
-    {
-        return $this->json['last_name'] ?? null;
-    }
-
-    public function getUsername(): ?string
+    public function getUserName(): ?string
     {
         return $this->json['username'] ?? null;
+    }
+
+    public function getSmartTitle(): ?string
+    {
+        return $this->getTitle() ?? $this->getUserName() ?? $this->getFirstName() ?? null;
     }
 
     public function getType(): ?string

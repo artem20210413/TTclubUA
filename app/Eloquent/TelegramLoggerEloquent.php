@@ -5,6 +5,7 @@ namespace App\Eloquent;
 use App\Enum\EnumTelegramLoggerDirection;
 use App\Models\TelegramMessage;
 use App\Services\Telegram\Dto\TelegramMessageDto;
+use App\Services\Telegram\Dto\TelegramWebhookDto;
 use Illuminate\Support\Facades\Log;
 
 class TelegramLoggerEloquent
@@ -28,14 +29,14 @@ class TelegramLoggerEloquent
         return new TelegramMessage();
     }
 
-    public static function createIn(TelegramMessageDto $telegramMessageDto)
+    public static function createIn(TelegramWebhookDto $telegramWebhookDto)
     {
         try {
             $t = new TelegramMessage();
-            $t->chat_id = $telegramMessageDto->getChat()->getId();
+            $t->chat_id = $telegramWebhookDto->getSmartChat()?->getId();
             $t->direction = EnumTelegramLoggerDirection::IN->value;
-            $t->text = $telegramMessageDto->getText();
-            $t->raw = $telegramMessageDto->json;
+            $t->text = $telegramWebhookDto?->getMessage()?->getText();
+            $t->raw = $telegramWebhookDto->json;
             $t->save();
 
             return $t;

@@ -333,4 +333,15 @@ class User extends Authenticatable implements HasMedia, AuditableContract
         return $this->fcmTokens->pluck('token')->toArray();
     }
 
+    /**
+     * Установить явный статус активности
+     *
+     * @param bool $status (true - активировать, false - деактивировать)
+     */
+    public function setAsActive(bool $status): void
+    {
+        $this->active = $status;
+        $this->save();
+    }
+
 }

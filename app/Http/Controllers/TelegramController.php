@@ -64,7 +64,7 @@ class TelegramController extends Controller
             ]);
         } catch (\Throwable $e) {
             Log::error("TG webhook. {$e->getMessage()}");
-            throw $e;
+//            throw $e;
         }
 
         return success();

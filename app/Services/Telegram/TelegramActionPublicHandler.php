@@ -77,7 +77,6 @@ class TelegramActionPublicHandler
 
             $bot = new TelegramBot(EnumTelegramEvents::CUSTOM);
             $bot->setTelegramIds($this->telegramWebhookDto?->getSmartChat()->getId());
-            dd('sendMessage');
             $res = $bot->sendMessage($text, $buttons);
         } catch (\Throwable $exception) {
             Log::error("Помилка логування зміни статусу користувача: " . $exception->getMessage(), [

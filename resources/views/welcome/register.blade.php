@@ -121,6 +121,13 @@
                         >{{ old('why_tt') }}</textarea>
                     </label>
 
+                    <label class="field field--wide @error('occupation_description') fail  @enderror">
+                        <span>Опис занять, роб. діяльності</span>
+                        <textarea name="occupation_description"
+                                  data-counter="100" required
+                                  rows="3">{{ old('occupation_description') }}</textarea>
+                    </label>
+
                     <div class="field field--wide upload @error('profile_photo') fail  @enderror">
                         <span>Додати фото профілю</span>
                         <label class="upload__drop">
@@ -133,12 +140,6 @@
                         </label>
                     </div>
 
-                    <label class="field field--wide @error('occupation_description') fail  @enderror">
-                        <span>Опис занять, роб. діяльності</span>
-                        <textarea name="occupation_description"
-                                  data-counter="100" required
-                                  rows="3">{{ old('occupation_description') }}</textarea>
-                    </label>
                     {{--                    <div class="field pass @error('password') fail  @enderror">--}}
                     {{--                        <span>Вигадати пароль</span>--}}
                     {{--                        <div class="pass__wrap">--}}

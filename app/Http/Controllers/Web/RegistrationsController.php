@@ -14,6 +14,7 @@ use App\Services\Image\ImageWebpService;
 use App\Services\Telegram\Sand\RegistrationSandToTo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
 
 
 class RegistrationsController extends Controller
@@ -44,7 +45,8 @@ class RegistrationsController extends Controller
         $r = new Registration();
         $r->name = $request->get('name');
         $r->setPhone($request->get('phone'));
-        $r->setPassword($request->get('password'));
+        $r->setPassword(Str::password(12));
+//        $r->setPassword($request->get('password'));
         $r->generationJsom($request);
         $r->save();
 

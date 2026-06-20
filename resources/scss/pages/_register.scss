@@ -76,6 +76,10 @@
 }
 
 .field--full {
+    grid-column: span 1;
+}
+
+.field--full {
     grid-column: 1 / -1;
 }
 

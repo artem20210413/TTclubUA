@@ -33,7 +33,7 @@ class RegisterFormRequest extends FormRequest
             'occupation_description' => 'nullable|string|max:100',
             'why_tt' => 'nullable|string|max:500',
             'mail_address' => 'nullable|string',
-            'password' => 'required|string|min:4|confirmed',
+//            'password' => 'required|string|min:4|confirmed',
             'profile_photo' => 'nullable|max:20480',
 
             'no_tt_friend' => 'nullable|boolean',

@@ -107,11 +107,11 @@
                                value="{{ old('mail_address') }}">
                     </label>
 
-{{--                    <label class="field field--wide @error('why_tt') fail  @enderror">--}}
-{{--                        <span>Чому саме Audi TT?</span>--}}
-{{--                        <textarea name="why_tt" required rows="3">{{ old('why_tt') }}</textarea>--}}
-{{--                    </label>--}}
-                    <label class="field field--wide @error('why_tt') fail @enderror" style="position: relative;">
+                    {{--                    <label class="field field--wide @error('why_tt') fail  @enderror">--}}
+                    {{--                        <span>Чому саме Audi TT?</span>--}}
+                    {{--                        <textarea name="why_tt" required rows="3">{{ old('why_tt') }}</textarea>--}}
+                    {{--                    </label>--}}
+                    <label class="field field--full @error('why_tt') fail @enderror" style="position: relative;">
                         <span>Чому саме Audi TT?</span>
                         <textarea
                             name="why_tt"
@@ -119,13 +119,6 @@
                             required
                             rows="3"
                         >{{ old('why_tt') }}</textarea>
-                    </label>
-
-                    <label class="field field--wide @error('occupation_description') fail  @enderror">
-                        <span>Опис занять, роб. діяльності</span>
-                        <textarea name="occupation_description"
-                                  data-counter="100" required
-                                  rows="3">{{ old('occupation_description') }}</textarea>
                     </label>
 
                     <div class="field field--wide upload @error('profile_photo') fail  @enderror">
@@ -140,30 +133,36 @@
                         </label>
                     </div>
 
-                    <div class="field pass @error('password') fail  @enderror">
-                        <span>Вигадати пароль</span>
-                        <div class="pass__wrap">
-                            <input id="password" name="password" type="password" required minlength="4">
-                            <button type="button" class="icon-btn" aria-label="Показати пароль"
-                                    data-toggle-password="#password">
-                                <span class="eye eye-open">@include('components.svg.eye')</span>
-                                <span class="eye eye-close" hidden>@include('components.svg.eye-close')</span>
-                            </button>
-                        </div>
-                    </div>
+                    <label class="field field--wide @error('occupation_description') fail  @enderror">
+                        <span>Опис занять, роб. діяльності</span>
+                        <textarea name="occupation_description"
+                                  data-counter="100" required
+                                  rows="3">{{ old('occupation_description') }}</textarea>
+                    </label>
+                    {{--                    <div class="field pass @error('password') fail  @enderror">--}}
+                    {{--                        <span>Вигадати пароль</span>--}}
+                    {{--                        <div class="pass__wrap">--}}
+                    {{--                            <input id="password" name="password" type="password" required minlength="4">--}}
+                    {{--                            <button type="button" class="icon-btn" aria-label="Показати пароль"--}}
+                    {{--                                    data-toggle-password="#password">--}}
+                    {{--                                <span class="eye eye-open">@include('components.svg.eye')</span>--}}
+                    {{--                                <span class="eye eye-close" hidden>@include('components.svg.eye-close')</span>--}}
+                    {{--                            </button>--}}
+                    {{--                        </div>--}}
+                    {{--                    </div>--}}
 
-                    <div class="field pass @error('password') fail  @enderror">
-                        <span>Підтвердження паролю</span>
-                        <div class="pass__wrap">
-                            <input id="password_confirmation" name="password_confirmation" type="password" required
-                                   minlength="4">
-                            <button type="button" class="icon-btn" aria-label="Показати пароль"
-                                    data-toggle-password="#password_confirmation">
-                                <span class="eye eye-open">@include('components.svg.eye')</span>
-                                <span class="eye eye-close" hidden>@include('components.svg.eye-close')</span>
-                            </button>
-                        </div>
-                    </div>
+                    {{--                    <div class="field pass @error('password') fail  @enderror">--}}
+                    {{--                        <span>Підтвердження паролю</span>--}}
+                    {{--                        <div class="pass__wrap">--}}
+                    {{--                            <input id="password_confirmation" name="password_confirmation" type="password" required--}}
+                    {{--                                   minlength="4">--}}
+                    {{--                            <button type="button" class="icon-btn" aria-label="Показати пароль"--}}
+                    {{--                                    data-toggle-password="#password_confirmation">--}}
+                    {{--                                <span class="eye eye-open">@include('components.svg.eye')</span>--}}
+                    {{--                                <span class="eye eye-close" hidden>@include('components.svg.eye-close')</span>--}}
+                    {{--                            </button>--}}
+                    {{--                        </div>--}}
+                    {{--                    </div>--}}
                 </div>
             </fieldset>
 
@@ -282,119 +281,119 @@
     </div>
 
 
-{{--    <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">--}}
-{{--    <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>--}}
-{{--    <script>--}}
-{{--        (function () {--}}
-{{--            const modal = document.getElementById('cropperModal');--}}
-{{--            const imgEl = document.getElementById('cropperImage');--}}
-{{--            const okBtn = document.getElementById('cropOk');--}}
-{{--            const cancel = document.getElementById('cropCancel');--}}
-{{--            let cropper = null;--}}
-{{--            let currentInput = null;--}}
-{{--            let objectUrl = null;--}}
-{{--            let aspect = 1;--}}
+    {{--    <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">--}}
+    {{--    <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>--}}
+    {{--    <script>--}}
+    {{--        (function () {--}}
+    {{--            const modal = document.getElementById('cropperModal');--}}
+    {{--            const imgEl = document.getElementById('cropperImage');--}}
+    {{--            const okBtn = document.getElementById('cropOk');--}}
+    {{--            const cancel = document.getElementById('cropCancel');--}}
+    {{--            let cropper = null;--}}
+    {{--            let currentInput = null;--}}
+    {{--            let objectUrl = null;--}}
+    {{--            let aspect = 1;--}}
 
-{{--            function parseAspect(str) {--}}
-{{--                if (!str) return 1;--}}
-{{--                const [w, h] = str.split('/').map(Number);--}}
-{{--                return (w && h) ? (w / h) : 1;--}}
-{{--            }--}}
+    {{--            function parseAspect(str) {--}}
+    {{--                if (!str) return 1;--}}
+    {{--                const [w, h] = str.split('/').map(Number);--}}
+    {{--                return (w && h) ? (w / h) : 1;--}}
+    {{--            }--}}
 
-{{--            function openCropper(file, input) {--}}
-{{--                currentInput = input;--}}
-{{--                aspect = parseAspect(input.getAttribute('data-aspect'));--}}
+    {{--            function openCropper(file, input) {--}}
+    {{--                currentInput = input;--}}
+    {{--                aspect = parseAspect(input.getAttribute('data-aspect'));--}}
 
-{{--                if (objectUrl) URL.revokeObjectURL(objectUrl);--}}
-{{--                objectUrl = URL.createObjectURL(file);--}}
+    {{--                if (objectUrl) URL.revokeObjectURL(objectUrl);--}}
+    {{--                objectUrl = URL.createObjectURL(file);--}}
 
-{{--                imgEl.src = objectUrl;--}}
-{{--                modal.hidden = false;--}}
+    {{--                imgEl.src = objectUrl;--}}
+    {{--                modal.hidden = false;--}}
 
-{{--                if (cropper) {--}}
-{{--                    cropper.destroy();--}}
-{{--                    cropper = null;--}}
-{{--                }--}}
-{{--                // Инициализация--}}
-{{--                cropper = new Cropper(imgEl, {--}}
-{{--                    viewMode: 1,--}}
-{{--                    aspectRatio: aspect,--}}
-{{--                    autoCropArea: 1,--}}
-{{--                    background: true,--}}
-{{--                    movable: true,--}}
-{{--                    zoomable: true,--}}
-{{--                    scalable: false,--}}
-{{--                    rotatable: true--}}
-{{--                });--}}
-{{--            }--}}
+    {{--                if (cropper) {--}}
+    {{--                    cropper.destroy();--}}
+    {{--                    cropper = null;--}}
+    {{--                }--}}
+    {{--                // Инициализация--}}
+    {{--                cropper = new Cropper(imgEl, {--}}
+    {{--                    viewMode: 1,--}}
+    {{--                    aspectRatio: aspect,--}}
+    {{--                    autoCropArea: 1,--}}
+    {{--                    background: true,--}}
+    {{--                    movable: true,--}}
+    {{--                    zoomable: true,--}}
+    {{--                    scalable: false,--}}
+    {{--                    rotatable: true--}}
+    {{--                });--}}
+    {{--            }--}}
 
-{{--            okBtn.addEventListener('click', () => {--}}
-{{--                if (!cropper || !currentInput) return;--}}
+    {{--            okBtn.addEventListener('click', () => {--}}
+    {{--                if (!cropper || !currentInput) return;--}}
 
-{{--                // Ограничим итоговый размер (например, 2000px по ширине)--}}
-{{--                const canvas = cropper.getCroppedCanvas({--}}
-{{--                    maxWidth: 2000,--}}
-{{--                    imageSmoothingEnabled: true,--}}
-{{--                    imageSmoothingQuality: 'high'--}}
-{{--                });--}}
+    {{--                // Ограничим итоговый размер (например, 2000px по ширине)--}}
+    {{--                const canvas = cropper.getCroppedCanvas({--}}
+    {{--                    maxWidth: 2000,--}}
+    {{--                    imageSmoothingEnabled: true,--}}
+    {{--                    imageSmoothingQuality: 'high'--}}
+    {{--                });--}}
 
-{{--                canvas.toBlob((blob) => {--}}
-{{--                    if (!blob) return;--}}
+    {{--                canvas.toBlob((blob) => {--}}
+    {{--                    if (!blob) return;--}}
 
-{{--                    // Подменяем файл в input через DataTransfer--}}
-{{--                    const fileName = (currentInput.files[0]?.name) || 'cropped.jpg';--}}
-{{--                    const croppedFile = new File([blob], fileName, {type: blob.type || 'image/jpeg'});--}}
-{{--                    const dt = new DataTransfer();--}}
-{{--                    dt.items.add(croppedFile);--}}
-{{--                    currentInput.files = dt.files;--}}
+    {{--                    // Подменяем файл в input через DataTransfer--}}
+    {{--                    const fileName = (currentInput.files[0]?.name) || 'cropped.jpg';--}}
+    {{--                    const croppedFile = new File([blob], fileName, {type: blob.type || 'image/jpeg'});--}}
+    {{--                    const dt = new DataTransfer();--}}
+    {{--                    dt.items.add(croppedFile);--}}
+    {{--                    currentInput.files = dt.files;--}}
 
-{{--                    // Обновим превью в соответствующем .upload__drop--}}
-{{--                    const drop = currentInput.closest('.upload__drop');--}}
-{{--                    if (drop) {--}}
-{{--                        const preview = drop.querySelector('.upload__preview');--}}
-{{--                        const hint = drop.querySelector('.upload__hint, svg');--}}
-{{--                        if (preview) {--}}
-{{--                            const previewUrl = URL.createObjectURL(croppedFile);--}}
-{{--                            preview.src = previewUrl;--}}
-{{--                            preview.style.display = 'block';--}}
-{{--                            preview.onload = () => URL.revokeObjectURL(previewUrl);--}}
-{{--                        }--}}
-{{--                        if (hint) hint.style.display = 'none';--}}
-{{--                    }--}}
+    {{--                    // Обновим превью в соответствующем .upload__drop--}}
+    {{--                    const drop = currentInput.closest('.upload__drop');--}}
+    {{--                    if (drop) {--}}
+    {{--                        const preview = drop.querySelector('.upload__preview');--}}
+    {{--                        const hint = drop.querySelector('.upload__hint, svg');--}}
+    {{--                        if (preview) {--}}
+    {{--                            const previewUrl = URL.createObjectURL(croppedFile);--}}
+    {{--                            preview.src = previewUrl;--}}
+    {{--                            preview.style.display = 'block';--}}
+    {{--                            preview.onload = () => URL.revokeObjectURL(previewUrl);--}}
+    {{--                        }--}}
+    {{--                        if (hint) hint.style.display = 'none';--}}
+    {{--                    }--}}
 
-{{--                    closeModal();--}}
-{{--                }, 'image/jpeg', 0.92);--}}
-{{--            });--}}
+    {{--                    closeModal();--}}
+    {{--                }, 'image/jpeg', 0.92);--}}
+    {{--            });--}}
 
-{{--            function closeModal() {--}}
-{{--                modal.hidden = true;--}}
-{{--                if (cropper) {--}}
-{{--                    cropper.destroy();--}}
-{{--                    cropper = null;--}}
-{{--                }--}}
-{{--                if (objectUrl) {--}}
-{{--                    URL.revokeObjectURL(objectUrl);--}}
-{{--                    objectUrl = null;--}}
-{{--                }--}}
-{{--                currentInput = null;--}}
-{{--            }--}}
+    {{--            function closeModal() {--}}
+    {{--                modal.hidden = true;--}}
+    {{--                if (cropper) {--}}
+    {{--                    cropper.destroy();--}}
+    {{--                    cropper = null;--}}
+    {{--                }--}}
+    {{--                if (objectUrl) {--}}
+    {{--                    URL.revokeObjectURL(objectUrl);--}}
+    {{--                    objectUrl = null;--}}
+    {{--                }--}}
+    {{--                currentInput = null;--}}
+    {{--            }--}}
 
-{{--            cancel.addEventListener('click', closeModal);--}}
-{{--            modal.addEventListener('click', (e) => {--}}
-{{--                if (e.target === modal) closeModal();--}}
-{{--            });--}}
+    {{--            cancel.addEventListener('click', closeModal);--}}
+    {{--            modal.addEventListener('click', (e) => {--}}
+    {{--                if (e.target === modal) closeModal();--}}
+    {{--            });--}}
 
-{{--            // Хук на все инпуты файлов--}}
-{{--            document.querySelectorAll('input[type="file"][data-upload]').forEach(input => {--}}
-{{--                input.addEventListener('change', e => {--}}
-{{--                    const file = e.target.files && e.target.files[0];--}}
-{{--                    if (!file) return;--}}
-{{--                    // Открываем кроппер--}}
-{{--                    openCropper(file, input);--}}
-{{--                });--}}
-{{--            });--}}
-{{--        })();--}}
-{{--    </script>--}}
+    {{--            // Хук на все инпуты файлов--}}
+    {{--            document.querySelectorAll('input[type="file"][data-upload]').forEach(input => {--}}
+    {{--                input.addEventListener('change', e => {--}}
+    {{--                    const file = e.target.files && e.target.files[0];--}}
+    {{--                    if (!file) return;--}}
+    {{--                    // Открываем кроппер--}}
+    {{--                    openCropper(file, input);--}}
+    {{--                });--}}
+    {{--            });--}}
+    {{--        })();--}}
+    {{--    </script>--}}
 
 
 

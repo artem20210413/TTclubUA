@@ -55,7 +55,8 @@ return [
                 . "Рід діяльності: {occupation_description}\n"
                 . "Адреса НП (для подарунків): {mail_address}\n"
                 . "Чому саме ауді ТТ?: {why_tt}\n"
-                . "Дата створення: {created_at}\n",
+                . "Дата створення: {created_at}\n"
+                . "Пароль за необхідністю відновлюється через бота.\n",
             'car' => "🚘 Авто {model} {gene}:\n"
                 . "Колір: {color}\n"
                 . "Номер: {license_plate}\n"

@@ -64,6 +64,7 @@ class CarController extends Controller
 
         $q = Car::query();
         $q = CarEloquent::search($q, $search);
+        $q = CarEloquent::searchByUser($q, $search);
 
         $q->addSelect([
             'external_car_id' => function ($query) {

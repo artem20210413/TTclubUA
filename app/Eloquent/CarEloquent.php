@@ -23,6 +23,27 @@ class CarEloquent
         return $query;
     }
 
+    public static function searchByUser(Builder $query, ?string $search): Builder
+    {
+        if (!$search) return $query;
+        $words = array_filter(explode(' ', preg_replace('/\s+/', ' ', trim($search))));
+
+        $query->orWhereHas('user', function ($userQuery) use ($search, $words) { // Поиск по авто
+            $userQuery->where('phone', 'like', "%{$search}%") // Поиск по номеру телефона
+            ->orWhere('name', 'like', "%{$search}%") // Поиск по имени
+            ->orWhere('telegram_nickname', 'like', "%{$search}%") // Поиск по нику в ТГ
+            ->orWhere('occupation_description', 'like', "%{$search}%") // Поиск по нику в ТГ
+            ->orWhere('instagram_nickname', 'like', "%{$search}%"); // Поиск по нику в ТГ
+            $userQuery->orWhere(function ($subQuery) use ($words) {
+                foreach ($words as $word) {
+                    $subQuery->orWhere('occupation_description', 'like', "%{$word}%");
+                }
+            });
+        });
+
+        return $query;
+    }
+
     public static function countCarsWithUsers(): int
     {
         return Car::whereHas('user')->count();

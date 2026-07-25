@@ -20,19 +20,18 @@ use App\Http\Controllers\Partner\PartnerController;
 use App\Http\Controllers\Partner\PromotionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SuggestionsController;
-use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\SystemController;
+use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/user', function (Request $request) {
+// Route::get('/user', function (Request $request) {
 //    return $request->user();
-//})->middleware('auth:sanctum');
+// })->middleware('auth:sanctum');
 
-//Route::post('/test/fa-fa', [TestController::class, 'fafa'])->middleware(['auth:sanctum', 'role:admin']);
-Route::get('/test', [TestController::class, 'test']);//->middleware(['auth:sanctum', 'role:admin']);
-
+// Route::post('/test/fa-fa', [TestController::class, 'fafa'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/test', [TestController::class, 'test']); // ->middleware(['auth:sanctum', 'role:admin']);
 
 Route::get('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
 Route::post('webhook/monobank', [\App\Http\Controllers\FinanceController::class, 'webhookMonobank']);
@@ -53,7 +52,6 @@ Route::get('/app-config/{platform}', [AppConfigController::class, 'check'])->mid
 
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
 Route::get('/system/user-stats', [SystemController::class, 'systemUserStats'])->middleware(['auth:sanctum', 'role:admin']);
-
 
 Route::get('/user/export', [UserController::class, 'export'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
@@ -97,7 +95,6 @@ Route::delete('/car/{car}/mine', [CarController::class, 'deleteMyCar'])->middlew
 Route::post('/car/{id}/collections', [CarController::class, 'addCollections'])->middleware(['auth:sanctum']);
 Route::post('/car/{car}/change-active', [CarController::class, 'changeActive'])->middleware(['auth:sanctum'])->middleware(['auth:sanctum', 'role:admin']);
 Route::delete('/car/{id}/collections/{mediaId}', [CarController::class, 'deleteCollections'])->middleware(['auth:sanctum']);
-
 
 // ... остальной код файла
 
@@ -163,9 +160,12 @@ Route::get('/models', [CarController::class, 'models'])->middleware(['auth:sanct
 Route::get('/colors', [CarController::class, 'colors'])->middleware(['auth:sanctum']);
 
 Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum']);
+Route::get('/cities/map', [CityController::class, 'mapAggregated'])->middleware(['auth:sanctum']);
+Route::get('/cities/{city}/users', [CityController::class, 'usersByCity'])
+    ->middleware(['auth:sanctum'])
+    ->missing(fn () => app(CityController::class)->usersByCityMissing());
 
 Route::post('/import', [ImportController::class, 'importMain'])->middleware(['auth:sanctum', 'role:admin']);
-
 
 Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [DrawController::class, 'index']);
@@ -208,9 +208,9 @@ Route::group(['prefix' => 'fcm', 'middleware' => ['auth:sanctum']], function () 
     Route::patch('/toggle', [FcmTokenController::class, 'toggle']);
 });
 
-//->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
-//->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).
-//->middleware('verified') Проверяет, что пользователь подтвердил свой email.
-//->middleware('role:admin') Проверяет, что пользователь обладает определенной ролью, используя Spatie Permissions.
-//->middleware('permission:view-dashboard') Проверяет, что у пользователя есть конкретное разрешение для действия.
-//Route::group(['middleware' => ['permission:edit articles|publish articles']], function () {}); // маршруты для пользователей, у которых есть либо "edit articles", либо "publish articles"
+// ->middleware('auth:sanctum') Проверяет аутентификацию с использованием Laravel Sanctum, который предоставляет возможность защищать API с помощью токенов.
+// ->middleware('guest') Проверяет, что пользователь не аутентифицирован (т.е., “гость”).
+// ->middleware('verified') Проверяет, что пользователь подтвердил свой email.
+// ->middleware('role:admin') Проверяет, что пользователь обладает определенной ролью, используя Spatie Permissions.
+// ->middleware('permission:view-dashboard') Проверяет, что у пользователя есть конкретное разрешение для действия.
+// Route::group(['middleware' => ['permission:edit articles|publish articles']], function () {}); // маршруты для пользователей, у которых есть либо "edit articles", либо "publish articles"

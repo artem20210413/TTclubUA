@@ -22,3 +22,7 @@ yarn-error.log
 /.zed
 .DS_Store
 package-lock.json
+
+specs
+.claude
+.specify

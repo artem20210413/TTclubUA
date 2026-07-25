@@ -33,7 +33,7 @@ class UserFactory extends Factory
             'phone' => $this->faker->unique()->phoneNumber(),
             'email' => $this->faker->unique()->safeEmail(),
             'birth_date' => $this->faker->date(),
-//            'club_entry_date' => $this->faker->date(),
+            //            'club_entry_date' => $this->faker->date(),
             'occupation_description' => $this->faker->text(),
             'phone_verified_at' => now(),
             'email_verified_at' => now(),
@@ -41,7 +41,6 @@ class UserFactory extends Factory
             'active' => 1,
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'profile_photo_path' => $this->faker->imageUrl(),
         ];
     }
 
@@ -50,7 +49,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
@@ -60,14 +59,14 @@ class UserFactory extends Factory
      */
     public function withPersonalTeam(?callable $callback = null): static
     {
-        if (!Features::hasTeamFeatures()) {
+        if (! Features::hasTeamFeatures()) {
             return $this->state([]);
         }
 
         return $this->has(
             Team::factory()
-                ->state(fn(array $attributes, User $user) => [
-                    'name' => $user->name . '\'s Team',
+                ->state(fn (array $attributes, User $user) => [
+                    'name' => $user->name.'\'s Team',
                     'user_id' => $user->id,
                     'personal_team' => true,
                 ])

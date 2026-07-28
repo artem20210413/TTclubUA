@@ -162,7 +162,7 @@ class FinanceController extends Controller
                 : redirect($baseUrl);
         }
 
-        $transaction = new MonoTransaction;
+        $transaction = new MonoTransaction();
         $transaction->createHash($user, $monoAccount->getID());
         $transaction->jar_id = $monoAccount->getID();
         $transaction->user_id = $user->id;

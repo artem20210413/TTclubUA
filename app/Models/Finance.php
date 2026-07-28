@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -14,12 +15,11 @@ use Illuminate\Support\Carbon;
  * @property float amount
  * @property string|null description
  * @property Carbon created_at
- *
- *
  * @property \App\Models\User $user
  */
 class Finance extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'id',

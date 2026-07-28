@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,12 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int owner_id
  * @property float amount
  * @property string|null description
- *
- *
  * @property \App\Models\User $user
  */
 class Costs extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'id',

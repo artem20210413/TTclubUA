@@ -70,6 +70,7 @@ Route::post('/user/{id}/change-password', [AuthController::class, 'changePasswor
 Route::post('/finance/user/{user}', [\App\Http\Controllers\FinanceController::class, 'set'])->middleware(['auth:sanctum', 'role:admin']);
 Route::delete('/finance/{finance}', [\App\Http\Controllers\FinanceController::class, 'delete'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/finance/user/{user}/statistics', [\App\Http\Controllers\FinanceController::class, 'statistics'])->middleware(['auth:sanctum']);
+Route::get('/finance/statistics/seasons', [\App\Http\Controllers\FinanceController::class, 'seasonStatistics'])->middleware(['auth:sanctum']);
 Route::get('/finance/user/{user}', [\App\Http\Controllers\FinanceController::class, 'list'])->middleware(['auth:sanctum']);
 Route::get('finance/jar-monobank', [\App\Http\Controllers\FinanceController::class, 'redirectJarMonobank']);
 

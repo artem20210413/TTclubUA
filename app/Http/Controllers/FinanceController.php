@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Eloquent\FinanceEloquent;
+use App\Eloquent\FinanceStatisticsEloquent;
 use App\Enum\EnumMonoAccount;
 use App\Enum\EnumMonoStatus;
 use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\FinanceRequest;
+use App\Http\Requests\SeasonStatisticsRequest;
 use App\Http\Resources\FinanceWithUserResource;
+use App\Http\Resources\SeasonStatisticsResource;
 use App\Models\Finance;
 use App\Models\MonoTransaction;
 use App\Models\User;
@@ -19,7 +22,6 @@ use Illuminate\Support\Facades\Log;
 
 class FinanceController extends Controller
 {
-
     public function set(User $user, FinanceRequest $request)
     {
         $finance = new Finance();
@@ -29,7 +31,7 @@ class FinanceController extends Controller
         if ($request->filled('created_at')) {
             $date = \Carbon\Carbon::parse($request->created_at)->setTime(10, 0, 0);
 
-            if (!$date->isToday()) {
+            if (! $date->isToday()) {
                 $finance->created_at = $date;
             }
         }
@@ -48,6 +50,7 @@ class FinanceController extends Controller
     public function list(User $user, Request $request)
     {
         $f = Finance::query()->where('user_id', $user->id)->orderBy('created_at', 'desc')->paginate(15);
+
         return success(data: FinanceWithUserResource::collection($f));
     }
 
@@ -55,49 +58,68 @@ class FinanceController extends Controller
     {
         $startMonth = config('club.season_start_month', 9);
         $seasonStart = Carbon::create(now()->month < $startMonth ? now()->year - 1 : now()->year, $startMonth, 1)->startOfDay();
+
         return success(data: [
             'current_season_sum' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', $seasonStart)->sum('amount'),
             'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(365))->sum('amount'),
             'largest_payment' => Finance::where('user_id', $user->id)->max('amount'), // наибольший платёж
         ]);
-//        return success(data: [
-//            'all_sum' => Finance::query()->where('user_id', $user->id)->sum('amount'),
-////            'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfYear())->sum('amount'),
-//            'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(365))->sum('amount'),
-////            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfMonth())->sum('amount'),
-//            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(30))->sum('amount'),
-//            'total_payments_count' => Finance::where('user_id', $user->id)->count(), // сколько всего платежей сделал пользователь
-//            'average_payment' => number_format(
-//                Finance::where('user_id', $user->id)->avg('amount') ?? 0,
-//                2,
-//                '.',
-//                ''
-//            ),
-//            'largest_payment' => Finance::where('user_id', $user->id)->max('amount'), // наибольший платёж
-//            'smallest_payment' => Finance::where('user_id', $user->id)->min('amount'), // наименьший платёж
-//            'last_payment_date' => Finance::where('user_id', $user->id)->latest()->value('created_at'), // дата последнего платежа
-//            'first_payment_date' => Finance::where('user_id', $user->id)->oldest()->value('created_at'),// когда был сделан первый платёж
-//        ]);
+        //        return success(data: [
+        //            'all_sum' => Finance::query()->where('user_id', $user->id)->sum('amount'),
+        // //            'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfYear())->sum('amount'),
+        //            'last_year' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(365))->sum('amount'),
+        // //            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->startOfMonth())->sum('amount'),
+        //            'last_month' => Finance::query()->where('user_id', $user->id)->where('created_at', '>=', now()->subDays(30))->sum('amount'),
+        //            'total_payments_count' => Finance::where('user_id', $user->id)->count(), // сколько всего платежей сделал пользователь
+        //            'average_payment' => number_format(
+        //                Finance::where('user_id', $user->id)->avg('amount') ?? 0,
+        //                2,
+        //                '.',
+        //                ''
+        //            ),
+        //            'largest_payment' => Finance::where('user_id', $user->id)->max('amount'), // наибольший платёж
+        //            'smallest_payment' => Finance::where('user_id', $user->id)->min('amount'), // наименьший платёж
+        //            'last_payment_date' => Finance::where('user_id', $user->id)->latest()->value('created_at'), // дата последнего платежа
+        //            'first_payment_date' => Finance::where('user_id', $user->id)->oldest()->value('created_at'),// когда был сделан первый платёж
+        //        ]);
     }
 
+    public function seasonStatistics(SeasonStatisticsRequest $request)
+    {
+        $seasons = $request->input('seasons', 2);
+        $perPage = $request->input('per_page', 20);
+        $page = $request->input('page', 1);
+
+        $result = FinanceStatisticsEloquent::buildSeasonStatistics((int) $seasons, (int) $perPage, (int) $page);
+
+        return success(data: [
+            'seasons' => SeasonStatisticsResource::collection($result['seasons']),
+            'grand_total' => [
+                'spent_total' => number_format($result['grand_total']['spent_total'], 2, '.', ''),
+                'collected_total' => number_format($result['grand_total']['collected_total'], 2, '.', ''),
+                'closing_balance' => number_format($result['grand_total']['closing_balance'], 2, '.', ''),
+            ],
+        ]);
+    }
 
     public function webhookMonobank(Request $request)
     {
         try {
             $monoAccount = EnumMonoAccount::LILIIA;
 
-//        Log::info('webhookMonobank', ['body' => $request->all()]);
-//        Log::info('webhookMonobank', ['body' => $request->all(), 'headers' => $request->header(), 'ip' => $request->ip(), 'host' => $request->host()]);
+            //        Log::info('webhookMonobank', ['body' => $request->all()]);
+            //        Log::info('webhookMonobank', ['body' => $request->all(), 'headers' => $request->header(), 'ip' => $request->ip(), 'host' => $request->host()]);
             $statementItem = $request->data['statementItem'] ?? null;
 
-            if ($request->all() === [] || ($request->data['account'] ?? null) !== $monoAccount->getID() || !$statementItem)
+            if ($request->all() === [] || ($request->data['account'] ?? null) !== $monoAccount->getID() || ! $statementItem) {
                 return success();
+            }
 
             $description = $statementItem['comment'] ?? '';
             if (preg_match('/pay:([a-zA-Z0-9]+)/', $description, $matches)) {
                 $hash = $matches[1];
                 /** @var MonoTransaction $payment */
-                $payment = MonoTransaction::where('hash', $hash)->first() ?? new MonoTransaction();
+                $payment = MonoTransaction::where('hash', $hash)->first() ?? new MonoTransaction;
                 $payment->source_ip = $request->ip();
                 $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
                 $payment->currency_code = $statementItem['currency_code'] ?? null;
@@ -115,12 +137,12 @@ class FinanceController extends Controller
 
         } catch (\Throwable $e) {
             $bot = new TelegramBot(EnumTelegramEvents::SYSTEM_ERRORS);
-            $bot->sendMessage('Monobank Webhook Critical Error:' . $e->getMessage());
+            $bot->sendMessage('Monobank Webhook Critical Error:'.$e->getMessage());
             Log::error('Monobank Webhook Critical Error:', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'payload' => $request->all() // Додаємо дані, на яких "впав" код
+                'payload' => $request->all(), // Додаємо дані, на яких "впав" код
             ]);
         }
 
@@ -134,25 +156,23 @@ class FinanceController extends Controller
         $baseUrl = "https://send.monobank.ua/jar/{$monoAccount->getSendId()}";
 
         $isApi = $request->is('api/*');
-        if (!$user) {
+        if (! $user) {
             return $isApi
                 ? error(new ApiException('User not found'))
                 : redirect($baseUrl);
         }
 
-        $transaction = new MonoTransaction();
+        $transaction = new MonoTransaction;
         $transaction->createHash($user, $monoAccount->getID());
         $transaction->jar_id = $monoAccount->getID();
         $transaction->user_id = $user->id;
         $transaction->save();
-        $url = $baseUrl . '?' . http_build_query([
-                't' => 'pay:' . $transaction->hash,
-            ]);
+        $url = $baseUrl.'?'.http_build_query([
+            't' => 'pay:'.$transaction->hash,
+        ]);
 
         return $isApi
             ? success(data: ['url' => $url])
             : redirect($url);
     }
-
-
 }

@@ -24,7 +24,7 @@ class FinanceController extends Controller
 {
     public function set(User $user, FinanceRequest $request)
     {
-        $finance = new Finance();
+        $finance = new Finance;
         $finance->user_id = $user->id;
         $finance->amount = $request->amount;
         $finance->description = $request->description;
@@ -86,20 +86,13 @@ class FinanceController extends Controller
 
     public function seasonStatistics(SeasonStatisticsRequest $request)
     {
-        $seasons = $request->input('seasons', 2);
         $perPage = $request->input('per_page', 20);
         $page = $request->input('page', 1);
+        $year = $request->filled('year') ? (int) $request->input('year') : null;
 
-        $result = FinanceStatisticsEloquent::buildSeasonStatistics((int) $seasons, (int) $perPage, (int) $page);
+        $result = FinanceStatisticsEloquent::buildSeasonStatistics($year, (int) $perPage, (int) $page);
 
-        return success(data: [
-            'seasons' => SeasonStatisticsResource::collection($result['seasons']),
-            'grand_total' => [
-                'spent_total' => number_format($result['grand_total']['spent_total'], 2, '.', ''),
-                'collected_total' => number_format($result['grand_total']['collected_total'], 2, '.', ''),
-                'closing_balance' => number_format($result['grand_total']['closing_balance'], 2, '.', ''),
-            ],
-        ]);
+        return success(data: new SeasonStatisticsResource($result));
     }
 
     public function webhookMonobank(Request $request)
@@ -162,7 +155,7 @@ class FinanceController extends Controller
                 : redirect($baseUrl);
         }
 
-        $transaction = new MonoTransaction();
+        $transaction = new MonoTransaction;
         $transaction->createHash($user, $monoAccount->getID());
         $transaction->jar_id = $monoAccount->getID();
         $transaction->user_id = $user->id;

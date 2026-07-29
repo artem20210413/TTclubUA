@@ -24,6 +24,7 @@ class CostsRequest extends FormRequest
         return [
             'amount' => 'required|numeric',
             'description' => 'string|nullable',
+            'created_at' => 'date|nullable',
         ];
     }
 }

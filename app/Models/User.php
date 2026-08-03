@@ -240,7 +240,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     /**
      * Сгенерировать и сохранить код в кеш на 10 минут.
      */
-    public function generateAndStoreLoginCode(int $time = 10, int $length = 6): string
+    public function generateAndStoreLoginCode(int $time = 10, int $length = 4): string
     {
 
         $code = str_pad((string)random_int(0, 10 ** $length - 1), $length, '0', STR_PAD_LEFT);

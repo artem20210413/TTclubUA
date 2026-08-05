@@ -86,18 +86,67 @@
             color: #8791a6;
             font-size: 12px;
         }
+
+        .opening {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <main class="card" role="main">
     <div class="inner">
-        <h1 class="title">Застосунок ще не встановлено</h1>
-        <p class="subtitle">Щоб увійти за кодом з Telegram, спершу встановіть застосунок TT Club UA, після чого повторіть спробу входу.</p>
+        <div id="opening-state">
+            <h1 class="title">Відкриваємо застосунок…</h1>
+            <p class="opening">Якщо застосунок не відкрився автоматично, за секунду тут з'явиться посилання на завантаження.</p>
+        </div>
 
-        <a class="btn" href="{{ route('app.download') }}">Завантажити застосунок</a>
+        <div id="fallback-state" class="hidden">
+            <h1 class="title">Застосунок ще не встановлено</h1>
+            <p class="subtitle">Щоб увійти за кодом з Telegram, спершу встановіть застосунок TT Club UA, після чого повторіть спробу входу.</p>
+
+            <a class="btn" href="{{ route('app.download') }}">Завантажити застосунок</a>
+        </div>
 
         <div class="foot">© {{ now()->year }} TT Club UA</div>
     </div>
 </main>
+
+<script>
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        var phone = params.get('phone');
+        var code = params.get('code');
+
+        function showFallback() {
+            document.getElementById('opening-state').classList.add('hidden');
+            document.getElementById('fallback-state').classList.remove('hidden');
+        }
+
+        if (!phone || !code) {
+            // Немає даних для входу — одразу показуємо fallback без спроби відкрити застосунок.
+            showFallback();
+            return;
+        }
+
+        var deepLink = '{{ $customScheme }}://login-tg-code?' + params.toString();
+
+        // Якщо за 1.5с сторінка все ще видима (тобто застосунок не перехопив редірект
+        // і система не переключилась на нього) — вважаємо, що застосунок не встановлений.
+        var fallbackTimer = setTimeout(showFallback, 1500);
+
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                clearTimeout(fallbackTimer);
+            }
+        });
+
+        window.location.href = deepLink;
+    })();
+</script>
 </body>
 </html>

@@ -28,9 +28,14 @@ Route::view('/privacy', 'privacy')
 
 Route::get('/events/{event}', [EventController::class, 'showPublic'])->name('events.show_public');
 
-// Fallback-сторінка Universal/App Link для входу через Telegram-код (якщо застосунок не встановлений)
-Route::view('/auth/tg-code', 'auth.tg-code-fallback')
-    ->name('auth.tg-code');
+// Fallback-сторінка Universal/App Link для входу через Telegram-код.
+// Сторінка сама намагається відкрити застосунок через кастомну схему (JS-редірект),
+// і лише якщо це не спрацювало — показує "завантажте застосунок".
+Route::get('/auth/tg-code', function () {
+    return view('auth.tg-code-fallback', [
+        'customScheme' => config('mobile.custom_scheme'),
+    ]);
+})->name('auth.tg-code');
 
 // Файли підтвердження домену для iOS Universal Links / Android App Links
 Route::get('/.well-known/apple-app-site-association', [WellKnownController::class, 'appleAppSiteAssociation']);

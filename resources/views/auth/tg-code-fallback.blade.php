@@ -95,14 +95,22 @@
         .hidden {
             display: none;
         }
+
+        .btn-secondary {
+            margin-top: 12px;
+            background: linear-gradient(180deg, rgba(139, 92, 246, .25), rgba(139, 92, 246, .15));
+        }
     </style>
 </head>
 <body>
 <main class="card" role="main">
     <div class="inner">
-        <div id="opening-state">
-            <h1 class="title">Відкриваємо застосунок…</h1>
-            <p class="opening">Якщо застосунок не відкрився автоматично, за секунду тут з'явиться посилання на завантаження.</p>
+        <div id="open-state" class="hidden">
+            <h1 class="title">Вхід у TT Club UA</h1>
+            <p class="subtitle">Натисніть, щоб відкрити застосунок і завершити вхід.</p>
+
+            <a id="open-app-btn" class="btn" href="#">Відкрити застосунок</a>
+            <a class="btn btn-secondary" href="{{ route('app.download') }}">Завантажити застосунок</a>
         </div>
 
         <div id="fallback-state" class="hidden">
@@ -122,29 +130,25 @@
         var phone = params.get('phone');
         var code = params.get('code');
 
-        function showFallback() {
-            document.getElementById('opening-state').classList.add('hidden');
-            document.getElementById('fallback-state').classList.remove('hidden');
-        }
-
         if (!phone || !code) {
-            // Немає даних для входу — одразу показуємо fallback без спроби відкрити застосунок.
-            showFallback();
+            // Немає даних для входу — показуємо fallback без спроби відкрити застосунок.
+            document.getElementById('fallback-state').classList.remove('hidden');
             return;
         }
 
         var deepLink = '{{ $customScheme }}://login-tg-code?' + params.toString();
 
-        // Якщо за 1.5с сторінка все ще видима (тобто застосунок не перехопив редірект
-        // і система не переключилась на нього) — вважаємо, що застосунок не встановлений.
-        var fallbackTimer = setTimeout(showFallback, 1500);
-
-        document.addEventListener('visibilitychange', function () {
-            if (document.hidden) {
-                clearTimeout(fallbackTimer);
-            }
+        // Показуємо кнопку одразу: більшість браузерів (особливо iOS Safari) блокують
+        // автоматичний редірект на кастомну схему без прямого тапу користувача,
+        // тому кнопка — основний, надійний спосіб відкрити застосунок.
+        document.getElementById('open-state').classList.remove('hidden');
+        document.getElementById('open-app-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+            window.location.href = deepLink;
         });
 
+        // Додатково пробуємо автоматичний редірект — спрацює в браузерах,
+        // які це дозволяють (без гарантій, тому кнопка вище лишається основним шляхом).
         window.location.href = deepLink;
     })();
 </script>

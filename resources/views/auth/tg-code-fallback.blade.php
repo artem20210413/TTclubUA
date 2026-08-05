@@ -136,7 +136,7 @@
             return;
         }
 
-        var deepLink = '{{ $customScheme }}://login-tg-code?' + params.toString();
+        var deepLink = '{{ $customScheme ?? 'ttclubua' }}://login-tg-code?' + params.toString();
 
         // Показуємо кнопку одразу: більшість браузерів (особливо iOS Safari) блокують
         // автоматичний редірект на кастомну схему без прямого тапу користувача,

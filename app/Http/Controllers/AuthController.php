@@ -22,11 +22,10 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-//        $this->middleware('permission:create post', ['only' => ['create', 'store']]);
-//        $this->middleware('permission:edit post', ['only' => ['edit', 'update']]);
-//        $this->middleware('permission:delete post', ['only' => ['destroy']]);
+        //        $this->middleware('permission:create post', ['only' => ['create', 'store']]);
+        //        $this->middleware('permission:edit post', ['only' => ['edit', 'update']]);
+        //        $this->middleware('permission:delete post', ['only' => ['destroy']]);
     }
-
 
     public function logout(Request $request)
     {
@@ -37,7 +36,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $user = new User();
+        $user = new User;
         $user->name = $request->name;
         $user->email = $request->email;
         $user->setPhone($request->phone);
@@ -45,7 +44,7 @@ class AuthController extends Controller
         $user->telegram_nickname = $request->telegram_nickname;
         $user->instagram_nickname = $request->instagram_nickname;
         $user->birth_date = Carbon::parse($request->birth_date);
-//        $user->club_entry_date = Carbon::parse($request->club_entry_date);
+        //        $user->club_entry_date = Carbon::parse($request->club_entry_date);
         $user->occupation_description = $request->occupation_description;
         $user->save();
 
@@ -65,15 +64,16 @@ class AuthController extends Controller
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         $credentials[$fieldType] = $login;
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return error(new ApiException('Invalid login details', 0, 401));
         }
 
         $user = Auth::user();
-        if (!$user->active) {
+        if (! $user->active) {
             Auth::logout();
+
             return error(new ApiException('Invalid login details', 0, 401));
-//            return error(new ApiException('Your account is deactivated', 0, 403));
+            //            return error(new ApiException('Your account is deactivated', 0, 403));
         }
 
         $user = Auth::user();
@@ -85,7 +85,6 @@ class AuthController extends Controller
         ]);
     }
 
-
     public function sendCode(Request $request)
     {
         $data = $request->validate([
@@ -95,28 +94,28 @@ class AuthController extends Controller
         $phone = $data['phone'];
         $ip = $request->ip();
 
-        Log::info("Запит коду авторизації", [
+        Log::info('Запит коду авторизації', [
             'номер' => $phone,
             'ip_адреса' => $ip,
-            'пристрій' => $request->userAgent()
+            'пристрій' => $request->userAgent(),
         ]);
         /** @var User|null $user */
         $user = User::findByPhone($phone);
         try {
 
-            if (!$user) {
-                Log::warning("Спроба входу: користувача не знайдено", [
+            if (! $user) {
+                Log::warning('Спроба входу: користувача не знайдено', [
                     'номер' => $phone,
-                    'ip_адреса' => $ip
+                    'ip_адреса' => $ip,
                 ]);
                 throw new ApiException('Користувача з таким номером не знайдено.', 0, 404);
             }
 
             if (empty($user->telegram_id)) {
-                Log::notice("Спроба входу: Telegram ID відсутній", [
+                Log::notice('Спроба входу: Telegram ID відсутній', [
                     'user_id' => $user->id,
                     'імʼя' => $user->name,
-                    'ip_адреса' => $ip
+                    'ip_адреса' => $ip,
                 ]);
                 throw new ApiException('Будь ласка, підтвердіть номер телефону через Telegram-бот, перш ніж входити.', 0, 400);
             }
@@ -125,16 +124,26 @@ class AuthController extends Controller
             $code = $user->generateAndStoreLoginCode();
             Auth::login($user);
             $text = TelegramBotHelpers::generationTextAuthCode($code, 10);
+
+            // Universal Link (https) — тільки такі посилання Telegram відкриває напряму з inline-кнопки.
+            // Кастомна ttclubua:// схема тут не використовується (Telegram її не підтримує в кнопках),
+            // застосунок перехоплює цей https-лінк сам через Associated Domains / App Links.
+            $universalLink = rtrim(config('mobile.universal_link_host'), '/').'/auth/tg-code?'.http_build_query([
+                'phone' => $phone,
+                'code' => $code,
+            ]);
+
             $bot = new TelegramBot(EnumTelegramEvents::MY);
-            $bot->sendMessage($text);
+            $bot->sendMessage($text, ['Підтвердити вхід' => $universalLink]);
             Auth::logout();
 
-            Log::info("Код авторизації успішно надіслано в Telegram", [
+            Log::info('Код авторизації успішно надіслано в Telegram', [
                 'user_id' => $user->id,
                 'імʼя' => $user->name,
                 'ip_адреса' => $ip,
-                'час_відправки' => now()->toDateTimeString()
+                'час_відправки' => now()->toDateTimeString(),
             ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Код для входу відправлено в Telegram.',
@@ -149,7 +158,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'phone' => 'required|string',
-            'code' => 'required|string'
+            'code' => 'required|string',
         ]);
 
         try {
@@ -159,20 +168,20 @@ class AuthController extends Controller
             $user = User::findByPhone($phone);
             $code = trim($request->code);
 
-            if (!$user) {
+            if (! $user) {
                 throw new ApiException('Користувача не знайдено.', 0, 404);
             }
 
             $cachedCode = $user->getLoginCodeFromCache();
 
-            if (!$cachedCode || $code !== $cachedCode) {
+            if (! $cachedCode || $code !== $cachedCode) {
                 throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
             }
 
             $user->clearCode();
             $token = $user->createToken("tg_$env")->plainTextToken;
 
-            return success("Авторизація успішна", [
+            return success('Авторизація успішна', [
                 'token' => $token,
                 'user' => new UserResource($user),
             ]);
@@ -182,12 +191,11 @@ class AuthController extends Controller
         }
     }
 
-
     public function changePassword(ChangePasswordRequest $request)
     {
         $user = $request->user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return error(new ApiException('Поточний пароль неправильний', 0, 400));
         }
 
@@ -215,5 +223,4 @@ class AuthController extends Controller
             return error($e);
         }
     }
-
 }

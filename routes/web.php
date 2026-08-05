@@ -1,22 +1,22 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\WellKnownController;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/', function () {
+// Route::get('/', function () {
 //    dd('welcome');
 //    return view('welcome');
-//});
+// });
 
-//Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'indexOld'])->name('web.home'); //->middleware('only.ua')
-//Route::post('/registration', [\App\Http\Controllers\Web\RegistrationsController::class, 'registration'])->name('web.post.registration');
+// Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'indexOld'])->name('web.home'); //->middleware('only.ua')
+// Route::post('/registration', [\App\Http\Controllers\Web\RegistrationsController::class, 'registration'])->name('web.post.registration');
 
 Route::get('/redirect-jar-monobank', [\App\Http\Controllers\FinanceController::class, 'redirectJarMonobank']);
 
-
-Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'index'])->name('web.welcome'); //->middleware('only.ua')
-Route::get('/thank-you', [\App\Http\Controllers\Web\RegistrationsController::class, 'thankYou'])->name('web.thank-you'); //->middleware('only.ua')
-Route::get('/register', [\App\Http\Controllers\Web\RegistrationsController::class, 'register'])->name('web.register'); //->middleware('only.ua')
+Route::get('/', [\App\Http\Controllers\Web\RegistrationsController::class, 'index'])->name('web.welcome'); // ->middleware('only.ua')
+Route::get('/thank-you', [\App\Http\Controllers\Web\RegistrationsController::class, 'thankYou'])->name('web.thank-you'); // ->middleware('only.ua')
+Route::get('/register', [\App\Http\Controllers\Web\RegistrationsController::class, 'register'])->name('web.register'); // ->middleware('only.ua')
 Route::post('/register', [\App\Http\Controllers\Web\RegistrationsController::class, 'apply'])->name('web.register.apply');
 
 Route::view('/app-download', 'app-download')
@@ -26,5 +26,12 @@ Route::view('/app-download', 'app-download')
 Route::view('/privacy', 'privacy')
     ->name('privacy');
 
-
 Route::get('/events/{event}', [EventController::class, 'showPublic'])->name('events.show_public');
+
+// Fallback-сторінка Universal/App Link для входу через Telegram-код (якщо застосунок не встановлений)
+Route::view('/auth/tg-code', 'auth.tg-code-fallback')
+    ->name('auth.tg-code');
+
+// Файли підтвердження домену для iOS Universal Links / Android App Links
+Route::get('/.well-known/apple-app-site-association', [WellKnownController::class, 'appleAppSiteAssociation']);
+Route::get('/.well-known/assetlinks.json', [WellKnownController::class, 'assetlinks']);

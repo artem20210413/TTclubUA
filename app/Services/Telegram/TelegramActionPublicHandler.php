@@ -73,7 +73,7 @@ class TelegramActionPublicHandler
 
         try {
             $text = TelegramBotHelpers::generationTextNewUser($this->telegramWebhookDto?->getMessage()->getNewChatMembers());
-            $buttons = config('telegram.messages.new_member_welcome.links', []);
+            $buttons = TelegramBotHelpers::getNewMemberWelcomeLinks();
 
             $bot = new TelegramBot(EnumTelegramEvents::CUSTOM);
             $bot->setTelegramIds($this->telegramWebhookDto?->getSmartChat()->getId());

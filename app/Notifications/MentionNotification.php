@@ -27,7 +27,17 @@ class MentionNotification extends Notification
 
     public function toTelegram(mixed $notifiable): TelegramMessagePayload
     {
-        $text = TelegramBotHelpers::generationTextMention($this->owner, $this->car, $this->description, $this->time);
+        $text = TelegramBotHelpers::renderTemplate('fa_fa', [
+            '{owner}' => TelegramBotHelpers::TryMentionPerson($this->owner),
+            '{employee}' => TelegramBotHelpers::TryMentionPerson($this->car?->user),
+        ]);
+
+        if ($this->time) {
+            $text .= "\n".$this->time->toDateTimeString();
+        }
+        if ($this->description) {
+            $text .= "\n\n✍️: {$this->description}";
+        }
 
         if ($this->imagePath) {
             return new TelegramMessagePayload(text: $text, photo: $this->imagePath);

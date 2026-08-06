@@ -19,8 +19,19 @@ class NewChatMemberLogNotification extends Notification
 
     public function toTelegram(mixed $notifiable): TelegramMessagePayload
     {
-        return new TelegramMessagePayload(
-            text: TelegramBotHelpers::generationTextNewUserLog($this->telegramWebhookDto)
-        );
+        $who = $this->telegramWebhookDto->getMessage()->getFrom();
+        $whom = [];
+        foreach ($this->telegramWebhookDto->getMessage()->getNewChatMembers() as $member) {
+            $whom[] = "<a href='tg://user?id={$member->getId()}'>{$member->getFirstName()}</a>";
+        }
+        $where = $this->telegramWebhookDto->getSmartChat()->getSmartTitle();
+
+        $text = TelegramBotHelpers::renderTemplate('new_member_welcome_log', [
+            '{who}' => "<a href='tg://user?id={$who->getId()}'>{$who->getFirstName()}</a>",
+            '{whom}' => implode(', ', $whom),
+            '{where}' => $where,
+        ], 'generationTextNewUserLog');
+
+        return new TelegramMessagePayload(text: $text);
     }
 }

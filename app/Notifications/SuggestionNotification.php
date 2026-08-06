@@ -27,7 +27,12 @@ class SuggestionNotification extends Notification
 
     public function toTelegram(mixed $notifiable): TelegramMessagePayload
     {
-        $text = TelegramBotHelpers::generationTextSuggestion($this->user, $this->description, $this->environment);
+        $text = TelegramBotHelpers::renderTemplate('new_suggestion', [
+            '{user}' => TelegramBotHelpers::TryMentionPerson($this->user),
+            '{phone}' => $this->user->phone,
+            '{description}' => $this->description,
+            '{environment_line}' => $this->environment ?? '-',
+        ]);
 
         if (! empty($this->photoPaths)) {
             return new TelegramMessagePayload(text: $text, mediaGroup: $this->photoPaths);

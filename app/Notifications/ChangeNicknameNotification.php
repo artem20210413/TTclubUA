@@ -21,8 +21,11 @@ class ChangeNicknameNotification extends Notification
 
     public function toTelegram(mixed $notifiable): TelegramMessagePayload
     {
-        return new TelegramMessagePayload(
-            text: TelegramBotHelpers::generationTextChangeNickname($this->oldNickname, $this->newNickname)
-        );
+        $text = TelegramBotHelpers::renderTemplate('change_nickname', [
+            '{old_nickname}' => $this->oldNickname ?? 'відсутнього',
+            '{new_nickname}' => $this->newNickname ?? 'порожній',
+        ], 'Нікнейм оновлено: {old_nickname} -> {new_nickname}');
+
+        return new TelegramMessagePayload(text: $text);
     }
 }

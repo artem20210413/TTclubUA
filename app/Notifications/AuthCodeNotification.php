@@ -22,8 +22,13 @@ class AuthCodeNotification extends Notification
 
     public function toTelegram(mixed $notifiable): TelegramMessagePayload
     {
+        $text = TelegramBotHelpers::renderTemplate('auth_code', [
+            '{code}' => $this->code,
+            '{minutes}' => $this->minutes,
+        ]);
+
         return new TelegramMessagePayload(
-            text: TelegramBotHelpers::generationTextAuthCode($this->code, $this->minutes),
+            text: $text,
             buttons: ['Підтвердити вхід' => $this->universalLink],
         );
     }

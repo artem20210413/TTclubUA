@@ -2,13 +2,15 @@
 
 namespace App\Services\Telegram\Commands\Set;
 
+use App\Eloquent\TelegramLoggerEloquent;
 use App\Enum\EnumTelegramLoggerDirection;
-use App\Models\TelegramLogger;
 use App\Models\TelegramMessage;
+use App\Notifications\CommandReplyNotification;
 use App\Services\Telegram\Commands\InterfaceCommand;
 use App\Services\Telegram\Dto\TelegramMessageDto;
 use Illuminate\Support\Facades\Log;
-use Telegram\Bot\Laravel\Facades\Telegram;
+use Illuminate\Support\Facades\Notification;
+use Telegram\Bot\Api;
 
 class CommandSetpassword implements InterfaceCommand
 {
@@ -17,22 +19,9 @@ class CommandSetpassword implements InterfaceCommand
      */
     public static function action(TelegramMessageDto $dto): void
     {
-        TelegramLogger::sendMessage([
-            'chat_id' => $dto->getChat()->getId(),
-            'text' =>
-                "🔐 *Створення нового пароля*\n\n" .
-//                "Будь ласка, введіть *новий пароль*.\n".
-                "📌 *Вимоги до пароля:*\n" .
-                "• мінімум 4 символів\n" .
-//                "• не може складатися лише з цифр\n".
-//                "• не повинен збігатися з вашим ім’ям або email\n".
-//                "• бажано використовувати комбінацію літер, цифр та символів\n\n".
-
-                "\nУ вас є *10 хвилин* для завершення операції." .
-                "\n✏️ Введіть новий пароль:",
-            'parse_mode' => 'Markdown',
-        ]);
-
+        Notification::route('telegram', $dto->getChat()->getId())->notify(
+            new CommandReplyNotification('commands.set_password.prompt')
+        );
     }
 
     /**
@@ -43,33 +32,31 @@ class CommandSetpassword implements InterfaceCommand
         $chatId = $dto->getChat()->getId();
         $user = $dto->getUser();
 
-        if (!$user) {
-            TelegramLogger::sendMessage([
-                'chat_id' => $chatId,
-                'text' => "⚠️ Не можу змінити пароль — користувача не знайдено.",
-            ]);
+        if (! $user) {
+            Notification::route('telegram', $chatId)->notify(
+                new CommandReplyNotification('commands.set_password.no_user')
+            );
+
             return;
         }
 
-        $password = trim((string)$text);
+        $password = trim((string) $text);
 
         if ($password === '') {
-            TelegramLogger::sendMessage([
-                'chat_id' => $chatId,
-                'text' => "❗ Пароль не може бути порожнім.\n\nСпробуйте ще раз:",
-            ]);
+            Notification::route('telegram', $chatId)->notify(
+                new CommandReplyNotification('commands.set_password.empty')
+            );
+
             return;
         }
 
         if (strlen($password) < 4) {
-            TelegramLogger::sendMessage([
-                'chat_id' => $chatId,
-                'text' => "❗ Пароль повинен містити *мінімум 4 символів*.",
-                'parse_mode' => 'Markdown',
-            ]);
+            Notification::route('telegram', $chatId)->notify(
+                new CommandReplyNotification('commands.set_password.too_short')
+            );
+
             return;
         }
-
 
         // -------------------
         // СОХРАНЕНИЕ ПАРОЛЯ
@@ -77,19 +64,26 @@ class CommandSetpassword implements InterfaceCommand
         $user->setPassword($password);
         $user->save();
 
-
         // Удаляем пароль из чата и логов
-        TelegramLogger::deleteMessage([
-            'chat_id' => $chatId,
-            'message_id' => $dto->getMessageId(),
-        ]);
+        self::deleteMessage($chatId, $dto->getMessageId());
 
         TelegramMessage::getLast($chatId, EnumTelegramLoggerDirection::IN)?->delete();
 
-        TelegramLogger::sendMessage([
-            'chat_id' => $chatId,
-            'text' => "✅ *Пароль успішно змінено!*\n\nМожете продовжувати користуватися ботом.",
-            'parse_mode' => 'Markdown',
-        ]);
+        Notification::route('telegram', $chatId)->notify(
+            new CommandReplyNotification('commands.set_password.success')
+        );
+    }
+
+    private static function deleteMessage(string|int $chatId, mixed $messageId): void
+    {
+        $params = ['chat_id' => $chatId, 'message_id' => $messageId];
+
+        try {
+            app(Api::class)->deleteMessage($params);
+            TelegramLoggerEloquent::createOutDelete($params);
+        } catch (\Throwable $e) {
+            Log::error('Telegram deleteMessage error: '.$e->getMessage());
+            TelegramLoggerEloquent::createOutDelete($params);
+        }
     }
 }

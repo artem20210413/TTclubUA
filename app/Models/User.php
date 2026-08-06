@@ -16,13 +16,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
-
 
 /**
  * Class User
@@ -48,24 +45,22 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $profile_photo_path
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
- *
  * @property City $cities
- *
  * @property-read \Illuminate\Database\Eloquent\Collection|Session[] $sessions
  * @property-read \Illuminate\Database\Eloquent\Collection|Car[] $cars
  */
-class User extends Authenticatable implements HasMedia, AuditableContract
+class User extends Authenticatable implements AuditableContract, HasMedia
 {
     use HasApiTokens;
-    use HasRoles;
-    use InteractsWithMedia;
-    use \OwenIt\Auditing\Auditable;
-
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
     use HasProfilePhoto;
+    use HasRoles;
+
+    use InteractsWithMedia;
+
     use Notifiable;
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -94,9 +89,11 @@ class User extends Authenticatable implements HasMedia, AuditableContract
         'password',
         'remember_token',
     ];
+
     protected $casts = [
         'birth_date' => 'date',
     ];
+
     /**
      * The accessors to append to the model's array form.
      *
@@ -113,9 +110,8 @@ class User extends Authenticatable implements HasMedia, AuditableContract
         'email_verified_at',
         'approve_verified_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
-
 
     /**
      * Get the attributes that should be cast.
@@ -133,9 +129,8 @@ class User extends Authenticatable implements HasMedia, AuditableContract
 
     public function getLoginCodeCacheKey(): string
     {
-        return 'login_code:user:' . $this->id;
+        return 'login_code:user:'.$this->id;
     }
-
 
     public function cities(): BelongsToMany
     {
@@ -158,16 +153,15 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     }
 
     /**
-     * @param int $id
-     * @return User
      * @throws ApiException
      */
-    static function findOrFail(int $id): User
+    public static function findOrFail(int $id): User
     {
         $user = User::find($id);
 
-        if (!$user)
-            throw  new ApiException('Користувача не існує', 0, 400);
+        if (! $user) {
+            throw new ApiException('Користувача не існує', 0, 400);
+        }
 
         return $user;
     }
@@ -185,7 +179,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
         $this->telegram_nickname = $request->input('telegram_nickname', $this->telegram_nickname);
         $this->instagram_nickname = $request->input('instagram_nickname', $this->instagram_nickname);
         $this->birth_date = Carbon::parse($request->input('birth_date', $this->birth_date));
-//        $this->club_entry_date = Carbon::parse($request->input('club_entry_date', $this->club_entry_date));
+        //        $this->club_entry_date = Carbon::parse($request->input('club_entry_date', $this->club_entry_date));
         $this->occupation_description = $request->input('occupation_description', $this->occupation_description);
 
         $this->save();
@@ -197,7 +191,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
             $newRoles = $request->input('roles'); // Массив строк из запроса
 
             if ($this->id === auth()->id() && $this->hasRole(EnumUserRoles::ADMIN->value)) {
-                if (!in_array(EnumUserRoles::ADMIN->value, $newRoles)) {
+                if (! in_array(EnumUserRoles::ADMIN->value, $newRoles)) {
                     $newRoles[] = EnumUserRoles::ADMIN->value;
                 }
             }
@@ -243,7 +237,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     public function generateAndStoreLoginCode(int $time = 10, int $length = 4): string
     {
 
-        $code = str_pad((string)random_int(0, 10 ** $length - 1), $length, '0', STR_PAD_LEFT);
+        $code = str_pad((string) random_int(0, 10 ** $length - 1), $length, '0', STR_PAD_LEFT);
 
         Cache::put(
             $this->getLoginCodeCacheKey(),
@@ -267,7 +261,6 @@ class User extends Authenticatable implements HasMedia, AuditableContract
         return Cache::get($this->getLoginCodeCacheKey());
     }
 
-
     /**
      * Перевірити, чи має користувач певну роль.
      */
@@ -282,6 +275,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     public function addRoleEnum(EnumUserRoles $role): self
     {
         $this->assignRole($role->value);
+
         return $this;
     }
 
@@ -291,6 +285,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     public function removeRoleEnum(EnumUserRoles $role): self
     {
         $this->removeRole($role->value);
+
         return $this;
     }
 
@@ -303,7 +298,7 @@ class User extends Authenticatable implements HasMedia, AuditableContract
         // Визначаємо 1 вересня поточного або минулого року
         $seasonStart = Carbon::create(now()->month < $startMonth ? now()->year - 1 : now()->year, $startMonth, 1)->startOfDay();
 
-        return (float)$this->finances()
+        return (float) $this->finances()
             ->where('created_at', '>=', $seasonStart)
             ->sum('amount');
     }
@@ -314,8 +309,12 @@ class User extends Authenticatable implements HasMedia, AuditableContract
     public function isSeasonPaid(): bool
     {
         return true;
-        if (!$this->hasRoleEnum(EnumUserRoles::TTOWNER)) return true;
-        if ($this->hasRoleEnum(EnumUserRoles::PRIVILEGED)) return true;
+        if (! $this->hasRoleEnum(EnumUserRoles::TTOWNER)) {
+            return true;
+        }
+        if ($this->hasRoleEnum(EnumUserRoles::PRIVILEGED)) {
+            return true;
+        }
 
         return $this->getSeasonPaymentsSum() >= config('club.min_payment', 500);
     }
@@ -333,15 +332,19 @@ class User extends Authenticatable implements HasMedia, AuditableContract
         return $this->fcmTokens->pluck('token')->toArray();
     }
 
+    public function routeNotificationForTelegram(): ?string
+    {
+        return $this->telegram_id ? (string) $this->telegram_id : null;
+    }
+
     /**
      * Установить явный статус активности
      *
-     * @param bool $status (true - активировать, false - деактивировать)
+     * @param  bool  $status  (true - активировать, false - деактивировать)
      */
     public function setAsActive(bool $status): void
     {
         $this->active = $status;
         $this->save();
     }
-
 }

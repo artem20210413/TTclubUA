@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Enum\EnumTelegramEvents;
 use App\Http\Requests\SuggestionsRequest;
-use App\Services\Telegram\TelegramBot;
-use App\Services\Telegram\TelegramBotHelpers;
-use Illuminate\Http\Request;
+use App\Notifications\SuggestionNotification;
+use App\Notifications\Support\TelegramRecipients;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class SuggestionsController extends Controller
 {
@@ -15,22 +15,20 @@ class SuggestionsController extends Controller
     {
         $user = Auth::user();
         $description = $request->input('description');
-        $environment = $request->header('X-Client-Platform','unknown');
+        $environment = $request->header('X-Client-Platform', 'unknown');
         $photos = $request->file('files');
 
-        $bot = new TelegramBot(EnumTelegramEvents::SUGGESTION);
-
-        $message = TelegramBotHelpers::generationTextSuggestion($user, $description, $environment);
-
+        $photoPaths = [];
         if ($photos) {
-            $photoPaths = [];
             foreach ($photos as $photo) {
                 $photoPaths[] = $photo->getRealPath();
             }
-            $bot->sendPhotosPathOrUrlWithDescription($photoPaths, $message);
-        } else {
-            $bot->sendMessage($message);
         }
+
+        Notification::send(
+            TelegramRecipients::routes(EnumTelegramEvents::SUGGESTION->getIds()),
+            new SuggestionNotification($user, $description, $environment, $photoPaths)
+        );
 
         return response()->json(['message' => 'Ваше звернення успішно відправлено!']);
     }

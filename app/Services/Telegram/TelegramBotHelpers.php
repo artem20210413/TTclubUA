@@ -19,9 +19,9 @@ class TelegramBotHelpers
      * Falls back to $default when the translation key is not found, matching the pre-refactor
      * config('telegram.messages.<key>', $default) behavior.
      */
-    private static function renderTemplate(string $key, array $replacements = [], string $default = '---'): string
+    public static function renderTemplate(string $key, array $replacements = [], string $default = '---'): string
     {
-        $template = Lang::has('telegram.' . $key) ? __('telegram.' . $key) : $default;
+        $template = Lang::has('telegram.'.$key) ? __('telegram.'.$key) : $default;
 
         return str_replace(array_keys($replacements), array_values($replacements), $template);
     }
@@ -34,6 +34,7 @@ class TelegramBotHelpers
     public static function MentionPerson(?User $user): string
     {
         $name = $user?->telegram_nickname ?? $user?->name;
+
         return "<a href='tg://user?id={$user?->telegram_id}'>$name</a>"; // Упоминание
     }
 
@@ -44,11 +45,13 @@ class TelegramBotHelpers
 
     public static function TryMentionPerson(?User $user): string
     {
-        if ($user?->telegram_id)
+        if ($user?->telegram_id) {
             return self::MentionPerson($user);
+        }
 
-        if ($user?->telegram_nickname)
+        if ($user?->telegram_nickname) {
             return self::LinkToPerson($user);
+        }
 
         return $user?->name;
     }
@@ -61,10 +64,10 @@ class TelegramBotHelpers
         ]);
 
         if ($time) {
-            $text = $text . "\n" . $time->toDateTimeString();
+            $text = $text."\n".$time->toDateTimeString();
         }
         if ($description) {
-            $text = $text . "\n\n✍️: $description";
+            $text = $text."\n\n✍️: $description";
         }
 
         return $text;
@@ -84,7 +87,7 @@ class TelegramBotHelpers
     {
         $data = $registration->getJson();
         $cities = collect($data->cities_model)
-            ->map(fn($city) => "{$city->name} ({$city->country})")
+            ->map(fn ($city) => "{$city->name} ({$city->country})")
             ->implode(', ');
 
         $why_tt_short = Str::limit($data->why_tt, 50, '...');
@@ -116,9 +119,9 @@ class TelegramBotHelpers
         }
 
         $noCarText = self::renderTemplate('registration.without_car', [], 'Немає Audi TT.');
-        $cars = $cars === "" ? $noCarText : $cars;
+        $cars = $cars === '' ? $noCarText : $cars;
 
-        return $user . "\n\n" . $cars;
+        return $user."\n\n".$cars;
     }
 
     public static function generationTextAuthCode(string $code, int $minutes): string
@@ -187,5 +190,4 @@ class TelegramBotHelpers
             '{where}' => $where,
         ], 'generationTextNewUserLog');
     }
-
 }

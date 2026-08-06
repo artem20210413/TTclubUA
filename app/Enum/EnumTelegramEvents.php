@@ -3,12 +3,10 @@
 namespace App\Enum;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
 
 enum EnumTelegramEvents
 {
-
-//    case NOTIFICATION;
+    //    case NOTIFICATION;
     case FA_FA;
     case STATS_MENTION;
     case CHANGE_USER;
@@ -18,24 +16,23 @@ enum EnumTelegramEvents
     case MY;
     case USERS; // определенным пользователям
     case CUSTOM; // произвольный
-    case EXPORT_USERS; //експорт всех пользователей
+    case EXPORT_USERS; // експорт всех пользователей
     case REGISTRATION; // при регистрации уведомление
     case SUGGESTION;
 
     /**
      * Получить разрешение для качества
      */
-    public function getIds(?Collection $users = null, array $chantIds = []): array
+    public function getIds(?Collection $users = null, array $chantIds = [], array $myIds = []): array
     {
 
-        $config = config("telegram.chats");
+        $config = config('telegram.chats');
 
         $welcome = $config['welcome'] ?? '';
         $ttChat = $config['tt_club_ua'] ?? '';
         $testBot2 = $config['test_bot_2'] ?? '';
         $suggestions = $config['suggestions'] ?? '';
 
-        $myIds = Auth::user() ? [Auth::user()->telegram_id] : [];
         $usersIds = $users ? $users->pluck('telegram_id')->toArray() : [];
 
         return match ($this) {
@@ -56,5 +53,4 @@ enum EnumTelegramEvents
             self::CUSTOM => $chantIds,
         };
     }
-
 }

@@ -5,41 +5,40 @@ namespace App\Services\Telegram;
 use App\Eloquent\TelegramLoggerEloquent;
 use App\Eloquent\UserEloquent;
 use App\Enum\EnumTelegramEvents;
-use App\Models\TelegramLogger;
 use App\Models\TelegramMessage;
-use App\Services\Telegram\Commands\Set\CommandContactSuccessfully;
-use App\Services\Telegram\Commands\Set\CommandGetPhone;
-use App\Services\Telegram\Commands\Set\CommandHelp;
-use App\Services\Telegram\Commands\Set\CommandStart;
-use App\Services\Telegram\Commands\Set\CommandUserNotActive;
-use App\Services\Telegram\Commands\TelegramCommands;
+use App\Notifications\ChatMemberLeftNotification;
+use App\Notifications\NewChatMemberLogNotification;
+use App\Notifications\NewChatMemberWelcomeNotification;
+use App\Notifications\Support\TelegramRecipients;
 use App\Services\Telegram\Dto\ChatMember\EnumTelegramChatMemberStatus;
-use App\Services\Telegram\Dto\TelegramMessageDto;
 use App\Services\Telegram\Dto\TelegramWebhookDto;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class TelegramActionPublicHandler
 {
+    protected ?TelegramMessage $telegramMessage;
 
-    protected TelegramMessage $telegramMessage;
-
-    public function __construct(readonly TelegramWebhookDto $telegramWebhookDto)
+    public function __construct(public readonly TelegramWebhookDto $telegramWebhookDto)
     {
 
         $this->telegramMessage = TelegramLoggerEloquent::createIn($telegramWebhookDto);
-
 
     }
 
     public function handler()
     {
-        if ($this->checkIsNewUser()) $this->handleNewUser();
-        if ($this->checkIsUserLeft()) $this->handleUserLeft();
+        if ($this->checkIsNewUser()) {
+            $this->handleNewUser();
+        }
+        if ($this->checkIsUserLeft()) {
+            $this->handleUserLeft();
+        }
     }
 
     private function checkIsNewUser(): bool
     {
-        return !empty($this->telegramWebhookDto?->getMessage()?->getNewChatMembers());
+        return ! empty($this->telegramWebhookDto?->getMessage()?->getNewChatMembers());
     }
 
     private function checkIsUserLeft(): bool
@@ -54,34 +53,32 @@ class TelegramActionPublicHandler
 
         try {
             // Відправка у чаи логов
-            $messageLog = TelegramBotHelpers::generationTextNewUserLog($this->telegramWebhookDto);
-            $bot = new TelegramBot(EnumTelegramEvents::CHANGE_USER);
-            $res = $bot->sendMessage($messageLog);
+            Notification::send(
+                TelegramRecipients::routes(EnumTelegramEvents::CHANGE_USER->getIds()),
+                new NewChatMemberLogNotification($this->telegramWebhookDto)
+            );
 
             foreach ($this->telegramWebhookDto->getMessage()->getNewChatMembers() as $chatMember) {
                 $user = UserEloquent::searchUser($chatMember);
                 $user?->setAsActive(true);
             }
 
-
         } catch (\Throwable $exception) {
-            Log::error("Помилка логування зміни статусу користувача: " . $exception->getMessage(), [
+            Log::error('Помилка логування зміни статусу користувача: '.$exception->getMessage(), [
                 'exception' => $exception,
-                'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId()
+                'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId(),
             ]);
         }
 
         try {
-            $text = TelegramBotHelpers::generationTextNewUser($this->telegramWebhookDto?->getMessage()->getNewChatMembers());
-            $buttons = TelegramBotHelpers::getNewMemberWelcomeLinks();
-
-            $bot = new TelegramBot(EnumTelegramEvents::CUSTOM);
-            $bot->setTelegramIds($this->telegramWebhookDto?->getSmartChat()->getId());
-            $res = $bot->sendMessage($text, $buttons);
+            Notification::send(
+                TelegramRecipients::routes([$this->telegramWebhookDto?->getSmartChat()->getId()]),
+                new NewChatMemberWelcomeNotification($this->telegramWebhookDto?->getMessage()->getNewChatMembers())
+            );
         } catch (\Throwable $exception) {
-            Log::error("Помилка логування зміни статусу користувача: " . $exception->getMessage(), [
+            Log::error('Помилка логування зміни статусу користувача: '.$exception->getMessage(), [
                 'exception' => $exception,
-                'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId()
+                'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId(),
             ]);
         }
     }
@@ -90,20 +87,19 @@ class TelegramActionPublicHandler
     {
         try {
             // Відправка у чаи логов
-            $messageLog = TelegramBotHelpers::generationTextUserLeftLog($this->telegramWebhookDto);
-            $bot = new TelegramBot(EnumTelegramEvents::CHANGE_USER);
-            $res = $bot->sendMessage($messageLog);
+            Notification::send(
+                TelegramRecipients::routes(EnumTelegramEvents::CHANGE_USER->getIds()),
+                new ChatMemberLeftNotification($this->telegramWebhookDto)
+            );
 
             $user = UserEloquent::searchUser($this->telegramWebhookDto->getChatMember()->getNewChatMember()->getUser());
             $user?->setAsActive(false);
 
         } catch (\Throwable $exception) {
-            Log::error("Помилка логування зміни статусу користувача: " . $exception->getMessage(), [
+            Log::error('Помилка логування зміни статусу користувача: '.$exception->getMessage(), [
                 'exception' => $exception,
-                'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId()
+                'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId(),
             ]);
         }
     }
-
-
 }

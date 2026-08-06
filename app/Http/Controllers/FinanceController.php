@@ -15,10 +15,13 @@ use App\Http\Resources\SeasonStatisticsResource;
 use App\Models\Finance;
 use App\Models\MonoTransaction;
 use App\Models\User;
-use App\Services\Telegram\TelegramBot;
+use App\Notifications\AdHocMessageNotification;
+use App\Notifications\Support\TelegramMessagePayload;
+use App\Notifications\Support\TelegramRecipients;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class FinanceController extends Controller
 {
@@ -129,8 +132,10 @@ class FinanceController extends Controller
             }
 
         } catch (\Throwable $e) {
-            $bot = new TelegramBot(EnumTelegramEvents::SYSTEM_ERRORS);
-            $bot->sendMessage('Monobank Webhook Critical Error:'.$e->getMessage());
+            Notification::send(
+                TelegramRecipients::routes(EnumTelegramEvents::SYSTEM_ERRORS->getIds()),
+                new AdHocMessageNotification(new TelegramMessagePayload(text: 'Monobank Webhook Critical Error:'.$e->getMessage()))
+            );
             Log::error('Monobank Webhook Critical Error:', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),

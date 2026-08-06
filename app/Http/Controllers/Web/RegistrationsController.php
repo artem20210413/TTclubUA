@@ -7,15 +7,11 @@ use App\Enum\EnumTypeMedia;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegiserFormRequestOLD;
 use App\Http\Requests\RegisterFormRequest;
-use App\Http\Requests\User\RegisterRequest;
-use App\Jobs\SandRegistrationToTg;
 use App\Models\Registration;
 use App\Services\Image\ImageWebpService;
 use App\Services\Telegram\Sand\RegistrationSandToTo;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
-
 
 class RegistrationsController extends Controller
 {
@@ -42,11 +38,11 @@ class RegistrationsController extends Controller
     public function apply(RegisterFormRequest $request)
     {
 
-        $r = new Registration();
+        $r = new Registration;
         $r->name = $request->get('name');
         $r->setPhone($request->get('phone'));
         $r->setPassword(Str::password(12));
-//        $r->setPassword($request->get('password'));
+        //        $r->setPassword($request->get('password'));
         $r->generationJsom($request);
         $r->save();
 
@@ -63,15 +59,16 @@ class RegistrationsController extends Controller
 
         }
 
-        new RegistrationSandToTo($r);
+        RegistrationSandToTo::send($r);
+
         return Redirect::route('web.thank-you');
     }
 
     public function registration(RegiserFormRequestOLD $request)
     {
-//        dd($request->all());
+        //        dd($request->all());
 
-        $r = new Registration();
+        $r = new Registration;
         $r->name = $request->get('name');
         $r->setPhone($request->get('phone'));
         $r->setPassword($request->get('password'));
@@ -87,14 +84,15 @@ class RegistrationsController extends Controller
         $carFiles = $request->file('car_files');
         foreach ($request->cars as $key => $car) {
             $carFile = $carFiles[$key] ?? null;
-            if (!isset($carFile)) continue;
+            if (! isset($carFile)) {
+                continue;
+            }
             $imageWebp = new ImageWebpService($carFile);
             $imageWebp->convert(EnumImageQuality::LOW);
             $imageWebp->save($r, EnumTypeMedia::PHOTO_COLLECTION);
         }
 
-
-        new RegistrationSandToTo($r);
+        RegistrationSandToTo::send($r);
 
         return Redirect::route('web.home')->with(['message' => 'Заявка успішно створено, чекайте на підтвердження']);
     }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\User\ChangePasswordByUserRequest;
 use App\Http\Requests\User\ChangePasswordRequest;
@@ -10,8 +9,7 @@ use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
-use App\Services\Telegram\TelegramBot;
-use App\Services\Telegram\TelegramBotHelpers;
+use App\Notifications\AuthCodeNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -122,8 +120,6 @@ class AuthController extends Controller
 
             // генерируем и сохраняем код в кеш
             $code = $user->generateAndStoreLoginCode();
-            Auth::login($user);
-            $text = TelegramBotHelpers::generationTextAuthCode($code, 10);
 
             // Universal Link (https) — тільки такі посилання Telegram відкриває напряму з inline-кнопки.
             // Кастомна ttclubua:// схема тут не використовується (Telegram її не підтримує в кнопках),
@@ -133,9 +129,7 @@ class AuthController extends Controller
                 'code' => $code,
             ]);
 
-            $bot = new TelegramBot(EnumTelegramEvents::MY);
-            $bot->sendMessage($text, ['Підтвердити вхід' => $universalLink]);
-            Auth::logout();
+            $user->notify(new AuthCodeNotification($code, $universalLink, 10));
 
             Log::info('Код авторизації успішно надіслано в Telegram', [
                 'user_id' => $user->id,

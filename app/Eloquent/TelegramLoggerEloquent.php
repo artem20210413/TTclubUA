@@ -4,17 +4,15 @@ namespace App\Eloquent;
 
 use App\Enum\EnumTelegramLoggerDirection;
 use App\Models\TelegramMessage;
-use App\Services\Telegram\Dto\TelegramMessageDto;
 use App\Services\Telegram\Dto\TelegramWebhookDto;
 use Illuminate\Support\Facades\Log;
 
 class TelegramLoggerEloquent
 {
-
-    public static function createOut(array $raw): TelegramMessage
+    public static function createOut(array $raw): ?TelegramMessage
     {
         try {
-            $t = new TelegramMessage();
+            $t = new TelegramMessage;
             $t->chat_id = $raw['chat_id'] ?? null;
             $t->direction = EnumTelegramLoggerDirection::OUT->value;
             $t->text = $raw['text'] ?? null;
@@ -26,13 +24,13 @@ class TelegramLoggerEloquent
             Log::error($exception->getMessage());
         }
 
-        return new TelegramMessage();
+        return null;
     }
 
-    public static function createIn(TelegramWebhookDto $telegramWebhookDto)
+    public static function createIn(TelegramWebhookDto $telegramWebhookDto): ?TelegramMessage
     {
         try {
-            $t = new TelegramMessage();
+            $t = new TelegramMessage;
             $t->chat_id = $telegramWebhookDto->getSmartChat()?->getId();
             $t->direction = EnumTelegramLoggerDirection::IN->value;
             $t->text = $telegramWebhookDto?->getMessage()?->getText();
@@ -44,13 +42,13 @@ class TelegramLoggerEloquent
             Log::error($exception->getMessage());
         }
 
-        return new TelegramMessage();
+        return null;
     }
 
-    public static function createOutDelete(array $raw)
+    public static function createOutDelete(array $raw): ?TelegramMessage
     {
         try {
-            $t = new TelegramMessage();
+            $t = new TelegramMessage;
             $t->chat_id = $raw['chat_id'] ?? null;
             $t->direction = EnumTelegramLoggerDirection::DELETE->value;
             $t->text = null;
@@ -62,8 +60,6 @@ class TelegramLoggerEloquent
             Log::error($exception->getMessage());
         }
 
-        return new TelegramMessage();
+        return null;
     }
-
-
 }

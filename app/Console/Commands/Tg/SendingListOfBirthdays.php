@@ -5,11 +5,13 @@ namespace App\Console\Commands\Tg;
 use App\Eloquent\UserEloquent;
 use App\Enum\EnumTelegramEvents;
 use App\Models\User;
-use App\Services\Command\ListOfBirthdays;
-use App\Services\Telegram\TelegramBot;
+use App\Notifications\AdHocMessageNotification;
+use App\Notifications\Support\TelegramMessagePayload;
+use App\Notifications\Support\TelegramRecipients;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class SendingListOfBirthdays extends Command
 {
@@ -32,22 +34,27 @@ class SendingListOfBirthdays extends Command
      */
     public function handle()
     {
-        $nextDays = (int)$this->argument('nextDays');
-        Log::info('search ListOfBirthdays nextDays: ' . $nextDays);
+        $nextDays = (int) $this->argument('nextDays');
+        Log::info('search ListOfBirthdays nextDays: '.$nextDays);
 
         $birthdayPeople = UserEloquent::getBirthdayPeople($nextDays);
-        $botT = new TelegramBot(EnumTelegramEvents::LIST_BIRTHDAYS);
-        $botT->sendMessage($this->getFormatStringBirthdayPeople($birthdayPeople, $nextDays));
+        Notification::send(
+            TelegramRecipients::routes(EnumTelegramEvents::LIST_BIRTHDAYS->getIds()),
+            new AdHocMessageNotification(new TelegramMessagePayload(
+                text: $this->getFormatStringBirthdayPeople($birthdayPeople, $nextDays)
+            ))
+        );
 
-        Log::info('finish ListOfBirthdays Count:' . $birthdayPeople->count());
+        Log::info('finish ListOfBirthdays Count:'.$birthdayPeople->count());
     }
-
 
     public function getFormatStringBirthdayPeople(Collection $birthdayPeople, int $nextDays): ?string
     {
         $isToday = $nextDays === 0;
         $count = $birthdayPeople->count();
-        if ($count === 0 && $isToday) return null;
+        if ($count === 0 && $isToday) {
+            return null;
+        }
 
         $text = $isToday
             ? "Сьогодні день народження у $count іменинників: \n"

@@ -11,17 +11,15 @@ use App\Http\Resources\Car\CarResource;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserWithCarsResource;
 use App\Models\User;
-use App\Services\Gemini\GeminiService;
-use App\Services\Gemini\Prompt\BirthdayGreetingData;
-use App\Services\Gemini\Prompt\Prompt;
-use App\Services\Telegram\TelegramBot;
+use App\Notifications\AdHocMessageNotification;
+use App\Notifications\Support\TelegramMessagePayload;
+use App\Notifications\Support\TelegramRecipients;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
-
 
 class UserController extends Controller
 {
-
     public function user(Request $request)
     {
         return success(data: ['user' => new UserWithCarsResource($request->user())]);
@@ -31,7 +29,6 @@ class UserController extends Controller
     {
         return success(data: new UserWithCarsResource($user));
     }
-
 
     public function search(Request $request)
     {
@@ -65,10 +62,8 @@ class UserController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-
         return success(data: CarResource::collection($user->cars));
     }
-
 
     public function update(UpdateUserRequest $request)
     {
@@ -103,9 +98,11 @@ class UserController extends Controller
     public function userChangeActive(User $user, UpdateUserRequest $request)
     {
         try {
-            if ($request->user()->id === $user->id) throw new ApiException('Власний статус міняти заборонено', 1, 403);
+            if ($request->user()->id === $user->id) {
+                throw new ApiException('Власний статус міняти заборонено', 1, 403);
+            }
 
-            $user->active = !$user->active;
+            $user->active = ! $user->active;
             $user->save();
 
             return success(message: 'Користувача успішно оновлено', data: ['user' => new UserResource($user)]);
@@ -124,14 +121,16 @@ class UserController extends Controller
             return response()->json(['message' => 'Empty'], 404);
         }
 
-        $fileName = 'users_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
-        $relativePath = 'exports/' . $fileName; // относительно storage/app
+        $fileName = 'users_'.now()->format('Y-m-d_H-i-s').'.xlsx';
+        $relativePath = 'exports/'.$fileName; // относительно storage/app
         Excel::store(new UserExport($users), $relativePath);
 
-        $absolutePath = storage_path('app/private/' . $relativePath);
-//
-        $bot = new TelegramBot(EnumTelegramEvents::EXPORT_USERS);
-        $bot->sendDocumentWithCaption($absolutePath, 'Ось усі користувачі 🧾');
+        $absolutePath = storage_path('app/private/'.$relativePath);
+        //
+        Notification::send(
+            TelegramRecipients::routes(EnumTelegramEvents::EXPORT_USERS->getIds()),
+            new AdHocMessageNotification(new TelegramMessagePayload(text: 'Ось усі користувачі 🧾', document: $absolutePath))
+        );
 
         if (file_exists($absolutePath)) {
             unlink($absolutePath);
@@ -141,6 +140,4 @@ class UserController extends Controller
             'status' => 'ok',
         ]);
     }
-
-
 }

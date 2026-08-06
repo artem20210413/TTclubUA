@@ -2,34 +2,34 @@
 
 namespace App\Eloquent;
 
-use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Models\User;
+use App\Notifications\ChangeNicknameNotification;
+use App\Notifications\Support\TelegramRecipients;
 use App\Services\Telegram\Dto\TelegramMessageDto;
 use App\Services\Telegram\Dto\TelegramUserDto;
-use App\Services\Telegram\TelegramBot;
-use App\Services\Telegram\TelegramBotHelpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class UserEloquent
 {
-
     public static function search(Builder $query, string $search): Builder
     {
-        if (!$search) return $query;
+        if (! $search) {
+            return $query;
+        }
 
         $query->where(function ($q) use ($search) {
             $searchLicense = formatNormalizePlateNumber($search);
             $q->where('phone', 'like', "%{$search}%") // Поиск по номеру телефона
-            ->orWhere('name', 'like', "%{$search}%") // Поиск по имени
-            ->orWhere('telegram_nickname', 'like', "%{$search}%") // Поиск по нику в ТГ
-            ->orWhereHas('cars', function ($carQuery) use ($search) { // Поиск по авто
-                $carQuery = CarEloquent::search($carQuery, $search);
-            });
+                ->orWhere('name', 'like', "%{$search}%") // Поиск по имени
+                ->orWhere('telegram_nickname', 'like', "%{$search}%") // Поиск по нику в ТГ
+                ->orWhereHas('cars', function ($carQuery) use ($search) { // Поиск по авто
+                    $carQuery = CarEloquent::search($carQuery, $search);
+                });
         });
 
         return $query;
@@ -40,11 +40,11 @@ class UserEloquent
         $today = Carbon::today();  // Текущая дата
         $birthdayNext8Days = Carbon::today()->addDays($nextDays);  // Дата через 8 дней
 
-// Форматируем дату для сравнения (только месяц и день)
+        // Форматируем дату для сравнения (только месяц и день)
         $todayFormatted = $today->format('m-d');
         $birthdayNext8DaysFormatted = $birthdayNext8Days->format('m-d');
 
-// Получаем пользователей, чьи дни рождения находятся в промежутке от сегодня до 8 дней вперед
+        // Получаем пользователей, чьи дни рождения находятся в промежутке от сегодня до 8 дней вперед
         $users = User::whereRaw('DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?', [
             $todayFormatted,
             $birthdayNext8DaysFormatted,
@@ -61,11 +61,11 @@ class UserEloquent
         return $users->sortBy(function ($user) {
             return Carbon::parse($user->birth_date)->format('m-d');
         })->values();
-//        $users->get()->sortBy(function ($user) {
-//            return Carbon::parse($user->birth_date)->format('m-d');// Получаем месяц и день из даты рождения, игнорируя год
-//        });
-//
-//        return $users;
+        //        $users->get()->sortBy(function ($user) {
+        //            return Carbon::parse($user->birth_date)->format('m-d');// Получаем месяц и день из даты рождения, игнорируя год
+        //        });
+        //
+        //        return $users;
     }
 
     public static function getNewMembersLastNDays(int $days): Collection
@@ -84,9 +84,9 @@ class UserEloquent
     }
 
     /**
-     * @param int $UserTgId
-     * @param array|null $contact
-     * @return User|null
+     * @param  int  $UserTgId
+     * @param  array|null  $contact
+     *
      * @throws ApiException
      */
     public static function updateByTg(TelegramMessageDto $messageDto): ?User
@@ -98,20 +98,24 @@ class UserEloquent
             if ($user->telegram_nickname !== $newNickname) {
                 $user->telegram_nickname = $newNickname;
                 $user->save();
-//                self::sendInfoByChangeNickname($messageDto, $user->telegram_nickname, $newNickname);
+                //                self::sendInfoByChangeNickname($messageDto, $user->telegram_nickname, $newNickname);
             }
 
             return $user;
         }
-        if (!$messageDto->getContact()) return null;
+        if (! $messageDto->getContact()) {
+            return null;
+        }
 
         $phone = str_replace('+', '', $messageDto->getContact()['phone_number']);
         $user = User::query()->where('phone', $phone)->first();
 
-        if (!$user) throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
+        if (! $user) {
+            throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
+        }
 
         $user->telegram_id = $messageDto->getContact()['user_id'];
-//        if ($messageDto->getFrom()->getFirstName() !== null)
+        //        if ($messageDto->getFrom()->getFirstName() !== null)
         $user->telegram_nickname = $messageDto->getFrom()->getUsername();
         $user->phone_verified_at = Carbon::now();
         $user->save();
@@ -127,14 +131,12 @@ class UserEloquent
     private static function sendInfoByChangeNickname(TelegramMessageDto $messageDto, ?string $oldNickname, ?string $newNickname)
     {
         try {
-            $text = TelegramBotHelpers::generationTextChangeNickname($oldNickname, $newNickname);
-            $bot = new TelegramBot(EnumTelegramEvents::CUSTOM);
-            $bot->setTelegramIds($messageDto->getFrom()->getId());
-            $bot->sendMessage($text);
+            Notification::send(
+                TelegramRecipients::routes([$messageDto->getFrom()->getId()]),
+                new ChangeNicknameNotification($oldNickname, $newNickname)
+            );
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
         }
     }
-
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 //
 use App\Services\Monobank\MonobankService;
 use Illuminate\Console\Scheduling\Schedule;
@@ -9,21 +10,24 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-//app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(1, '01:00');
-//app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(4, '01:00');
+// app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(1, '01:00');
+// app(Schedule::class)->command('autoria_serch:sync')->weeklyOn(4, '01:00');
 app(Schedule::class)->command('autoria_serch:sync')->dailyAt('06:00');
 app(Schedule::class)->command('autoria_serch:sync')->dailyAt('15:00');
 
 app(Schedule::class)->command('audit:prune --days=365')->dailyAt('02:55');
-//app(Schedule::class)->command('clear:mention 30')->dailyAt('03:00');
+// app(Schedule::class)->command('clear:mention 30')->dailyAt('03:00');
 app(Schedule::class)->command('clear:mention-media 365')->dailyAt('03:00');
 app(Schedule::class)->command('clear:registration 30')->dailyAt('03:15');
 app(Schedule::class)->command('clear:mono-prune 90')->dailyAt('03:30');
-app(Schedule::class)->call(fn() => (new MonobankService)->checkWebhook())->dailyAt('04:00');
+app(Schedule::class)->call(fn () => (new MonobankService)->checkWebhook())->dailyAt('04:00');
+
+app(Schedule::class)->command('tg:send-daily-digest')->dailyAt(config('telegram.digest.time', '22:00'));
+app(Schedule::class)->command('clear:telegram-messages '.config('telegram.digest.retention_days', 30))->dailyAt('03:20');
 
 app(Schedule::class)->command('tg:sending-list-of-birthdays 0')->dailyAt('09:00');
 app(Schedule::class)->command('tg:send-stats-mention')->monthlyOn(1, '10:00');
 app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->weeklyOn(0, '15:00');
-//app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->everyMinute();
+// app(Schedule::class)->command('tg:sending-list-of-birthdays 8')->everyMinute();
 
-//test
+// test

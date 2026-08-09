@@ -49,6 +49,35 @@ class Prompt
     ");
     }
 
+    /**
+     * Compact, token-frugal prompt (FR-011): concise Ukrainian digest of useful
+     * highlights from a day's chat messages, without fabricating content (FR-003).
+     *
+     * @param  array<int, string>  $messages
+     */
+    public static function buildDailyDigestPrompt(array $messages): string
+    {
+        $joined = implode("\n", array_map(
+            static fn (int $i, string $m): string => ($i + 1).'. '.$m,
+            array_keys($messages),
+            $messages,
+        ));
+
+        return trim("
+Ти помічник чату клубу. Нижче — сьогоднішні повідомлення чату (по одному в рядку).
+Зроби стислий підсумок УКРАЇНСЬКОЮ мовою лише корисного: хто що продає/купує,
+домовленості, важливі запитання й відповіді, оголошення.
+Правила:
+- Використовуй ЛИШЕ інформацію з повідомлень, нічого не вигадуй.
+- Коротко, до 8 пунктів, кожен — один рядок з емодзі-маркером.
+- Якщо корисного немає — відповідай рівно: 'Сьогодні без помітних обговорень.'
+- Не додавай вступів чи пояснень, лише підсумок.
+
+Повідомлення:
+{$joined}
+");
+    }
+
     public static function buildStatisticsMentionPrompt(array $data): string
     {
         $styleText = EnumPromptStyle::GARAGE->description();

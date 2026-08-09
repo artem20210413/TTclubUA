@@ -15,8 +15,15 @@ class GeminiDigestSummarizer implements DigestSummarizer
 {
     public function summarize(array $messages): string
     {
+        if ($messages === []) {
+            return ''; // no messages at all → composer shows the calm fallback line, no AI call
+        }
+
         $prompt = Prompt::buildDailyDigestPrompt($messages);
 
-        return trim(GeminiService::generate($prompt, GeminiModel::FLASH)->getText());
+        $text = GeminiService::generate($prompt, GeminiModel::FLASH)->getText();
+
+        // Strip markdown bold that Telegram HTML mode would render as literal '**'.
+        return trim(str_replace('**', '', $text));
     }
 }

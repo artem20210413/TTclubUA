@@ -26,7 +26,10 @@ class DailyDigest extends Model
         'digest_date',
         'status',
         'message',
+        'prompt',
         'source_message_count',
+        'total_messages',
+        'top_active',
         'birthday_user_count',
         'delivered_at',
     ];
@@ -35,6 +38,8 @@ class DailyDigest extends Model
         'digest_date' => 'date',
         'delivered_at' => 'datetime',
         'source_message_count' => 'integer',
+        'total_messages' => 'integer',
+        'top_active' => 'array',
         'birthday_user_count' => 'integer',
     ];
 

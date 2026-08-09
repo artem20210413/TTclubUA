@@ -38,18 +38,6 @@ return [
         'suggestions' => env('TELEGRAM_CHAT_SUGGESTIONS'),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Daily AI Chat Digest
-    |--------------------------------------------------------------------------
-    | Delivery target lives in EnumTelegramEvents::DAILY_DIGEST (the tt_club_ua
-    | chat), following the same "event → chat" pattern as the other events.
-    |
-    | source_chats  : chats whose incoming messages are summarized. Defaults to
-    |                 tt_club_ua; add more later via a comma-separated env value.
-    | retention_days: how long collected telegram_messages are kept before purge.
-    | time          : daily schedule time (app timezone) for the digest.
-    */
     'bots' => [
         'mybot' => [
             'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),

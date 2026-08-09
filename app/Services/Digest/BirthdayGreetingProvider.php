@@ -2,7 +2,6 @@
 
 namespace App\Services\Digest;
 
-use App\Eloquent\UserEloquent;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
@@ -15,14 +14,18 @@ use Illuminate\Support\Collection;
 class BirthdayGreetingProvider
 {
     /**
-     * @return Collection<int, User> Today's greetable members.
+     * @return Collection<int, User> Greetable members whose birthday falls on $date.
      */
     public function membersForDate(CarbonInterface $date): Collection
     {
-        // getBirthdayPeople(0) already filters active + is_tt and matches today's month-day.
-        return UserEloquent::getBirthdayPeople(0)
-            ->filter(fn (User $user) => ! empty($user->telegram_id))
-            ->values();
+        // Match the birthday to the given date's month-day (ignoring year), same
+        // active + is_tt scope as getBirthdayPeople, plus a required telegram_id.
+        return User::query()
+            ->whereRaw('DATE_FORMAT(birth_date, "%m-%d") = ?', [$date->format('m-d')])
+            ->where('active', true)
+            ->where('is_tt', true)
+            ->whereNotNull('telegram_id')
+            ->get();
     }
 
     public function forDate(CarbonInterface $date): string

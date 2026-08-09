@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config()->set('telegram.digest.source_chats', ['555']);
+    config()->set('telegram.chats.tt_club_ua', '555'); // DAILY_DIGEST_COLLECT source
 });
 
 function makeMessage(array $attributes): void
@@ -51,6 +51,35 @@ it('prefixes messages with the author @username when present', function () {
     $result = (new DailyDigestCollector)->forDate(now());
 
     expect($result)->toBe(['@petro: Продам ракетку', 'Без ніка']);
+});
+
+it('adds reply context from raw so the thread is clear', function () {
+    makeMessage([
+        'text' => 'Так, беру',
+        'raw' => ['message' => [
+            'from' => ['username' => 'petro'],
+            'reply_to_message' => ['text' => 'Продам ракетку за 500', 'from' => ['username' => 'ivan']],
+        ]],
+    ]);
+
+    $result = (new DailyDigestCollector)->forDate(now());
+
+    expect($result[0])->toContain('@petro: Так, беру')
+        ->and($result[0])->toContain('↩ у відповідь @ivan: "Продам ракетку за 500"');
+});
+
+it('appends a jump link for supergroup messages', function () {
+    config()->set('telegram.chats.tt_club_ua', '-1001330280439');
+    TelegramMessage::create([
+        'chat_id' => '-1001330280439',
+        'direction' => 'in',
+        'text' => 'Продам ракетку',
+        'message_id' => '4567',
+    ]);
+
+    $result = (new DailyDigestCollector)->forDate(now());
+
+    expect($result[0])->toContain('🔗https://t.me/c/1330280439/4567');
 });
 
 it('excludes messages from other days', function () {

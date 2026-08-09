@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Notification;
 const MAIN_CHAT = '111222';
 
 beforeEach(function () {
-    config()->set('telegram.chats.tt_club_ua', MAIN_CHAT);
-    config()->set('telegram.digest.source_chats', [MAIN_CHAT]);
+    config()->set('telegram.chats.tt_club_ua', MAIN_CHAT);   // DAILY_DIGEST_COLLECT source
+    config()->set('telegram.chats.test_bot_2', MAIN_CHAT);   // DAILY_DIGEST delivery
     Notification::fake();
 });
 

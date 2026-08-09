@@ -11,6 +11,8 @@ use App\Services\Digest\BirthdayGreetingProvider;
 use App\Services\Digest\Contracts\DigestSummarizer;
 use App\Services\Digest\DailyDigestCollector;
 use App\Services\Digest\DailyDigestComposer;
+use App\Services\Digest\DailyDigestStatsProvider;
+use App\Services\Gemini\Prompt\Prompt;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -52,6 +54,7 @@ class SendDailyDigestJob implements ShouldQueue
         DailyDigestCollector $collector,
         DigestSummarizer $summarizer,
         BirthdayGreetingProvider $greetings,
+        DailyDigestStatsProvider $stats,
         DailyDigestComposer $composer,
     ): void {
         $digest = $this->claimDigest();
@@ -61,22 +64,37 @@ class SendDailyDigestJob implements ShouldQueue
         }
 
         $messages = $collector->forDate($this->date);
+        $statsData = $stats->forDate($this->date);
         $greetingText = $greetings->forDate($this->date);
         $birthdayCount = $greetings->membersForDate($this->date)->count();
 
         $summary = $summarizer->summarize($messages); // may throw → job retries
 
-        $message = $composer->compose($summary, $greetingText);
+        $message = $composer->compose($summary, $statsData['text'], $greetingText);
 
         $this->send($message);
 
-        $digest->update([
-            'status' => DailyDigest::STATUS_DELIVERED,
-            'message' => $message,
-            'source_message_count' => count($messages),
-            'birthday_user_count' => $birthdayCount,
-            'delivered_at' => now(),
-        ]);
+        // The message is already out — finalize the row so a failing metadata write
+        // cannot trigger a retry that re-sends the digest (idempotency, FR-007).
+        try {
+            $digest->update([
+                'status' => DailyDigest::STATUS_DELIVERED,
+                'message' => $message,
+                'prompt' => $messages !== [] ? Prompt::buildDailyDigestPrompt($messages) : null,
+                'source_message_count' => count($messages),
+                'total_messages' => $statsData['total'],
+                'top_active' => $statsData['top'],
+                'birthday_user_count' => $birthdayCount,
+                'delivered_at' => now(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Daily digest sent but metadata update failed: '.$e->getMessage());
+            // Minimal finalize (status column always exists) to prevent a re-send on retry.
+            DailyDigest::whereKey($digest->getKey())->update([
+                'status' => DailyDigest::STATUS_DELIVERED,
+                'delivered_at' => now(),
+            ]);
+        }
     }
 
     /**

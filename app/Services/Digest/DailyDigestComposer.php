@@ -7,28 +7,32 @@ namespace App\Services\Digest;
  */
 class DailyDigestComposer
 {
+    private const HEADER = "📋 <b>Підсумок дня</b>\n\n";
+
     private const NO_HIGHLIGHTS = 'Сьогодні в гаражі тихо, без рухів.';
 
     /** Telegram sendMessage hard limit. */
     private const TELEGRAM_MAX = 4096;
 
-    public function compose(?string $summary, ?string $greeting = null): string
+    public function compose(?string $summary, ?string $stats = null, ?string $greeting = null): string
     {
         $summary = trim((string) $summary);
+        $stats = trim((string) $stats);
         $greeting = trim((string) $greeting);
 
-        $header = "📋 <b>Підсумок дня</b>\n";
         $body = $summary !== '' ? $summary : self::NO_HIGHLIGHTS;
 
-        // Keep the birthday greeting intact; trim only the summary body to fit Telegram's limit.
-        if ($greeting !== '') {
-            $reserved = mb_strlen($header) + mb_strlen("\n\n".$greeting);
-            $body = $this->trim($body, self::TELEGRAM_MAX - $reserved);
-
-            return $header.$body."\n\n".$greeting;
+        // Header + these blocks must stay intact; only the AI summary body is trimmed to fit the limit.
+        $tail = '';
+        foreach ([$stats, $greeting] as $block) {
+            if ($block !== '') {
+                $tail .= "\n\n".$block;
+            }
         }
 
-        return $this->trim($header.$body, self::TELEGRAM_MAX);
+        $body = $this->trim($body, self::TELEGRAM_MAX - mb_strlen(self::HEADER) - mb_strlen($tail));
+
+        return self::HEADER.$body.$tail;
     }
 
     private function trim(string $text, int $max): string

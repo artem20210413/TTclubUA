@@ -19,8 +19,8 @@ enum EnumTelegramEvents
     case EXPORT_USERS; // експорт всех пользователей
     case REGISTRATION; // при регистрации уведомление
     case SUGGESTION;
-    case DAILY_DIGEST; // ежедневный AI-дайджест в главный чат
-    case DAILY_DIGEST_COLLECT; // ежедневный AI-дайджест в главный чат звідки збираємо
+    case DAILY_DIGEST; // куда отправляем ежедневный AI-дайджест
+    case DAILY_DIGEST_COLLECT; // из каких чатов собираем сообщения для дайджеста
 
     /**
      * Получить разрешение для качества

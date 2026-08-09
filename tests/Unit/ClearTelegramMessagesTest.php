@@ -3,7 +3,7 @@
 use App\Models\TelegramMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 it('deletes telegram messages older than N days and keeps recent ones', function () {
     $old = TelegramMessage::create([

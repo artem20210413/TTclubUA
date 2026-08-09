@@ -66,7 +66,9 @@ class DailyDigestCollector
             $seen[$key] = true;
 
             // Append a jump link to the exact message so the summary can point to it.
-            if ($link = $this->messageLink($message->chat_id, $message->message_id)) {
+            // message_id column is not populated on ingest, so fall back to the raw payload.
+            $messageId = $message->message_id ?: data_get($message->raw, 'message.message_id');
+            if ($link = $this->messageLink($message->chat_id, $messageId)) {
                 $clean .= " 🔗{$link}";
             }
 

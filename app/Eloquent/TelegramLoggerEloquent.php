@@ -32,6 +32,7 @@ class TelegramLoggerEloquent
         try {
             $t = new TelegramMessage;
             $t->chat_id = $telegramWebhookDto->getSmartChat()?->getId();
+            $t->message_id = data_get($telegramWebhookDto->json, 'message.message_id');
             $t->direction = EnumTelegramLoggerDirection::IN->value;
             $t->text = $telegramWebhookDto?->getMessage()?->getText();
             $t->raw = $telegramWebhookDto->json;

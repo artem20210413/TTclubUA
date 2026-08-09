@@ -4,7 +4,7 @@ use App\Models\TelegramMessage;
 use App\Services\Digest\DailyDigestCollector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
     config()->set('telegram.chats.tt_club_ua', '555'); // DAILY_DIGEST_COLLECT source

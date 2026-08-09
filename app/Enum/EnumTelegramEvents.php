@@ -45,7 +45,7 @@ enum EnumTelegramEvents
             self::SUGGESTION => [$suggestions],
 
             self::STATS_MENTION => [$ttChat],
-            self::DAILY_DIGEST => [config('telegram.digest.main_chat')],
+            self::DAILY_DIGEST => [$ttChat],
 
             self::TEST => [$testBot2],
             self::SYSTEM_ERRORS => [$testBot2],

@@ -42,17 +42,17 @@ return [
     |--------------------------------------------------------------------------
     | Daily AI Chat Digest
     |--------------------------------------------------------------------------
-    | main_chat     : delivery + initial source chat. Defaults to the existing
-    |                 tt_club_ua chat (TELEGRAM_CHAT_TT_CLUB) — no new chat id needed.
+    | Delivery target lives in EnumTelegramEvents::DAILY_DIGEST (the tt_club_ua
+    | chat), following the same "event → chat" pattern as the other events.
+    |
     | source_chats  : chats whose incoming messages are summarized. Defaults to
-    |                 [main_chat]; add more later via a comma-separated env value.
+    |                 tt_club_ua; add more later via a comma-separated env value.
     | retention_days: how long collected telegram_messages are kept before purge.
     | time          : daily schedule time (app timezone) for the digest.
     */
     'digest' => [
-        'main_chat' => env('TELEGRAM_DIGEST_MAIN_CHAT', env('TELEGRAM_CHAT_TT_CLUB')),
         'source_chats' => array_values(array_filter(
-            explode(',', (string) env('TELEGRAM_DIGEST_SOURCE_CHATS', (string) env('TELEGRAM_DIGEST_MAIN_CHAT', (string) env('TELEGRAM_CHAT_TT_CLUB'))))
+            explode(',', (string) env('TELEGRAM_DIGEST_SOURCE_CHATS', (string) env('TELEGRAM_CHAT_TT_CLUB')))
         )),
         'retention_days' => (int) env('TELEGRAM_DIGEST_RETENTION_DAYS', 30),
         'time' => env('TELEGRAM_DIGEST_TIME', '22:00'),

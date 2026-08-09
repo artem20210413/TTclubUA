@@ -46,7 +46,7 @@ enum EnumTelegramEvents
             self::SUGGESTION => [$suggestions],
 
             self::STATS_MENTION => [$ttChat],
-            self::DAILY_DIGEST => [$testBot2],
+            self::DAILY_DIGEST => [$ttChat],
             self::DAILY_DIGEST_COLLECT => [$ttChat],
 
             self::TEST => [$testBot2],

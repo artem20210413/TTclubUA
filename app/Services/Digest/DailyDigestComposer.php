@@ -7,21 +7,40 @@ namespace App\Services\Digest;
  */
 class DailyDigestComposer
 {
-    private const NO_HIGHLIGHTS = 'Сьогодні без помітних обговорень.';
+    private const NO_HIGHLIGHTS = 'Сьогодні в гаражі тихо, без рухів.';
+
+    /** Telegram sendMessage hard limit. */
+    private const TELEGRAM_MAX = 4096;
 
     public function compose(?string $summary, ?string $greeting = null): string
     {
         $summary = trim((string) $summary);
         $greeting = trim((string) $greeting);
 
-        $parts = [];
+        $header = "📋 <b>Підсумок дня</b>\n";
+        $body = $summary !== '' ? $summary : self::NO_HIGHLIGHTS;
 
-        $parts[] = "📋 <b>Підсумок дня</b>\n".($summary !== '' ? $summary : self::NO_HIGHLIGHTS);
-
+        // Keep the birthday greeting intact; trim only the summary body to fit Telegram's limit.
         if ($greeting !== '') {
-            $parts[] = $greeting;
+            $reserved = mb_strlen($header) + mb_strlen("\n\n".$greeting);
+            $body = $this->trim($body, self::TELEGRAM_MAX - $reserved);
+
+            return $header.$body."\n\n".$greeting;
         }
 
-        return implode("\n\n", $parts);
+        return $this->trim($header.$body, self::TELEGRAM_MAX);
+    }
+
+    private function trim(string $text, int $max): string
+    {
+        if ($max <= 0) {
+            return '';
+        }
+
+        if (mb_strlen($text) <= $max) {
+            return $text;
+        }
+
+        return rtrim(mb_substr($text, 0, $max - 1)).'…';
     }
 }

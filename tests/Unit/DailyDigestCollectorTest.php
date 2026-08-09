@@ -41,6 +41,18 @@ it('dedupes repeated message text', function () {
     expect($result)->toHaveCount(2);
 });
 
+it('prefixes messages with the author @username when present', function () {
+    makeMessage([
+        'text' => 'Продам ракетку',
+        'raw' => ['message' => ['from' => ['username' => 'petro']]],
+    ]);
+    makeMessage(['text' => 'Без ніка', 'raw' => null]);
+
+    $result = (new DailyDigestCollector)->forDate(now());
+
+    expect($result)->toBe(['@petro: Продам ракетку', 'Без ніка']);
+});
+
 it('excludes messages from other days', function () {
     $old = TelegramMessage::create([
         'chat_id' => '555', 'direction' => 'in', 'text' => 'yesterday', 'message_id' => '1',

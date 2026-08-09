@@ -50,13 +50,6 @@ return [
     | retention_days: how long collected telegram_messages are kept before purge.
     | time          : daily schedule time (app timezone) for the digest.
     */
-    'digest' => [
-        'source_chats' => array_values(array_filter(
-            explode(',', (string) env('TELEGRAM_DIGEST_SOURCE_CHATS', (string) env('TELEGRAM_CHAT_TT_CLUB')))
-        )),
-        'retention_days' => (int) env('TELEGRAM_DIGEST_RETENTION_DAYS', 30),
-        'time' => env('TELEGRAM_DIGEST_TIME', '22:00'),
-    ],
     'bots' => [
         'mybot' => [
             'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),

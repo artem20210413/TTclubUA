@@ -20,6 +20,7 @@ enum EnumTelegramEvents
     case REGISTRATION; // при регистрации уведомление
     case SUGGESTION;
     case DAILY_DIGEST; // ежедневный AI-дайджест в главный чат
+    case DAILY_DIGEST_COLLECT; // ежедневный AI-дайджест в главный чат звідки збираємо
 
     /**
      * Получить разрешение для качества
@@ -45,7 +46,8 @@ enum EnumTelegramEvents
             self::SUGGESTION => [$suggestions],
 
             self::STATS_MENTION => [$ttChat],
-            self::DAILY_DIGEST => [$ttChat],
+            self::DAILY_DIGEST => [$testBot2],
+            self::DAILY_DIGEST_COLLECT => [$ttChat],
 
             self::TEST => [$testBot2],
             self::SYSTEM_ERRORS => [$testBot2],

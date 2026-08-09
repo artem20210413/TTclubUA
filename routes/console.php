@@ -22,8 +22,8 @@ app(Schedule::class)->command('clear:registration 30')->dailyAt('03:15');
 app(Schedule::class)->command('clear:mono-prune 90')->dailyAt('03:30');
 app(Schedule::class)->call(fn () => (new MonobankService)->checkWebhook())->dailyAt('04:00');
 
-app(Schedule::class)->command('tg:send-daily-digest')->dailyAt(config('telegram.digest.time', '22:00'));
-app(Schedule::class)->command('clear:telegram-messages '.config('telegram.digest.retention_days', 30))->dailyAt('03:20');
+app(Schedule::class)->command('tg:send-daily-digest')->dailyAt('22:00');
+app(Schedule::class)->command('clear:telegram-messages 365')->dailyAt('03:20');
 
 app(Schedule::class)->command('tg:sending-list-of-birthdays 0')->dailyAt('09:00');
 app(Schedule::class)->command('tg:send-stats-mention')->monthlyOn(1, '10:00');

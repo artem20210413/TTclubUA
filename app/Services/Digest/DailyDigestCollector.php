@@ -29,25 +29,29 @@ class DailyDigestCollector
             return [];
         }
 
-        $texts = TelegramMessage::query()
+        $messages = TelegramMessage::query()
             ->where('direction', EnumTelegramLoggerDirection::IN->value)
             ->whereIn('chat_id', $sourceChats)
             ->whereBetween('created_at', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
             ->whereNotNull('text')
             ->orderBy('id')
-            ->pluck('text');
+            ->get(['text', 'raw']);
 
         $seen = [];
         $result = [];
 
-        foreach ($texts as $text) {
-            $clean = trim((string) $text);
+        foreach ($messages as $message) {
+            $text = trim((string) $message->text);
 
-            if ($clean === '') {
+            if ($text === '') {
                 continue;
             }
 
-            $clean = mb_substr($clean, 0, self::MAX_MESSAGE_LENGTH);
+            $text = mb_substr($text, 0, self::MAX_MESSAGE_LENGTH);
+
+            // Prefix with the author's @username (when present) so the summary can tag people.
+            $author = $this->authorHandle($message->raw);
+            $clean = $author ? "{$author}: {$text}" : $text;
 
             $key = mb_strtolower($clean);
             if (isset($seen[$key])) {
@@ -63,5 +67,15 @@ class DailyDigestCollector
         }
 
         return $result;
+    }
+
+    /**
+     * Extract the message author's @username from the stored raw webhook payload.
+     */
+    private function authorHandle(mixed $raw): ?string
+    {
+        $username = data_get($raw, 'message.from.username');
+
+        return $username ? '@'.$username : null;
     }
 }

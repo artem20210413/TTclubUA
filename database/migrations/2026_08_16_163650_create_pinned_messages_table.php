@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('chat_id');
             $table->string('message_id');
             $table->dateTime('unpin_at')->nullable();
+            $table->boolean('delete_after_unpin')->default(false);
             $table->timestamps();
 
             $table->unique(['chat_id', 'message_id']);

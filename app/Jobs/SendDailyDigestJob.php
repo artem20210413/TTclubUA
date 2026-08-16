@@ -72,9 +72,6 @@ class SendDailyDigestJob implements ShouldQueue
 
         $sent = $this->send($message);
 
-        foreach ($sent as $chatId => $messageId) {
-            PinTelegramMessageJob::dispatch($chatId, $messageId, now()->addHours(24));
-        }
 
         // The message is already out — finalize the row so a failing metadata write
         // cannot trigger a retry that re-sends the digest (idempotency, FR-007).
@@ -134,6 +131,10 @@ class SendDailyDigestJob implements ShouldQueue
                 Log::error('Telegram send error: '.$e->getMessage(), ['chat_id' => $chatId]);
                 TelegramLoggerEloquent::createOut($params);
             }
+        }
+
+        foreach ($sent as $chatId => $messageId) {
+            PinTelegramMessageJob::dispatch($chatId, $messageId, now()->addHours(24));
         }
 
         return $sent;

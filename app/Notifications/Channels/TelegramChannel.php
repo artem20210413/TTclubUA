@@ -3,6 +3,7 @@
 namespace App\Notifications\Channels;
 
 use App\Eloquent\TelegramLoggerEloquent;
+use App\Jobs\PinTelegramMessageJob;
 use App\Notifications\Support\TelegramMessagePayload;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -42,7 +43,11 @@ class TelegramChannel
             } elseif ($payload->document) {
                 $this->telegram->sendDocument($params);
             } else {
-                $this->telegram->sendMessage($params);
+                $response = $this->telegram->sendMessage($params);
+
+                if ($payload->pin) {
+                    PinTelegramMessageJob::dispatch($chatId, $response->message_id, $payload->pinUntil);
+                }
             }
 
             TelegramLoggerEloquent::createOut($params);

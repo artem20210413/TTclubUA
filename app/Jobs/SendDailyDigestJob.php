@@ -2,9 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Eloquent\TelegramLoggerEloquent;
 use App\Enum\EnumTelegramEvents;
 use App\Models\DailyDigest;
+use App\Notifications\AdHocMessageNotification;
+use App\Notifications\Support\TelegramMessagePayload;
+use App\Notifications\Support\TelegramRecipients;
 use App\Services\Digest\BirthdayGreetingProvider;
 use App\Services\Digest\Contracts\DigestSummarizer;
 use App\Services\Digest\DailyDigestCollector;
@@ -18,7 +20,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Telegram\Bot\Api;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * Generates and delivers the once-per-day digest to the main chat.
@@ -70,12 +72,7 @@ class SendDailyDigestJob implements ShouldQueue
 
         $message = $composer->compose($summary, $statsData['text'], $greetingText);
 
-        $sent = $this->send($message);
-
-        foreach ($sent as $chatId => $messageId) {
-            PinTelegramMessageJob::dispatch($chatId, $messageId, now()->addHours(24));
-        }
-
+        $this->send($message, pin: true);
 
         // The message is already out — finalize the row so a failing metadata write
         // cannot trigger a retry that re-sends the digest (idempotency, FR-007).
@@ -114,30 +111,19 @@ class SendDailyDigestJob implements ShouldQueue
     }
 
     /**
-     * Sends the digest directly via the Telegram API (not through Notification::send()) so the
-     * returned message_id is available to the caller.
-     *
-     * @return array<string, int> Sent message_id keyed by chat_id.
+     * When $pin is true, TelegramChannel dispatches PinTelegramMessageJob for the sent message
+     * (pinned for 24 hours) — opt-in per notification, no change to how other notifications send.
      */
-    private function send(string $message): array
+    private function send(string $message, bool $pin = false): void
     {
-        $telegram = app(Api::class);
-        $sent = [];
-
-        foreach (array_filter(EnumTelegramEvents::DAILY_DIGEST->getIds()) as $chatId) {
-            $params = ['chat_id' => $chatId, 'text' => $message, 'parse_mode' => 'HTML'];
-
-            try {
-                $response = $telegram->sendMessage($params);
-                TelegramLoggerEloquent::createOut($params);
-                $sent[$chatId] = $response->message_id;
-            } catch (\Throwable $e) {
-                Log::error('Telegram send error: '.$e->getMessage(), ['chat_id' => $chatId]);
-                TelegramLoggerEloquent::createOut($params);
-            }
-        }
-
-        return $sent;
+        Notification::send(
+            TelegramRecipients::routes(EnumTelegramEvents::DAILY_DIGEST->getIds()),
+            new AdHocMessageNotification(new TelegramMessagePayload(
+                text: $message,
+                pin: $pin,
+                pinUntil: $pin ? now()->addHours(24) : null,
+            )),
+        );
     }
 
     /**

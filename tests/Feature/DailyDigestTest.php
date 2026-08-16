@@ -4,15 +4,16 @@ use App\Jobs\SendDailyDigestJob;
 use App\Models\DailyDigest;
 use App\Models\TelegramMessage;
 use App\Models\User;
+use App\Notifications\AdHocMessageNotification;
 use App\Services\Digest\Contracts\DigestSummarizer;
-use Telegram\Bot\Api;
-use Telegram\Bot\Objects\Message;
+use Illuminate\Support\Facades\Notification;
 
 const MAIN_CHAT = '111222';
 
 beforeEach(function () {
     config()->set('telegram.chats.tt_club_ua', MAIN_CHAT);   // DAILY_DIGEST_COLLECT source
     config()->set('telegram.chats.test_bot_2', MAIN_CHAT);   // DAILY_DIGEST delivery
+    Notification::fake();
 });
 
 function fakeSummarizer(string $return = 'Підсумок', ?Throwable $throw = null): void
@@ -42,31 +43,24 @@ function seedIncoming(string $text, string $chat = MAIN_CHAT): void
     ]);
 }
 
-/**
- * Mocks the Telegram API so the job's direct sendMessage/pinChatMessage calls succeed;
- * returns a counter object whose ->count reflects how many messages were sent.
- */
-function mockTelegramSend(): stdClass
+function sentOnDemandCount(): int
 {
-    $state = new stdClass;
-    $state->count = 0;
+    $count = 0;
 
-    $api = Mockery::mock(Api::class);
-    $api->shouldReceive('sendMessage')
-        ->andReturnUsing(function (array $params) use ($state) {
-            $state->count++;
+    try {
+        Notification::assertSentOnDemand(AdHocMessageNotification::class, function () use (&$count) {
+            $count++;
 
-            return new Message(['message_id' => $state->count, 'chat' => ['id' => $params['chat_id']]]);
+            return true;
         });
-    $api->shouldReceive('pinChatMessage')->andReturn(true);
+    } catch (\PHPUnit\Framework\AssertionFailedError) {
+        // assertSentOnDemand() itself asserts "at least one sent"; nothing sent is a valid 0.
+    }
 
-    app()->instance(Api::class, $api);
-
-    return $state;
+    return $count;
 }
 
 it('posts one digest to the main chat and marks it delivered (US1)', function () {
-    $telegram = mockTelegramSend();
     fakeSummarizer('🔧 Хтось продає ракетку');
     seedIncoming('Продам ракетку');
     seedIncoming('Хто йде на тренування?');
@@ -76,11 +70,10 @@ it('posts one digest to the main chat and marks it delivered (US1)', function ()
     $digest = DailyDigest::whereDate('digest_date', today())->firstOrFail();
     expect($digest->status)->toBe(DailyDigest::STATUS_DELIVERED)
         ->and($digest->source_message_count)->toBe(2)
-        ->and($telegram->count)->toBe(1);
+        ->and(sentOnDemandCount())->toBe(1);
 });
 
 it('does not post a second digest for the same day (idempotency, FR-007)', function () {
-    $telegram = mockTelegramSend();
     fakeSummarizer();
     seedIncoming('Привіт');
 
@@ -88,11 +81,10 @@ it('does not post a second digest for the same day (idempotency, FR-007)', funct
     SendDailyDigestJob::dispatchSync();
 
     expect(DailyDigest::whereDate('digest_date', today())->count())->toBe(1)
-        ->and($telegram->count)->toBe(1);
+        ->and(sentOnDemandCount())->toBe(1);
 });
 
 it('marks the day failed and posts nothing when the AI fails and there are no birthdays (FR-008)', function () {
-    $telegram = mockTelegramSend();
     seedIncoming('Привіт');
     $job = new SendDailyDigestJob;
 
@@ -100,11 +92,10 @@ it('marks the day failed and posts nothing when the AI fails and there are no bi
 
     $digest = DailyDigest::whereDate('digest_date', today())->firstOrFail();
     expect($digest->status)->toBe(DailyDigest::STATUS_FAILED)
-        ->and($telegram->count)->toBe(0);
+        ->and(sentOnDemandCount())->toBe(0);
 });
 
 it('greets today active main-chat members who have a telegram_id (US2)', function () {
-    mockTelegramSend();
     fakeSummarizer('Підсумок');
     User::factory()->create([
         'name' => 'Іван',
@@ -121,7 +112,6 @@ it('greets today active main-chat members who have a telegram_id (US2)', functio
 });
 
 it('excludes birthday users without telegram_id or inactive (FR-004)', function () {
-    mockTelegramSend();
     fakeSummarizer('Підсумок');
     User::factory()->create([
         'name' => 'NoTg',
@@ -145,7 +135,6 @@ it('excludes birthday users without telegram_id or inactive (FR-004)', function 
 });
 
 it('falls back to greetings only when AI fails but birthdays exist (FR-008, greetings_only)', function () {
-    $telegram = mockTelegramSend();
     User::factory()->create([
         'name' => 'Оля',
         'telegram_id' => 999,
@@ -158,5 +147,5 @@ it('falls back to greetings only when AI fails but birthdays exist (FR-008, gree
     $digest = DailyDigest::whereDate('digest_date', today())->firstOrFail();
     expect($digest->status)->toBe(DailyDigest::STATUS_GREETINGS_ONLY)
         ->and($digest->message)->toContain('Оля')
-        ->and($telegram->count)->toBe(1);
+        ->and(sentOnDemandCount())->toBe(1);
 });

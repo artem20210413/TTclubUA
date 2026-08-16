@@ -29,7 +29,7 @@ function mockTelegramSendReturning(int $messageId): Api
         ->andReturn(new Message(['message_id' => $messageId, 'chat' => ['id' => DIGEST_CHAT]]));
     $api->shouldReceive('pinChatMessage')
         ->once()
-        ->with(['chat_id' => DIGEST_CHAT, 'message_id' => $messageId]);
+        ->with(['chat_id' => DIGEST_CHAT, 'message_id' => $messageId, 'disable_notification' => false]);
 
     return $api;
 }

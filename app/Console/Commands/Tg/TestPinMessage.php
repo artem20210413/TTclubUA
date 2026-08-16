@@ -15,7 +15,8 @@ class TestPinMessage extends Command
 {
     protected $signature = 'tg:test-pin-message
         {minutes=2 : Minutes to keep it pinned; 0 means pin indefinitely}
-        {--delete : When the pin expires, delete the message instead of just unpinning it}';
+        {--delete : When the pin expires, delete the message instead of just unpinning it}
+        {--silent : Pin without notifying chat members}';
 
     protected $description = 'Send a test message to the test_bot_2 chat and pin it until now + N minutes (or forever)';
 
@@ -42,7 +43,7 @@ class TestPinMessage extends Command
 
         $messageId = $response->message_id;
 
-        $pinner->pinUntil($chatId, $messageId, $unpinAt, true);
+        $pinner->pinUntil($chatId, $messageId, $unpinAt, $deleteAfterUnpin, notify: ! $this->option('silent'));
 
         $action = $deleteAfterUnpin ? 'deleted' : 'unpinned';
         $this->info("Sent and pinned message_id={$messageId} in chat {$chatId}, unpin_at=".($unpinAt ?? 'never (indefinite)'));

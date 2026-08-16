@@ -13,7 +13,7 @@ test('pinUntil calls Telegram and stores the given unpin_at', function () {
     $api = Mockery::mock(Api::class);
     $api->shouldReceive('pinChatMessage')
         ->once()
-        ->with(['chat_id' => 'chat-1', 'message_id' => 'msg-1']);
+        ->with(['chat_id' => 'chat-1', 'message_id' => 'msg-1', 'disable_notification' => false]);
 
     $this->app->instance(Api::class, $api);
 
@@ -47,6 +47,19 @@ test('pinUntil with deleteAfterUnpin stores the flag for the sweep to use', func
     app(MessagePinner::class)->pinUntil('chat-1', 'msg-1', now()->addHour(), deleteAfterUnpin: true);
 
     expect(PinnedMessage::sole()->delete_after_unpin)->toBeTrue();
+});
+
+test('pinUntil with notify: false pins silently', function () {
+    $api = Mockery::mock(Api::class);
+    $api->shouldReceive('pinChatMessage')
+        ->once()
+        ->with(['chat_id' => 'chat-1', 'message_id' => 'msg-1', 'disable_notification' => true]);
+
+    $this->app->instance(Api::class, $api);
+
+    app(MessagePinner::class)->pinUntil('chat-1', 'msg-1', now()->addHour(), notify: false);
+
+    expect(PinnedMessage::count())->toBe(1);
 });
 
 test('re-pinning the same message updates the existing record instead of duplicating it', function () {

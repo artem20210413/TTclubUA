@@ -24,10 +24,11 @@ class PinTelegramMessageJob implements ShouldQueue
         public readonly string|int $messageId,
         public readonly ?Carbon $unpinAt,
         public readonly bool $deleteAfterUnpin = false,
+        public readonly bool $notify = true,
     ) {}
 
     public function handle(MessagePinner $pinner): void
     {
-        $pinner->pinUntil($this->chatId, $this->messageId, $this->unpinAt, $this->deleteAfterUnpin);
+        $pinner->pinUntil($this->chatId, $this->messageId, $this->unpinAt, $this->deleteAfterUnpin, $this->notify);
     }
 }

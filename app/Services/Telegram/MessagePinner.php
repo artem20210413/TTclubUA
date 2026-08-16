@@ -21,13 +21,17 @@ class MessagePinner
      *
      * When $deleteAfterUnpin is true, the sweep deletes the Telegram message instead of just
      * unpinning it once $unpinAt passes.
+     *
+     * $notify controls whether chat members are notified about the pin (Telegram's own default
+     * is to notify, so this defaults to true; pass false to pin silently).
      */
-    public function pinUntil(string|int $chatId, string|int $messageId, ?Carbon $unpinAt, bool $deleteAfterUnpin = false): void
+    public function pinUntil(string|int $chatId, string|int $messageId, ?Carbon $unpinAt, bool $deleteAfterUnpin = false, bool $notify = true): void
     {
         try {
             $this->telegram->pinChatMessage([
                 'chat_id' => $chatId,
                 'message_id' => $messageId,
+                'disable_notification' => ! $notify,
             ]);
         } catch (\Throwable $e) {
             Log::error('Telegram pin error: '.$e->getMessage(), [

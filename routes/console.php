@@ -24,6 +24,7 @@ app(Schedule::class)->call(fn () => (new MonobankService)->checkWebhook())->dail
 
 app(Schedule::class)->command('tg:send-daily-digest')->dailyAt('22:00');
 app(Schedule::class)->command('clear:telegram-messages 365')->dailyAt('03:20');
+app(Schedule::class)->command('tg:unpin-expired-messages')->everyFiveMinutes();
 
 app(Schedule::class)->command('tg:sending-list-of-birthdays 0')->dailyAt('09:00');
 app(Schedule::class)->command('tg:send-stats-mention')->monthlyOn(1, '10:00');

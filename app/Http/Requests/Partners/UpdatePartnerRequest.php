@@ -8,7 +8,7 @@ class UpdatePartnerRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->hasRole('admin');
+        return $this->user()->hasRole(['admin', 'copywriter', 'head-copywriter']);
     }
 
     public function rules(): array

@@ -8,8 +8,7 @@ class StorePartnerRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Assuming only admins can create partners, based on other routes
-        return $this->user()->hasRole('admin');
+        return $this->user()->hasRole(['admin', 'copywriter', 'head-copywriter']);
     }
 
     public function rules(): array

@@ -24,11 +24,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read \Illuminate\Database\Eloquent\Collection|Prize[] $prizes
  * @property-read \Illuminate\Database\Eloquent\Collection|DrawResult[] $results
  */
-class Draw extends Model implements HasMedia
+class Draw extends Model implements AuditableContract, HasMedia
 {
     use HasProfilePhoto;
     use InteractsWithMedia;
-
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'title',
@@ -62,17 +62,16 @@ class Draw extends Model implements HasMedia
             $draw->prizes->each->delete();
             $draw->clearMediaCollection(EnumTypeMedia::PHOTO_DRAW->value);
 
-//            $medias = $draw->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
-//            foreach ($medias as $media) {
-//                $media->delete();
-//            }
+            //            $medias = $draw->getMedia(EnumTypeMedia::PHOTO_DRAW->value);
+            //            foreach ($medias as $media) {
+            //                $media->delete();
+            //            }
         });
     }
 
-//    public function results()
-//    {
-//        return $this->hasMany(DrawResult::class);
-//    }
-
+    //    public function results()
+    //    {
+    //        return $this->hasMany(DrawResult::class);
+    //    }
 
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enum\EnumTypeMedia;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Jetstream\HasProfilePhoto;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -20,10 +21,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property-read Draw $draw
  * @property-read Participant|null $winner
  */
-class Prize extends Model implements HasMedia
+class Prize extends Model implements AuditableContract, HasMedia
 {
     use HasProfilePhoto;
     use InteractsWithMedia;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'draw_id',

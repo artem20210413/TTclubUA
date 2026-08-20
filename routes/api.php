@@ -112,10 +112,10 @@ Route::post('suggestions/send', [SuggestionsController::class, 'send'])->middlew
 
 Route::group(['prefix' => 'partners', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [PartnerController::class, 'index']);
-    Route::post('/', [PartnerController::class, 'store'])->middleware('role:admin');
-    Route::post('/{partner}', [PartnerController::class, 'update'])->middleware('role:admin');
-    Route::post('/{partner}/photos', [PartnerController::class, 'addPhotos'])->middleware('role:admin');
-    Route::delete('/{partner}/photos/{mediaId}', [PartnerController::class, 'deletePhoto'])->middleware('role:admin');
+    Route::post('/', [PartnerController::class, 'store'])->middleware('role:admin|copywriter|head-copywriter');
+    Route::post('/{partner}', [PartnerController::class, 'update'])->middleware('role:admin|copywriter|head-copywriter');
+    Route::post('/{partner}/photos', [PartnerController::class, 'addPhotos'])->middleware('role:admin|copywriter|head-copywriter');
+    Route::delete('/{partner}/photos/{mediaId}', [PartnerController::class, 'deletePhoto'])->middleware('role:admin|head-copywriter');
 
     // Promotions
     Route::group(['prefix' => '/{partner}/promotions'], function () {
@@ -133,27 +133,27 @@ Route::get('/calendar', [CalendarController::class, 'list'])->middleware(['auth:
 Route::get('/calendar/{event}/description', [CalendarController::class, 'calendarDescription'])->middleware(['auth:sanctum']);
 Route::group(['prefix' => 'event', 'middleware' => ['auth:sanctum']], static function () {
     Route::get('/', [EventController::class, 'list']);
-    Route::post('/', [EventController::class, 'create'])->middleware(['role:admin']);
-    Route::put('/{event}', [EventController::class, 'update'])->middleware(['role:admin']);
-    Route::put('/{event}/active/{active}', [EventController::class, 'changeActive'])->whereIn('active', [0, 1])->middleware(['role:admin']);
-    Route::post('/{event}/image', [EventController::class, 'eventAddImage'])->middleware(['role:admin']);
-    Route::delete('/{event}/image', [EventController::class, 'eventDeleteImages'])->middleware(['role:admin']);
-    Route::delete('/{event}/collections/{mediaId}', [EventController::class, 'eventDeleteImage'])->middleware(['role:admin']);
+    Route::post('/', [EventController::class, 'create'])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::put('/{event}', [EventController::class, 'update'])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::put('/{event}/active/{active}', [EventController::class, 'changeActive'])->whereIn('active', [0, 1])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::post('/{event}/image', [EventController::class, 'eventAddImage'])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::delete('/{event}/image', [EventController::class, 'eventDeleteImages'])->middleware(['role:admin|head-copywriter']);
+    Route::delete('/{event}/collections/{mediaId}', [EventController::class, 'eventDeleteImage'])->middleware(['role:admin|head-copywriter']);
 
     Route::get('/type', [EventController::class, 'type']);
-    Route::post('/type/{eventType}/image', [EventController::class, 'eventTypeAddImage'])->middleware(['role:admin']);
-    Route::delete('/type/{eventType}/image', [EventController::class, 'eventTypeDeleteImages'])->middleware(['role:admin']);
+    Route::post('/type/{eventType}/image', [EventController::class, 'eventTypeAddImage'])->middleware(['role:admin|head-copywriter']);
+    Route::delete('/type/{eventType}/image', [EventController::class, 'eventTypeDeleteImages'])->middleware(['role:admin|head-copywriter']);
 });
 
 Route::group(['prefix' => 'goods', 'middleware' => ['auth:sanctum']], static function () {
     Route::get('/', [GoodsController::class, 'lists']);
-    Route::post('/', [GoodsController::class, 'create'])->middleware(['role:admin']);
-    Route::put('/{goods}', [GoodsController::class, 'update'])->middleware(['role:admin']);
-    Route::patch('/{goods}/active/{active}', [GoodsController::class, 'changeActive'])->middleware(['role:admin']);
+    Route::post('/', [GoodsController::class, 'create'])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::put('/{goods}', [GoodsController::class, 'update'])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::patch('/{goods}/active/{active}', [GoodsController::class, 'changeActive'])->middleware(['role:admin|copywriter|head-copywriter']);
 
-    Route::post('/{goods}/images', [GoodsController::class, 'eventAddImage'])->middleware(['role:admin']);
-    Route::delete('/{goods}/images/{mediaId}', [GoodsController::class, 'eventDeleteImage'])->middleware(['role:admin']);
-    Route::delete('/{goods}/images', [GoodsController::class, 'eventDeleteImages'])->middleware(['role:admin']);
+    Route::post('/{goods}/images', [GoodsController::class, 'eventAddImage'])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::delete('/{goods}/images/{mediaId}', [GoodsController::class, 'eventDeleteImage'])->middleware(['role:admin|head-copywriter']);
+    Route::delete('/{goods}/images', [GoodsController::class, 'eventDeleteImages'])->middleware(['role:admin|head-copywriter']);
 });
 
 Route::get('/genes', [CarController::class, 'genes'])->middleware(['auth:sanctum']);
@@ -171,22 +171,22 @@ Route::post('/import', [ImportController::class, 'importMain'])->middleware(['au
 Route::group(['prefix' => 'draws', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [DrawController::class, 'index']);
     Route::get('/{draw}', [DrawController::class, 'show']);
-    Route::post('/', [DrawController::class, 'store'])->middleware('role:admin');
-    Route::put('/{draw}', [DrawController::class, 'update'])->middleware('role:admin');
-    Route::delete('/{draw}', [DrawController::class, 'destroy'])->middleware('role:admin');
-    Route::post('/{draw}/roll/{prize}', [DrawController::class, 'rollPrize'])->middleware('role:admin');
-    Route::post('/{draw}/reset/{prize}', [DrawController::class, 'resetPrize'])->middleware('role:admin');
-    Route::delete('/{draw}/image/{mediaId}', [DrawController::class, 'eventDeleteImage'])->middleware(['role:admin']);
-    Route::post('/{draw}/image', action: [DrawController::class, 'eventAddImage'])->middleware(['role:admin']);
+    Route::post('/', [DrawController::class, 'store'])->middleware('role:admin|copywriter|head-copywriter');
+    Route::put('/{draw}', [DrawController::class, 'update'])->middleware('role:admin|copywriter|head-copywriter');
+    Route::delete('/{draw}', [DrawController::class, 'destroy'])->middleware('role:admin|head-copywriter');
+    Route::post('/{draw}/roll/{prize}', [DrawController::class, 'rollPrize'])->middleware('role:admin|head-copywriter');
+    Route::post('/{draw}/reset/{prize}', [DrawController::class, 'resetPrize'])->middleware('role:admin|head-copywriter');
+    Route::delete('/{draw}/image/{mediaId}', [DrawController::class, 'eventDeleteImage'])->middleware(['role:admin|head-copywriter']);
+    Route::post('/{draw}/image', action: [DrawController::class, 'eventAddImage'])->middleware(['role:admin|copywriter|head-copywriter']);
 
     // Prizes routes nested under draws
     Route::group(['prefix' => '/{draw}/prizes'], function () {
         Route::get('/', [PrizeController::class, 'index']);
-        Route::post('/', [PrizeController::class, 'store'])->middleware('role:admin');
-        Route::put('/{prize}', [PrizeController::class, 'update'])->middleware('role:admin');
-        Route::delete('/{prize}', [PrizeController::class, 'destroy'])->middleware('role:admin');
-        Route::delete('/{prize}/image/{mediaId}', [PrizeController::class, 'eventDeleteImage'])->middleware(['role:admin']);
-        Route::post('/{prize}/image', action: [PrizeController::class, 'eventAddImage'])->middleware(['role:admin']);
+        Route::post('/', [PrizeController::class, 'store'])->middleware('role:admin|copywriter|head-copywriter');
+        Route::put('/{prize}', [PrizeController::class, 'update'])->middleware('role:admin|copywriter|head-copywriter');
+        Route::delete('/{prize}', [PrizeController::class, 'destroy'])->middleware('role:admin|head-copywriter');
+        Route::delete('/{prize}/image/{mediaId}', [PrizeController::class, 'eventDeleteImage'])->middleware(['role:admin|head-copywriter']);
+        Route::post('/{prize}/image', action: [PrizeController::class, 'eventAddImage'])->middleware(['role:admin|copywriter|head-copywriter']);
     });
 
     // Participants routes nested under draws

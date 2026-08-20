@@ -4,13 +4,14 @@ namespace App\Enum;
 
 enum EnumUserRoles: string
 {
-
     case ADMIN = 'admin';
     case EDITOR = 'editor';
     case USER = 'user';
     case TESTER = 'tester';
     case TTOWNER = 'TTowner';
     case PRIVILEGED = 'privileged';
+    case COPYWRITER = 'copywriter';
+    case HEAD_COPYWRITER = 'head-copywriter';
 
     // Метод для получения перевода
     public function label(): string
@@ -22,12 +23,13 @@ enum EnumUserRoles: string
             self::TESTER => 'Тестувальник',
             self::TTOWNER => 'Власник Audi ТТ',
             self::PRIVILEGED => 'Привілейований користувач',
+            self::COPYWRITER => 'Копірайтер',
+            self::HEAD_COPYWRITER => 'Головний копірайтер',
         };
     }
 
     /**
      * Повертає опис прав та особливостей кожної ролі.
-     * * @return string
      */
     public function description(): string
     {
@@ -38,20 +40,22 @@ enum EnumUserRoles: string
             self::TESTER => 'Доступ до функціоналу тестування.',
             self::TTOWNER => 'Є або був власником Audi TT та є членом клубу.',
             self::PRIVILEGED => 'Користувач, з якого не стягуються обов\'язкові платежі.',
+            self::COPYWRITER => 'Може створювати та редагувати мерч, партнерів, розіграші (контент) та події, без права видалення.',
+            self::HEAD_COPYWRITER => 'Те саме, що Копірайтер, плюс видалення записів і керування розіграшем (запуск/визначення переможця).',
         };
     }
 
     // Метод для збору всіх даних у масив
     public static function apiList(): array
     {
-        return array_map(fn($case) => [
+        return array_map(fn ($case) => [
             'alias' => $case->value,
             'name' => $case->label(),
             'description' => $case->description(),
         ], self::cases());
     }
 
-//    foreach (EnumUserRoles::cases() as $role) {
-//    echo "- **{$role->value}**: {$role->label()}\n";
-//    }
+    //    foreach (EnumUserRoles::cases() as $role) {
+    //    echo "- **{$role->value}**: {$role->label()}\n";
+    //    }
 }

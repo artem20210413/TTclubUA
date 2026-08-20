@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -17,7 +16,9 @@ class RoleSeeder extends Seeder
         $roles = [
             ['name' => 'admin', 'guard_name' => 'web'],
             ['name' => 'editor', 'guard_name' => 'web'],
-            ['name' => 'user', 'guard_name' => 'web']
+            ['name' => 'user', 'guard_name' => 'web'],
+            ['name' => 'copywriter', 'guard_name' => 'web'],
+            ['name' => 'head-copywriter', 'guard_name' => 'web'],
         ];
 
         foreach ($roles as $role) {
@@ -29,7 +30,7 @@ class RoleSeeder extends Seeder
 
             if ($role->name === 'admin') {
                 $role->givePermissionTo(Permission::all());
-//                $editor->givePermissionTo('create post', 'edit post');
+                //                $editor->givePermissionTo('create post', 'edit post');
             }
         }
     }

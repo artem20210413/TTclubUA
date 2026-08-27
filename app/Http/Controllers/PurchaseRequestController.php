@@ -21,6 +21,6 @@ class PurchaseRequestController extends Controller
             new PurchaseRequestNotification(Auth::user(), $goods, $request->input('description'))
         );
 
-        return response()->json(['message' => __('Заявку на покупку успішно відправлено! З вами зв\'яжеться менеджер.')]);
+        return response()->json(['message' => __('purchase_request_sent')]);
     }
 }

@@ -19,6 +19,7 @@ enum EnumTelegramEvents
     case EXPORT_USERS; // експорт всех пользователей
     case REGISTRATION; // при регистрации уведомление
     case SUGGESTION;
+    case PURCHASE_REQUEST; // заявки на покупку товарів
     case DAILY_DIGEST; // куда отправляем ежедневный AI-дайджест
     case DAILY_DIGEST_COLLECT; // из каких чатов собираем сообщения для дайджеста
 
@@ -34,6 +35,7 @@ enum EnumTelegramEvents
         $ttChat = $config['tt_club_ua'] ?? '';
         $testBot2 = $config['test_bot_2'] ?? '';
         $suggestions = $config['suggestions'] ?? '';
+        $purchaseRequests = $config['purchase_requests'] ?? '';
 
         $usersIds = $users ? $users->pluck('telegram_id')->toArray() : [];
 
@@ -44,6 +46,7 @@ enum EnumTelegramEvents
             self::REGISTRATION => [$welcome],
             self::CHANGE_USER => [$welcome],
             self::SUGGESTION => [$suggestions],
+            self::PURCHASE_REQUEST => [$purchaseRequests],
 
             self::STATS_MENTION => [$ttChat],
             self::DAILY_DIGEST => [$ttChat],

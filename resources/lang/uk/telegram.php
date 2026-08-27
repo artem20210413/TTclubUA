@@ -8,6 +8,14 @@ return [
         ."📞<b>:</b> {phone}\n"
         ."⚙️<b>:</b> {environment_line}\n"
         .'📄<b>:</b> {description}',
+    'purchase_request' => "🛒 <b>Нова заявка на покупку!</b>\n"
+        ."<b>Від:</b> {user}\n"
+        ."<b>Ім'я:</b> {name}\n"
+        ."<b>Телефон:</b> {phone}\n"
+        ."<b>Товар:</b> {title}\n"
+        ."<b>Ціна:</b> {price}\n"
+        ."{inactive_line}"
+        .'<b>Опис:</b> {description}',
     'registration' => [
         'user' => "ім'я: {name}\n"
             ."Телефон: {phone}\n"

@@ -18,6 +18,7 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Partner\PartnerController;
 use App\Http\Controllers\Partner\PromotionController;
+use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SuggestionsController;
 use App\Http\Controllers\SystemController;
@@ -110,6 +111,7 @@ Route::group(['prefix' => 'mention', 'middleware' => ['auth:sanctum']], static f
 
 Route::post('suggestions/send', [SuggestionsController::class, 'send'])->middleware(['auth:sanctum']);
 
+
 Route::group(['prefix' => 'partners', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [PartnerController::class, 'index']);
     Route::post('/', [PartnerController::class, 'store'])->middleware('role:admin|copywriter|head-copywriter');
@@ -150,6 +152,7 @@ Route::group(['prefix' => 'goods', 'middleware' => ['auth:sanctum']], static fun
     Route::post('/', [GoodsController::class, 'create'])->middleware(['role:admin|copywriter|head-copywriter']);
     Route::put('/{goods}', [GoodsController::class, 'update'])->middleware(['role:admin|copywriter|head-copywriter']);
     Route::patch('/{goods}/active/{active}', [GoodsController::class, 'changeActive'])->middleware(['role:admin|copywriter|head-copywriter']);
+    Route::post('/purchase-request', [PurchaseRequestController::class, 'send'])->middleware(['auth:sanctum']);
 
     Route::post('/{goods}/images', [GoodsController::class, 'eventAddImage'])->middleware(['role:admin|copywriter|head-copywriter']);
     Route::delete('/{goods}/images/{mediaId}', [GoodsController::class, 'eventDeleteImage'])->middleware(['role:admin|head-copywriter']);

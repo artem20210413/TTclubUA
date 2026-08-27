@@ -1,4 +1,5 @@
 {
     "test": "Профіль: :profile. Колір: :color.",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Заявку на покупку успішно відправлено! З вами зв'яжеться менеджер.": "Your purchase request has been sent successfully! A manager will contact you."
 }

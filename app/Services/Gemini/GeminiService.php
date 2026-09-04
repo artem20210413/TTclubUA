@@ -19,8 +19,8 @@ class GeminiService
     public static function generate(string $prompt, GeminiModel $model = GeminiModel::FLASH): GeminiRequestDto
     {
         Log::info("Gemini AI: Sending request to {$model->value}", [
-//            'prompt_preview' => mb_substr($prompt, 0, 500) . '...', // щоб не забивати лог гігантським текстом
-            'prompt_preview' => $prompt // щоб не забивати лог гігантським текстом
+            'prompt_preview' => mb_substr($prompt, 0, 500) . '...', // щоб не забивати лог гігантським текстом
+//            'prompt_preview' => $prompt // щоб не забивати лог гігантським текстом
         ]);
 
         $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model->value}:generateContent";

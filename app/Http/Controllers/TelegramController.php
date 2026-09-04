@@ -21,7 +21,7 @@ class TelegramController extends Controller
     {
 
         // https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://tt.tishchenko.kiev.ua/api/telegram/webhook
-        Log::info('webhook request received', [$request->all()]);
+        Log::channel('telegram_webhook')->info('webhook request received', [$request->all()]);
 
         //        $message = $request->message ?? $request->edited_message ?? null;
         //        if (!$message) return success();

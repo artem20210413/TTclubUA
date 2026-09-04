@@ -33,6 +33,8 @@ class SendDailyDigestJob implements ShouldQueue
 
     public int $tries = 4;
 
+    public int $timeout = 300;
+
     private CarbonImmutable $date;
 
     public function __construct(?string $date = null)

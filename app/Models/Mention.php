@@ -18,6 +18,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $car_id
  * @property string $description
  * @property array car_snapshot
+ * @property float|null $latitude
+ * @property float|null $longitude
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */

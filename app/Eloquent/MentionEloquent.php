@@ -30,10 +30,18 @@ class MentionEloquent
         $mention->caught_user_id = $car->user_id;
         $mention->description = $description;
         $mention->car_snapshot = $car->toArray();
+
+        $imageWebp = $file ? new ImageWebpService($file) : null;
+
+        if ($imageWebp) {
+            $gps = $imageWebp->getGps();
+            $mention->latitude = $gps['latitude'] ?? null;
+            $mention->longitude = $gps['longitude'] ?? null;
+        }
+
         $mention->save();
 
-        if ($file) {
-            $imageWebp = new ImageWebpService($file);
+        if ($imageWebp) {
             $imageWebp->convert(EnumImageQuality::HD);
             $imageWebp->save($mention, EnumTypeMedia::PHOTO_MENTION);
         }

@@ -18,16 +18,34 @@ class ImageWebpService
     /** @var array|Image[] */
     private array $images;
 
+    /** @var array<int, array{latitude: float, longitude: float}|null> */
+    private array $gps = [];
+
     /** @param array|UploadedFile|UploadedFile[] ...$images */
     public function __construct(array|UploadedFile ...$images)
     {
         foreach ($images as $image) {
 
-            if (HeicToJpg::isHeic($image))
+            if (HeicToJpg::isHeic($image)) {
+                // Конвертер зберігає EXIF (у т.ч. GPS) із HEIC у результуючий JPG,
+                // тож геопозицію треба читати саме з нього — з оригінального HEIC
+                // ext-exif читати не вміє, а з фінального webp EXIF вже буде втрачено.
                 $image = HeicToJpg::convert($image)->get();
+                $this->gps[] = ExifGpsService::extractFromString($image);
+            } else {
+                $this->gps[] = ExifGpsService::extract($image);
+            }
 
             $this->images[] = \Intervention\Image\Facades\Image::make($image)->orientate()->encode('webp', 90);
         }
+    }
+
+    /**
+     * @return array{latitude: float, longitude: float}|null
+     */
+    public function getGps(int $index = 0): ?array
+    {
+        return $this->gps[$index] ?? null;
     }
 
     /** @return array|Image[] */

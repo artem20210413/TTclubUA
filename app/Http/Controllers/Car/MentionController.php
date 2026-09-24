@@ -8,6 +8,7 @@ use App\Jobs\SandMention;
 use App\Models\Car;
 use App\Models\Mention;
 use App\Models\User;
+use App\Services\Mention\MentionLocationService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -107,5 +108,18 @@ class MentionController extends Controller
         $mentions = $query->latest()->paginate($request->input('per_page', 15));
 
         return response()->json($mentions);
+    }
+
+    /**
+     * Отримати список геолокацій "фа-фа". Точки, що знаходяться дуже
+     * близько одна до одної, об'єднуються в одну з підрахунком кількості.
+     */
+    public function getLocations(Request $request): JsonResponse
+    {
+        $radiusMeters = $request->input('radius');
+
+        return response()->json(
+            MentionLocationService::getClusteredLocations($radiusMeters ? (int) $radiusMeters : null)
+        );
     }
 }

@@ -106,6 +106,7 @@ Route::group(['prefix' => 'mention', 'middleware' => ['auth:sanctum']], static f
     Route::get('/user/{user}/sent', [MentionController::class, 'getSentMentions']);
     Route::get('/user/{user}/received/count', [MentionController::class, 'getReceivedMentionsCount']);
     Route::get('/user/{user}/received', [MentionController::class, 'getReceivedMentions']);
+    Route::get('/locations', [MentionController::class, 'getLocations']);
 
 });
 

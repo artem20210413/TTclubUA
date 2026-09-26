@@ -57,4 +57,26 @@ class GeminiDigestSummarizer implements DigestSummarizer
             })
             ->implode("\n");
     }
+
+    //private function linkify(string $text): string
+    //    {
+    //        $url = 'https?:\/\/t\.me\/c\/\d+\/\d+';
+    //
+    //        return collect(explode("\n", $text))
+    //            ->map(function (string $line) use ($url): string {
+    //                $line = str_replace('🔗', '', $line);
+    //
+    //                if (! preg_match('#'.$url.'#u', $line, $m)) {
+    //                    return $line;
+    //                }
+    //
+    //                $first = $m[0];
+    //                // Remove every link (and any leading comma/space) from the line…
+    //                $line = preg_replace('#[\s,]*'.$url.'#u', '', $line);
+    //
+    //                // …then append a single hidden link.
+    //                return rtrim($line, " \t,;").' <a href="'.$first.'">детальніше</a>';
+    //            })
+    //            ->implode("\n");
+
 }

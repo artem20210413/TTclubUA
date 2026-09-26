@@ -28,6 +28,7 @@ enum EnumTelegramEvents
      */
     public function getIds(?Collection $users = null, array $chantIds = [], array $myIds = []): array
     {
+        $isLocal = config('app.env') === 'local';
 
         $config = config('telegram.chats');
 
@@ -39,7 +40,7 @@ enum EnumTelegramEvents
 
         $usersIds = $users ? $users->pluck('telegram_id')->toArray() : [];
 
-        return match ($this) {
+        $ids = match ($this) {
             self::FA_FA => [$ttChat],
             self::EXPORT_USERS => [$welcome],
             self::LIST_BIRTHDAYS => [$welcome],
@@ -59,5 +60,11 @@ enum EnumTelegramEvents
             self::USERS => $usersIds,
             self::CUSTOM => $chantIds,
         };
+
+        if ($isLocal && $this !== self::TEST && $this !== self::SYSTEM_ERRORS) {
+            $ids = array_filter($ids) === [] ? [] : [$testBot2];
+        }
+
+        return $ids;
     }
 }

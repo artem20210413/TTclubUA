@@ -149,6 +149,7 @@ class SendDailyDigestJob implements ShouldQueue
         $members = $greetings->membersForDate($this->date);
 
         if ($members->isEmpty()) {
+            $this->notifySystemError('Щоденний дайджест не надіслано (усі спроби вичерпано): '.$e->getMessage());
             $digest->update(['status' => DailyDigest::STATUS_FAILED]);
 
             return;
@@ -166,7 +167,23 @@ class SendDailyDigestJob implements ShouldQueue
             ]);
         } catch (\Throwable $sendError) {
             Log::error('SendDailyDigestJob greetings-only fallback failed: '.$sendError->getMessage());
+            $this->notifySystemError('Не вдалося надіслати щоденний дайджест (усі спроби вичерпано): '.$sendError->getMessage());
             $digest->update(['status' => DailyDigest::STATUS_FAILED]);
+        }
+    }
+
+    /**
+     * Best-effort alert to the system-errors chat; must never itself throw and break the caller.
+     */
+    private function notifySystemError(string $message): void
+    {
+        try {
+            Notification::send(
+                TelegramRecipients::routes(EnumTelegramEvents::SYSTEM_ERRORS->getIds()),
+                new AdHocMessageNotification(new TelegramMessagePayload(text: '⚠️ '.$message)),
+            );
+        } catch (\Throwable $e) {
+            Log::error('Failed to notify system-errors chat: '.$e->getMessage());
         }
     }
 }

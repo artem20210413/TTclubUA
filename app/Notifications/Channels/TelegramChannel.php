@@ -3,6 +3,7 @@
 namespace App\Notifications\Channels;
 
 use App\Eloquent\TelegramLoggerEloquent;
+use App\Enum\EnumTelegramEvents;
 use App\Jobs\PinTelegramMessageJob;
 use App\Notifications\Support\TelegramMessagePayload;
 use Illuminate\Notifications\Notification;
@@ -58,6 +59,30 @@ class TelegramChannel
             ]);
 
             TelegramLoggerEloquent::createOut($params);
+
+            $this->alertSystemErrors($chatId, $notification::class, $e);
+        }
+    }
+
+    /**
+     * Best-effort alert to the system-errors chat for any failed Telegram send, of any
+     * notification type. Never throws itself, and skips the error chat to avoid recursion.
+     */
+    private function alertSystemErrors(string|int $failedChatId, string $notificationClass, \Throwable $e): void
+    {
+        foreach (EnumTelegramEvents::SYSTEM_ERRORS->getIds() as $errorChatId) {
+            if (empty($errorChatId) || (string) $errorChatId === (string) $failedChatId) {
+                continue;
+            }
+
+            try {
+                $this->telegram->sendMessage([
+                    'chat_id' => $errorChatId,
+                    'text' => "⚠️ Помилка відправки Telegram ({$notificationClass}) у чат {$failedChatId}: {$e->getMessage()}",
+                ]);
+            } catch (\Throwable $alertError) {
+                Log::error('Failed to notify system-errors chat: '.$alertError->getMessage());
+            }
         }
     }
 

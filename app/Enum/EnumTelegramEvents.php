@@ -37,6 +37,7 @@ enum EnumTelegramEvents
         $testBot2 = $config['test_bot_2'] ?? '';
         $suggestions = $config['suggestions'] ?? '';
         $purchaseRequests = $config['purchase_requests'] ?? '';
+        $systemErrors = $config['system_errors'] ?? '';
 
         $usersIds = $users ? $users->pluck('telegram_id')->toArray() : [];
 
@@ -54,7 +55,7 @@ enum EnumTelegramEvents
             self::DAILY_DIGEST_COLLECT => [$ttChat],
 
             self::TEST => [$testBot2],
-            self::SYSTEM_ERRORS => [$testBot2],
+            self::SYSTEM_ERRORS => [$systemErrors],
 
             self::MY => $myIds,
             self::USERS => $usersIds,

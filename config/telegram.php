@@ -37,6 +37,7 @@ return [
         'tt_club_ua' => env('TELEGRAM_CHAT_TT_CLUB'),
         'suggestions' => env('TELEGRAM_CHAT_SUGGESTIONS'),
         'purchase_requests' => env('TELEGRAM_CHAT_PURCHASE_REQUESTS'),
+        'system_errors' => env('TELEGRAM_CHAT_SYSTEM_ERRORS'),
     ],
 
     'bots' => [

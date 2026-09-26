@@ -89,7 +89,7 @@ class TelegramChannel
                 new AdHocMessageNotification(new TelegramMessagePayload(text: $message)),
             );
         } catch (\Throwable $alertError) {
-            Log::error('Failed to notify system-errors chat: '.$alertError->getMessage());
+            Log::error('Не вдалося сповістити чат системних помилок: '.$alertError->getMessage());
         }
     }
 

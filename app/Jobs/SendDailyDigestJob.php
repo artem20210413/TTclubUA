@@ -183,7 +183,7 @@ class SendDailyDigestJob implements ShouldQueue
                 new AdHocMessageNotification(new TelegramMessagePayload(text: '⚠️ '.$message)),
             );
         } catch (\Throwable $e) {
-            Log::error('Failed to notify system-errors chat: '.$e->getMessage());
+            Log::error('Не вдалося сповістити чат системних помилок: '.$e->getMessage());
         }
     }
 }

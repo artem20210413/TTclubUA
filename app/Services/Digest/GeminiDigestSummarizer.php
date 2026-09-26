@@ -41,16 +41,19 @@ class GeminiDigestSummarizer implements DigestSummarizer
             ->map(function (string $line) use ($url): string {
                 $line = str_replace('🔗', '', $line);
 
-                if (! preg_match('#'.$url.'#u', $line, $m)) {
-                    return $line;
+                $hasLink = (bool) preg_match('#'.$url.'#u', $line, $m);
+
+                if ($hasLink) {
+                    // Remove every link (and any leading comma/space) from the line…
+                    $line = preg_replace('#[\s,]*'.$url.'#u', '', $line);
                 }
 
-                $first = $m[0];
-                // Remove every link (and any leading comma/space) from the line…
-                $line = preg_replace('#[\s,]*'.$url.'#u', '', $line);
+                // AI-generated text is not under our control — escape it so a stray
+                // '<'/'>'/'&' can't break Telegram's HTML parse_mode before we append our own tag.
+                $line = htmlspecialchars(rtrim($line, " \t,;"), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
                 // …then append a single hidden link.
-                return rtrim($line, " \t,;").' <a href="'.$first.'">детальніше</a>';
+                return $hasLink ? $line.' <a href="'.$m[0].'">детальніше</a>' : $line;
             })
             ->implode("\n");
     }

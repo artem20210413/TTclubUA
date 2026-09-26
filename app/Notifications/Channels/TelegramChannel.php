@@ -5,7 +5,9 @@ namespace App\Notifications\Channels;
 use App\Eloquent\TelegramLoggerEloquent;
 use App\Enum\EnumTelegramEvents;
 use App\Jobs\PinTelegramMessageJob;
+use App\Notifications\AdHocMessageNotification;
 use App\Notifications\Support\TelegramMessagePayload;
+use App\Notifications\Support\TelegramRecipients;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -70,19 +72,24 @@ class TelegramChannel
      */
     private function alertSystemErrors(string|int $failedChatId, string $notificationClass, \Throwable $e): void
     {
-        foreach (EnumTelegramEvents::SYSTEM_ERRORS->getIds() as $errorChatId) {
-            if (empty($errorChatId) || (string) $errorChatId === (string) $failedChatId) {
-                continue;
-            }
+        // Recursion guard: if the error chat itself is the one that just failed, the
+        // recipient list below won't include it again (dedup happens per-chat there).
+        if ((string) $failedChatId === (string) (EnumTelegramEvents::SYSTEM_ERRORS->getIds()[0] ?? '')) {
+            return;
+        }
 
-            try {
-                $this->telegram->sendMessage([
-                    'chat_id' => $errorChatId,
-                    'text' => "⚠️ Помилка відправки Telegram ({$notificationClass}) у чат {$failedChatId}: {$e->getMessage()}",
-                ]);
-            } catch (\Throwable $alertError) {
-                Log::error('Failed to notify system-errors chat: '.$alertError->getMessage());
-            }
+        // Exception text is arbitrary and could contain '<'/'>'/'&' that would break
+        // Telegram's HTML parser, so escape it before it goes into an HTML-mode message.
+        $safeMessage = htmlspecialchars($e->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $message = "⚠️ Помилка відправки Telegram ({$notificationClass}) у чат {$failedChatId}: {$safeMessage}";
+
+        try {
+            Notification::send(
+                TelegramRecipients::routes(EnumTelegramEvents::SYSTEM_ERRORS->getIds()),
+                new AdHocMessageNotification(new TelegramMessagePayload(text: $message)),
+            );
+        } catch (\Throwable $alertError) {
+            Log::error('Failed to notify system-errors chat: '.$alertError->getMessage());
         }
     }
 

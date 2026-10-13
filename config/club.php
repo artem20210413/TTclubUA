@@ -11,6 +11,6 @@ return [
     |
     */
 
-    'min_payment' => 500,
+    'min_payment' => 1000,
     'season_start_month' => 9,
 ];

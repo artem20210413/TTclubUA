@@ -33,11 +33,11 @@ class MentionEloquent
 
         $imageWebp = $file ? new ImageWebpService($file) : null;
 
-        if ($imageWebp) {
-            $gps = $imageWebp->getGps();
-            $mention->latitude = $gps['latitude'] ?? null;
-            $mention->longitude = $gps['longitude'] ?? null;
-        }
+//        if ($imageWebp) {
+//            $gps = $imageWebp->getGps();
+//            $mention->latitude = $gps['latitude'] ?? null;
+//            $mention->longitude = $gps['longitude'] ?? null;
+//        }
 
         $mention->save();
 

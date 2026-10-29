@@ -6,6 +6,7 @@ use App\Eloquent\TelegramLoggerEloquent;
 use App\Eloquent\UserEloquent;
 use App\Enum\EnumTelegramEvents;
 use App\Models\TelegramMessage;
+use App\Models\User;
 use App\Notifications\ChatMemberLeftNotification;
 use App\Notifications\NewChatMemberLogNotification;
 use App\Notifications\NewChatMemberWelcomeNotification;
@@ -92,8 +93,25 @@ class TelegramActionPublicHandler
                 new ChatMemberLeftNotification($this->telegramWebhookDto)
             );
 
-            $user = UserEloquent::searchUser($this->telegramWebhookDto->getChatMember()->getNewChatMember()->getUser());
-            $user?->setAsActive(false);
+            $member = $this->telegramWebhookDto->getChatMember()->getNewChatMember()->getUser();
+
+            // Шукаємо за telegram_id
+            $user = UserEloquent::searchUser($member);
+
+            // Фолбек: шукаємо за ніком у ТГ, якщо за telegram_id не знайшли
+            if (! $user && $member?->getUsername()) {
+                $user = User::query()->where('telegram_nickname', $member->getUsername())->first();
+            }
+
+            if ($user) {
+                $user->setAsActive(false);
+            } else {
+                Log::warning('Користувач, що покинув чат, не знайдений у БД — деактивацію пропущено', [
+                    'telegram_id' => $member?->getId(),
+                    'telegram_nickname' => $member?->getUsername(),
+                    'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId(),
+                ]);
+            }
 
         } catch (\Throwable $exception) {
             Log::error('Помилка логування зміни статусу користувача: '.$exception->getMessage(), [

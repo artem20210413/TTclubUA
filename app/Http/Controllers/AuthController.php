@@ -178,7 +178,6 @@ class AuthController extends Controller
             $maxAttempts = (int)config('auth.login_code.max_attempts', 5);
 
             if ($user->getLoginCodeFailedAttempts() >= $maxAttempts) {
-                Log::info('clearCode');
                 $user->clearCode();
                 $user->notify(new LoginCodeRevokedNotification($maxAttempts));
 
@@ -191,10 +190,7 @@ class AuthController extends Controller
             }
 
             if ($code !== $cachedCode) {
-                Log::info('getLoginCodeFailedAttempts ' . $user->getLoginCodeFailedAttempts());
-                Log::info('incrementLoginCodeFailedAttempts ');
                 $user->incrementLoginCodeFailedAttempts();
-                Log::info('getLoginCodeFailedAttempts ' . $user->getLoginCodeFailedAttempts());
 
                 throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
             }

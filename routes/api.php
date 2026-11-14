@@ -43,7 +43,8 @@ Route::get('/telegram/test', [TelegramController::class, 'test']);
 Route::get('/roles', [RoleController::class, 'index'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/login/tg/send-code', [AuthController::class, 'sendCode'])->middleware('params.throttle:15');
-Route::post('/login/tg/verify', [AuthController::class, 'verifyCode'])->middleware('throttle:5,2');
+// Перебір коду обмежує ліміт спроб на користувача (auth.login_code.max_attempts), тож IP-ліміт м'який.
+Route::post('/login/tg/verify', [AuthController::class, 'verifyCode'])->middleware('throttle:10,1');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');

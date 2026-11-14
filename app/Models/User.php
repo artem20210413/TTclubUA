@@ -245,12 +245,34 @@ class User extends Authenticatable implements AuditableContract, HasMedia
             now()->addMinutes($time) // TTL кода
         );
 
+        // Новий код — новий лічильник невдалих спроб (живе стільки ж, скільки код).
+        Cache::put($this->getLoginCodeAttemptsCacheKey(), 0, now()->addMinutes($time));
+
         return $code;
     }
 
     public function clearCode()
     {
         Cache::delete($this->getLoginCodeCacheKey());
+        Cache::delete($this->getLoginCodeAttemptsCacheKey());
+    }
+
+    public function getLoginCodeAttemptsCacheKey(): string
+    {
+        return 'login_code_attempts:user:'.$this->id;
+    }
+
+    /**
+     * Кількість невдалих спроб ввести поточний код.
+     */
+    public function getLoginCodeFailedAttempts(): int
+    {
+        return (int) Cache::get($this->getLoginCodeAttemptsCacheKey(), 0);
+    }
+
+    public function incrementLoginCodeFailedAttempts(): int
+    {
+        return (int) Cache::increment($this->getLoginCodeAttemptsCacheKey());
     }
 
     /**

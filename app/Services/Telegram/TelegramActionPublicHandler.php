@@ -29,10 +29,25 @@ class TelegramActionPublicHandler
 
     public function handler()
     {
+        $chatId = $this->telegramWebhookDto->getSmartChat()?->getId();
+
+        // Вступ/вихід впливає на активність акаунта лише в головній групі клубу. Інакше будь-хто
+        // міг би додати бота у свою групу й через вступ/вихід (де)активувати членів клубу.
+        $isMembershipChat = EnumTelegramEvents::MEMBERSHIP->hasChat($chatId);
+
+        // Привітання — тільки в чатах з білого списку, щоб бот не вітав людей у чужих групах.
+        $isWelcomeChat = EnumTelegramEvents::NEW_MEMBER_WELCOME->hasChat($chatId);
+
         if ($this->checkIsNewUser()) {
-            $this->handleNewUser();
+            if ($isMembershipChat) {
+                $this->handleNewUser();
+            }
+            if ($isWelcomeChat) {
+                $this->sendWelcome();
+            }
         }
-        if ($this->checkIsUserLeft()) {
+
+        if ($this->checkIsUserLeft() && $isMembershipChat) {
             $this->handleUserLeft();
         }
     }
@@ -70,14 +85,17 @@ class TelegramActionPublicHandler
                 'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId(),
             ]);
         }
+    }
 
+    private function sendWelcome(): void
+    {
         try {
             Notification::send(
                 TelegramRecipients::routes([$this->telegramWebhookDto?->getSmartChat()->getId()]),
                 new NewChatMemberWelcomeNotification($this->telegramWebhookDto?->getMessage()->getNewChatMembers())
             );
         } catch (\Throwable $exception) {
-            Log::error('Помилка логування зміни статусу користувача: '.$exception->getMessage(), [
+            Log::error('Помилка надсилання привітання новому учаснику: '.$exception->getMessage(), [
                 'exception' => $exception,
                 'chat_id' => $this->telegramWebhookDto->getSmartChat()?->getId(),
             ]);

@@ -22,6 +22,8 @@ enum EnumTelegramEvents
     case PURCHASE_REQUEST; // заявки на покупку товарів
     case DAILY_DIGEST; // куда отправляем ежедневный AI-дайджест
     case DAILY_DIGEST_COLLECT; // из каких чатов собираем сообщения для дайджеста
+    case MEMBERSHIP; // чаты, где вступ/выход влияет на активность акаунта (только главная группа)
+    case NEW_MEMBER_WELCOME; // белый список чатов, где бот приветствует новых участников
 
     /**
      * Получить разрешение для качества
@@ -53,6 +55,8 @@ enum EnumTelegramEvents
             self::STATS_MENTION => [$ttChat],
             self::DAILY_DIGEST => [$ttChat],
             self::DAILY_DIGEST_COLLECT => [$ttChat],
+            self::MEMBERSHIP => [$ttChat],
+            self::NEW_MEMBER_WELCOME => [$ttChat],
 
             self::TEST => [$testBot2],
             self::SYSTEM_ERRORS => [$systemErrors],
@@ -67,5 +71,19 @@ enum EnumTelegramEvents
         }
 
         return $ids;
+    }
+
+    /**
+     * Чи входить чат до списку цього події (порожні/ненастроєні id не збігаються ні з чим).
+     */
+    public function hasChat(int|string|null $chatId): bool
+    {
+        if ($chatId === null || $chatId === '') {
+            return false;
+        }
+
+        $ids = array_map('strval', array_filter($this->getIds()));
+
+        return in_array((string) $chatId, $ids, true);
     }
 }

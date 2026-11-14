@@ -10,6 +10,7 @@ use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Notifications\AuthCodeNotification;
+use App\Notifications\LoginCodeRevokedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -168,7 +169,29 @@ class AuthController extends Controller
 
             $cachedCode = $user->getLoginCodeFromCache();
 
-            if (! $cachedCode || $code !== $cachedCode) {
+            if (! $cachedCode) {
+                throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
+            }
+
+            // Ліміт невдалих спроб: після max_attempts помилок наступна спроба анулює код
+            // (навіть якщо вона правильна), і користувач отримує про це повідомлення в Telegram.
+            $maxAttempts = (int) config('auth.login_code.max_attempts', 5);
+
+            if ($user->getLoginCodeFailedAttempts() >= $maxAttempts) {
+                $user->clearCode();
+                $user->notify(new LoginCodeRevokedNotification($maxAttempts));
+
+                Log::warning('Код входу анульовано: перевищено кількість спроб', [
+                    'user_id' => $user->id,
+                    'ip_адреса' => $request->ip(),
+                ]);
+
+                throw new ApiException('Забагато невдалих спроб. Код анульовано — запросіть новий.', 0, 429);
+            }
+
+            if ($code !== $cachedCode) {
+                $user->incrementLoginCodeFailedAttempts();
+
                 throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
             }
 

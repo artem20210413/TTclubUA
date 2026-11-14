@@ -107,14 +107,29 @@ class UserEloquent
             return null;
         }
 
-        $phone = str_replace('+', '', $messageDto->getContact()['phone_number']);
+        // Приймаємо лише власний контакт відправника. Telegram дозволяє переслати будь-який
+        // контакт (наприклад, з телефонної книги), і без цієї перевірки можна було б
+        // перезаписати telegram_id / нік чужого акаунта, знаючи лише номер телефону.
+        $contactUserId = $messageDto->getContactUserId();
+        $fromId = $messageDto->getFrom()?->getId();
+
+        if (empty($contactUserId) || empty($fromId) || $contactUserId !== $fromId) {
+            Log::warning('Спроба прив\'язки чужого контакту в Telegram', [
+                'from_id' => $fromId,
+                'contact_user_id' => $contactUserId,
+            ]);
+
+            throw new ApiException('❗ Надішліть, будь ласка, власний номер телефону кнопкою «Надіслати номер».');
+        }
+
+        $phone = str_replace('+', '', (string) $messageDto->getContactPhone());
         $user = User::query()->where('phone', $phone)->first();
 
         if (! $user) {
             throw new ApiException("❗ Ми не знайшли ваш акаунт. Переконайтесь, що ви зареєстровані. Номер '$phone'");
         }
 
-        $user->telegram_id = $messageDto->getContact()['user_id'];
+        $user->telegram_id = $contactUserId;
         //        if ($messageDto->getFrom()->getFirstName() !== null)
         $user->telegram_nickname = $messageDto->getFrom()->getUsername();
         $user->phone_verified_at = Carbon::now();

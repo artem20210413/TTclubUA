@@ -38,6 +38,21 @@ class TelegramMessageDto
         return $this->json['contact'] ?? null;
     }
 
+    /**
+     * Telegram id власника контакту (відсутній, якщо контакт не прив'язаний до акаунта Telegram).
+     */
+    public function getContactUserId(): ?int
+    {
+        $userId = $this->getContact()['user_id'] ?? null;
+
+        return $userId !== null ? (int) $userId : null;
+    }
+
+    public function getContactPhone(): ?string
+    {
+        return $this->getContact()['phone_number'] ?? null;
+    }
+
     public function getMessageId(): ?int
     {
         return $this->json['message_id'] ?? null;

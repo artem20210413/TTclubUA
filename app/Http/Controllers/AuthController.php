@@ -11,6 +11,7 @@ use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Notifications\AuthCodeNotification;
 use App\Notifications\LoginCodeRevokedNotification;
+use App\Notifications\LoginSuccessNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -197,6 +198,8 @@ class AuthController extends Controller
 
             $user->clearCode();
             $token = $user->createToken("tg_$env")->plainTextToken;
+
+            $user->notify(new LoginSuccessNotification($env, now()));
 
             return success('Авторизація успішна', [
                 'token' => $token,

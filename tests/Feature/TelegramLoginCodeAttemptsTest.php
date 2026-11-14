@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Notifications\LoginCodeRevokedNotification;
+use App\Notifications\LoginSuccessNotification;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Notification;
 
@@ -31,7 +32,27 @@ test('correct code within the limit logs the user in', function () {
 
     verifyLoginCode($this, $this->code)->assertOk()->assertJsonPath('data.token', fn ($t) => ! empty($t));
 
-    Notification::assertNothingSent();
+    Notification::assertNotSentTo($this->user, LoginCodeRevokedNotification::class);
+});
+
+test('successful login sends an "authorization successful" message to telegram', function () {
+    $this->postJson('/api/login/tg/verify', ['phone' => '+380501112233', 'code' => $this->code], [
+        'X-Client-Platform' => '<b>ios</b>',
+    ])->assertOk();
+
+    Notification::assertSentTo($this->user, LoginSuccessNotification::class, function ($notification) {
+        $text = $notification->toTelegram($this->user)->text;
+
+        return str_contains($text, 'Авторизація успішна')
+            && str_contains($text, '&lt;b&gt;ios&lt;/b&gt;'); // платформа з заголовка екранована
+    });
+    Notification::assertSentToTimes($this->user, LoginSuccessNotification::class, 1);
+});
+
+test('wrong code does not send the success message', function () {
+    verifyLoginCode($this, $this->wrongCode)->assertStatus(404);
+
+    Notification::assertNotSentTo($this->user, LoginSuccessNotification::class);
 });
 
 test('the attempt after max failures revokes the code and notifies the user in telegram', function () {
@@ -68,5 +89,5 @@ test('requesting a new code resets the failed attempts counter', function () {
     $newCode = $this->user->generateAndStoreLoginCode();
 
     verifyLoginCode($this, $newCode)->assertOk();
-    Notification::assertNothingSent();
+    Notification::assertNotSentTo($this->user, LoginCodeRevokedNotification::class);
 });

@@ -55,6 +55,8 @@ Deploy: `php artisan deploy` (`app/Console/Commands/DeployCommand.php`) does `gi
 
 ## Project conventions & tooling
 
+- **Keep the README in sync.** Any significant change must update `README.md` **and** its Ukrainian translation `README.uk.md` in the same piece of work. Significant means a new feature or module, a new or changed integration, environment variable or config key, a changed setup/run/test/deploy step, a new scheduled task, or a changed architecture convention. Small bug fixes and internal refactors don't need it. Mention the README update in the final summary.
+
 - **House-convention skills** in `.claude/skills/`: `tt-api-endpoint`, `tt-eloquent-model`, `tt-queued-job`, `tt-telegram-notify`. Load the matching one before adding or changing an endpoint, a model, a queued job, or any Telegram sending.
 - **Constitution** (`.specify/memory/constitution.md`): Simplicity & YAGNI (no speculative abstractions) and Laravel & framework conventions (thin controllers, Form Requests, use the installed packages rather than custom equivalents, Pint-clean).
 - **Spec-Kit workflow**: features are developed through `speckit-*` skills, with artifacts in `specs/NNN-feature-name/` (spec, plan, tasks). The active feature is recorded in `.specify/feature.json`. Docs under `docs/` and speckit docs are mirrored with a Ukrainian `.uk.md` translation.

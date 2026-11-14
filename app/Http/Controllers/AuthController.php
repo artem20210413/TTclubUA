@@ -63,12 +63,12 @@ class AuthController extends Controller
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         $credentials[$fieldType] = $login;
 
-        if (! Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             return error(new ApiException('Invalid login details', 0, 401));
         }
 
         $user = Auth::user();
-        if (! $user->active) {
+        if (!$user->active) {
             Auth::logout();
 
             return error(new ApiException('Invalid login details', 0, 401));
@@ -102,7 +102,7 @@ class AuthController extends Controller
         $user = User::findByPhone($phone);
         try {
 
-            if (! $user) {
+            if (!$user) {
                 Log::warning('Спроба входу: користувача не знайдено', [
                     'номер' => $phone,
                     'ip_адреса' => $ip,
@@ -125,10 +125,10 @@ class AuthController extends Controller
             // Universal Link (https) — тільки такі посилання Telegram відкриває напряму з inline-кнопки.
             // Кастомна ttclubua:// схема тут не використовується (Telegram її не підтримує в кнопках),
             // застосунок перехоплює цей https-лінк сам через Associated Domains / App Links.
-            $universalLink = rtrim(config('mobile.universal_link_host'), '/').'/auth/tg-code?'.http_build_query([
-                'phone' => $phone,
-                'code' => $code,
-            ]);
+            $universalLink = rtrim(config('mobile.universal_link_host'), '/') . '/auth/tg-code?' . http_build_query([
+                    'phone' => $phone,
+                    'code' => $code,
+                ]);
 
             $user->notify(new AuthCodeNotification($code, $universalLink, 10));
 
@@ -163,21 +163,22 @@ class AuthController extends Controller
             $user = User::findByPhone($phone);
             $code = trim($request->code);
 
-            if (! $user) {
+            if (!$user) {
                 throw new ApiException('Користувача не знайдено.', 0, 404);
             }
 
             $cachedCode = $user->getLoginCodeFromCache();
 
-            if (! $cachedCode) {
+            if (!$cachedCode) {
                 throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
             }
 
             // Ліміт невдалих спроб: після max_attempts помилок наступна спроба анулює код
             // (навіть якщо вона правильна), і користувач отримує про це повідомлення в Telegram.
-            $maxAttempts = (int) config('auth.login_code.max_attempts', 5);
+            $maxAttempts = (int)config('auth.login_code.max_attempts', 5);
 
             if ($user->getLoginCodeFailedAttempts() >= $maxAttempts) {
+                Log::info('clearCode');
                 $user->clearCode();
                 $user->notify(new LoginCodeRevokedNotification($maxAttempts));
 
@@ -190,7 +191,10 @@ class AuthController extends Controller
             }
 
             if ($code !== $cachedCode) {
+                Log::info('getLoginCodeFailedAttempts ' . $user->getLoginCodeFailedAttempts());
+                Log::info('incrementLoginCodeFailedAttempts ');
                 $user->incrementLoginCodeFailedAttempts();
+                Log::info('getLoginCodeFailedAttempts ' . $user->getLoginCodeFailedAttempts());
 
                 throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
             }
@@ -212,7 +216,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! Hash::check($request->current_password, $user->password)) {
+        if (!Hash::check($request->current_password, $user->password)) {
             return error(new ApiException('Поточний пароль неправильний', 0, 400));
         }
 

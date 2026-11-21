@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Eloquent\FinanceEloquent;
 use App\Eloquent\FinanceStatisticsEloquent;
 use App\Enum\EnumMonoAccount;
-use App\Enum\EnumMonoStatus;
 use App\Enum\EnumTelegramEvents;
 use App\Http\Controllers\Api\ApiException;
 use App\Http\Requests\FinanceRequest;
@@ -18,6 +16,7 @@ use App\Models\User;
 use App\Notifications\AdHocMessageNotification;
 use App\Notifications\Support\TelegramMessagePayload;
 use App\Notifications\Support\TelegramRecipients;
+use App\Services\Monobank\MonobankService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -98,7 +97,7 @@ class FinanceController extends Controller
         return success(data: new SeasonStatisticsResource($result));
     }
 
-    public function webhookMonobank(Request $request)
+    public function webhookMonobank(Request $request, MonobankService $monobank)
     {
         try {
             $monoAccount = EnumMonoAccount::LILIIA;
@@ -111,26 +110,7 @@ class FinanceController extends Controller
                 return success();
             }
 
-            $description = $statementItem['comment'] ?? '';
-            if (preg_match('/pay:([a-zA-Z0-9]+)/', $description, $matches)) {
-                $hash = $matches[1];
-                /** @var MonoTransaction $payment */
-                $payment = MonoTransaction::where('hash', $hash)->first() ?? new MonoTransaction;
-                $payment->source_ip = $request->ip();
-                $payment->status = EnumMonoStatus::CONFIRMED->getAlias();
-                $payment->currency_code = $statementItem['currency_code'] ?? null;
-                $payment->amount = $statementItem['amount'] ?? null;
-                $payment->description = $statementItem['description'] ?? null;
-                $payment->comment = $statementItem['comment'] ?? null;
-                $payment->jar_id = $monoAccount->getID();
-
-                if ($payment->id) {
-                    FinanceEloquent::createByMono($payment);
-                }
-
-                $payment->save();
-            }
-
+            $monobank->handleStatementItem($monoAccount, $statementItem, $request->ip());
         } catch (\Throwable $e) {
             Notification::send(
                 TelegramRecipients::routes(EnumTelegramEvents::SYSTEM_ERRORS->getIds()),

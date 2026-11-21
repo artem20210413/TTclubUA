@@ -64,7 +64,7 @@ vendor/bin/sail artisan schedule:work   # планувальник, див. rout
 | `TELEGRAM_BOT_TOKEN` | Токен бота |
 | `TELEGRAM_WEBHOOK_SECRET` | Секрет, що перевіряється в заголовку `X-Telegram-Bot-Api-Secret-Token`. **Обов'язково задайте на проді**: якщо змінна порожня, вебхук приймає будь-які запити |
 | `TELEGRAM_CHAT_TT_CLUB` | Головний чат клубу: вступ/вихід, привітання, дайджест, згадки |
-| `TELEGRAM_CHAT_WELCOME` | Адмінський лог-чат: реєстрації, зміни учасників, дні народження |
+| `TELEGRAM_CHAT_WELCOME` | Адмінський лог-чат: реєстрації, зміни учасників, дні народження, платежі в банку Monobank, які не вдалося прив'язати до учасника |
 | `TELEGRAM_CHAT_SUGGESTIONS`, `TELEGRAM_CHAT_PURCHASE_REQUESTS` | Пропозиції та заявки на покупку |
 | `TELEGRAM_CHAT_SYSTEM_ERRORS` | Сповіщення про системні помилки |
 | `TELEGRAM_CHAT_TEST_BOT_2` | Тестовий чат. При `APP_ENV=local` **усі** повідомлення йдуть сюди замість справжніх чатів |

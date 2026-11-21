@@ -24,6 +24,7 @@ enum EnumTelegramEvents
     case DAILY_DIGEST_COLLECT; // из каких чатов собираем сообщения для дайджеста
     case MEMBERSHIP; // чаты, где вступ/выход влияет на активность акаунта (только главная группа)
     case NEW_MEMBER_WELCOME; // белый список чатов, где бот приветствует новых участников
+    case MONO_UNMATCHED_PAYMENT; // платіж у банку Monobank, який не вдалося прив'язати до учасника
 
     /**
      * Получить разрешение для качества
@@ -49,6 +50,7 @@ enum EnumTelegramEvents
             self::LIST_BIRTHDAYS => [$welcome],
             self::REGISTRATION => [$welcome],
             self::CHANGE_USER => [$welcome],
+            self::MONO_UNMATCHED_PAYMENT => [$welcome],
             self::SUGGESTION => [$suggestions],
             self::PURCHASE_REQUEST => [$purchaseRequests],
 

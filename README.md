@@ -64,7 +64,7 @@ Besides the standard Laravel variables (`APP_*`, `DB_*`, `CACHE_STORE`, `QUEUE_C
 | `TELEGRAM_BOT_TOKEN` | Bot token |
 | `TELEGRAM_WEBHOOK_SECRET` | Secret checked in the `X-Telegram-Bot-Api-Secret-Token` header. **Set it in production**; when empty the webhook accepts any request |
 | `TELEGRAM_CHAT_TT_CLUB` | Main club chat: join/leave tracking, welcome, digest, mentions |
-| `TELEGRAM_CHAT_WELCOME` | Admin log chat: registrations, member changes, birthdays |
+| `TELEGRAM_CHAT_WELCOME` | Admin log chat: registrations, member changes, birthdays, Monobank jar payments that could not be matched to a member |
 | `TELEGRAM_CHAT_SUGGESTIONS`, `TELEGRAM_CHAT_PURCHASE_REQUESTS` | Suggestions and purchase requests |
 | `TELEGRAM_CHAT_SYSTEM_ERRORS` | System error alerts |
 | `TELEGRAM_CHAT_TEST_BOT_2` | Test chat. With `APP_ENV=local` **all** messages go here instead of real chats |

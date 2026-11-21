@@ -53,7 +53,7 @@ Route::delete('/delete-account', [UserController::class, 'deleteAccount'])->midd
 Route::get('/app-config/{platform}', [AppConfigController::class, 'check'])->middleware(['auth:sanctum']);
 
 Route::get('/homepage-data', [HomePageController::class, 'homepageData'])->middleware(['auth:sanctum']);
-Route::get('/system/user-stats', [SystemController::class, 'systemUserStats'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/system/user-stats', [SystemController::class, 'systemUserStats'])->middleware(['auth:sanctum', 'role:' . \App\Enum\EnumUserRoles::ADMIN->value . ',' . \App\Enum\EnumUserRoles::HEAD_COPYWRITER->value]);
 
 Route::get('/user/export', [UserController::class, 'export'])->middleware(['auth:sanctum', 'role:admin']);
 Route::post('/user/profile-picture', [MediaController::class, 'updateProfilePicture'])->middleware('auth:sanctum');
@@ -169,7 +169,7 @@ Route::get('/cities', [CityController::class, 'all'])->middleware(['auth:sanctum
 Route::get('/cities/map', [CityController::class, 'mapAggregated'])->middleware(['auth:sanctum']);
 Route::get('/cities/{city}/users', [CityController::class, 'usersByCity'])
     ->middleware(['auth:sanctum'])
-    ->missing(fn () => app(CityController::class)->usersByCityMissing());
+    ->missing(fn() => app(CityController::class)->usersByCityMissing());
 
 Route::post('/import', [ImportController::class, 'importMain'])->middleware(['auth:sanctum', 'role:admin']);
 

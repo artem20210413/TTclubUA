@@ -14,8 +14,21 @@ return [
         ."<b>Телефон:</b> {phone}\n"
         ."<b>Товар:</b> {title}\n"
         ."<b>Ціна:</b> {price}\n"
-        ."{inactive_line}"
+        .'{inactive_line}'
         .'<b>Опис:</b> {description}',
+    'mono_unmatched_payment' => [
+        'message' => "💸 <b>Платіж у банку без власника</b>\n"
+            ."<b>Сума:</b> {amount} грн\n"
+            ."<b>Відправник:</b> {sender}\n"
+            ."<b>Коментар:</b> {comment}\n"
+            ."<b>Час:</b> {time}\n"
+            ."<b>Причина:</b> {reason}\n"
+            ."<b>Запис:</b> mono_transactions #{id}\n\n"
+            .'Знайдіть платника, зарахуйте йому внесок вручну та проставте <code>user_id</code> у записі.',
+        'reason_no_code' => 'оплата без коду із застосунку (у коментарі немає <code>pay:</code>)',
+        'reason_used_link' => 'лінк уже оплачено раніше, його власник: {owner} (#{owner_id}). Ймовірно, лінк переслали або зберегли',
+        'reason_unknown_code' => 'код оплати не знайдено (лінк застарів або його видалено)',
+    ],
     'registration' => [
         'user' => "ім'я: {name}\n"
             ."Телефон: {phone}\n"

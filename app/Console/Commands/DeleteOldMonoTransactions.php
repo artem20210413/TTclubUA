@@ -31,7 +31,7 @@ class DeleteOldMonoTransactions extends Command
         $days = $this->argument('days') ?? 90;
         $cutoff = Carbon::now()->subDays($days);
 
-        $count = MonoTransaction::where('created_at', '<', $cutoff)->delete();
+        $count = MonoTransaction::where('created_at', '<', $cutoff)->where('status', 'pending')->delete();
 
         $this->info("Removed $count records created earlier than $cutoff.");
 

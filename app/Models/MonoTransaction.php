@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property string|null $hash Уникальный хеш для сверки
+ * @property string|null $statement_id Ідентифікатор операції у виписці Monobank (захист від повторної обробки)
  * @property string|null $jar_id Идентификатор банки Monobank (если используется)
- * @property string|null source_ip
+ * @property string|null $source_ip
  * @property string|null $user_id
  * @property int|null $amount Сумма транзакции (в копейках)
  * @property int|null $currency_code Код валюты по ISO 4217
@@ -39,8 +40,6 @@ class MonoTransaction extends Model
         'currency_code' => 'integer',
     ];
 
-
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -49,6 +48,6 @@ class MonoTransaction extends Model
     public function createHash(User $user, string $jarId): void
     {
         $timestamp = now()->format('Y-m-d H:i:s');
-        $this->hash =  hash('sha256', "{$jarId}|{$user->id}|{$timestamp}");
+        $this->hash = hash('sha256', "{$jarId}|{$user->id}|{$timestamp}");
     }
 }

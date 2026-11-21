@@ -19,7 +19,7 @@ app(Schedule::class)->command('audit:prune --days=365')->dailyAt('02:55');
 // app(Schedule::class)->command('clear:mention 30')->dailyAt('03:00');
 app(Schedule::class)->command('clear:mention-media 365')->dailyAt('03:00');
 app(Schedule::class)->command('clear:registration 30')->dailyAt('03:15');
-app(Schedule::class)->command('clear:mono-prune 90')->dailyAt('03:30');
+//app(Schedule::class)->command('clear:mono-prune 90')->dailyAt('03:30');
 app(Schedule::class)->call(fn () => (new MonobankService)->checkWebhook())->dailyAt('04:00');
 
 app(Schedule::class)->command('tg:send-daily-digest')->dailyAt('22:00');

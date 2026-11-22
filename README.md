@@ -78,15 +78,14 @@ Besides the standard Laravel variables (`APP_*`, `DB_*`, `CACHE_STORE`, `QUEUE_C
 
 Club rules (minimum season fee, season start month) live in `config/club.php`.
 
-Telegram webhook URL: `https://<host>/api/telegram/webhook`. Register it with `setWebhook`, passing the same `secret_token` as `TELEGRAM_WEBHOOK_SECRET`. The webhook must receive `callback_query` (button presses). Before deploying a version with login-alert buttons, check `getWebhookInfo`; if `allowed_updates` is a list without `callback_query`, register again with the same URL and secret and the **current** list plus `callback_query` (doing this before the deploy is safe: older code sends no buttons). For example, if the list is `message`, `chat_member`, `my_chat_member`:
+Telegram webhook URL: `https://<host>/api/telegram/webhook`. Register or update it with:
 
 ```bash
-curl -F url=https://<host>/api/telegram/webhook -F secret_token=<TELEGRAM_WEBHOOK_SECRET> \
-  -F 'allowed_updates=["message","chat_member","my_chat_member","callback_query"]' \
-  "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook"
+php artisan tg:set-webhook          # shows the current settings and the new ones, asks for confirmation
+php artisan tg:set-webhook --info   # only shows the current settings (getWebhookInfo)
 ```
 
-Do not use the SDK's `php artisan telegram:webhook --setup`: it does not send `secret_token`, and the app would then reject every update.
+The command keeps the current webhook URL (or uses `APP_URL` + `/api/telegram/webhook` when none is set; `--url=` overrides it), sends `TELEGRAM_WEBHOOK_SECRET` as `secret_token` and the update types from `config/telegram.php` (`bots.mybot.allowed_updates`: `message`, `chat_member`, `my_chat_member`, `callback_query`). It refuses to run without the secret and warns when an update type would stop arriving. Run it once after deploying the version with login-alert buttons: until then Telegram does not deliver button presses (`callback_query`). Use it instead of the SDK's `telegram:webhook --setup`, which does not send the secret.
 
 ## Tests and code style
 

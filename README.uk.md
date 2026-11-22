@@ -78,15 +78,14 @@ vendor/bin/sail artisan schedule:work   # планувальник, див. rout
 
 Правила клубу (мінімальний внесок за сезон, місяць початку сезону) — у `config/club.php`.
 
-URL вебхука Telegram: `https://<host>/api/telegram/webhook`. Реєструється через `setWebhook` з тим самим `secret_token`, що й у `TELEGRAM_WEBHOOK_SECRET`. Вебхук має отримувати `callback_query` (натискання кнопок). Перед деплоєм версії з кнопками в повідомленні про вхід перевірте `getWebhookInfo`; якщо `allowed_updates` — список без `callback_query`, зареєструйте вебхук знову з тим самим URL і секретом та **поточним** списком плюс `callback_query` (робити це до деплою безпечно: старий код кнопок не надсилає). Наприклад, якщо в списку `message`, `chat_member`, `my_chat_member`:
+URL вебхука Telegram: `https://<host>/api/telegram/webhook`. Зареєструвати або оновити його:
 
 ```bash
-curl -F url=https://<host>/api/telegram/webhook -F secret_token=<TELEGRAM_WEBHOOK_SECRET> \
-  -F 'allowed_updates=["message","chat_member","my_chat_member","callback_query"]' \
-  "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook"
+php artisan tg:set-webhook          # показує поточні й нові налаштування, просить підтвердження
+php artisan tg:set-webhook --info   # лише показує поточні налаштування (getWebhookInfo)
 ```
 
-Не використовуйте `php artisan telegram:webhook --setup` з SDK: він не передає `secret_token`, і застосунок відхилятиме кожне оновлення.
+Команда лишає поточний URL вебхука (або бере `APP_URL` + `/api/telegram/webhook`, якщо вебхук ще не задано; `--url=` його перевизначає), передає `TELEGRAM_WEBHOOK_SECRET` як `secret_token` і типи оновлень з `config/telegram.php` (`bots.mybot.allowed_updates`: `message`, `chat_member`, `my_chat_member`, `callback_query`). Без секрету вона не запускається, а якщо якийсь тип оновлень перестане приходити — попереджає. Запустіть її один раз після деплою версії з кнопками в повідомленні про вхід: до цього Telegram не надсилає натискання кнопок (`callback_query`). Використовуйте її замість `telegram:webhook --setup` з SDK, який не передає секрет.
 
 ## Тести і стиль коду
 

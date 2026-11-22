@@ -48,7 +48,12 @@ return [
             /*
              * @see https://core.telegram.org/bots/api#update
              */
-            'allowed_updates' => null,
+            /*
+             * Типи оновлень, які обробляє бот (TelegramWebhookDto). Список явний, бо chat_member
+             * Telegram надсилає лише за явного списку. callback_query — натискання кнопок.
+             * Реєструється командою `php artisan tg:set-webhook` (разом із secret_token).
+             */
+            'allowed_updates' => ['message', 'chat_member', 'my_chat_member', 'callback_query'],
             'commands' => [
                 // Acme\Project\Commands\MyTelegramBot\BotCommand::class
             ],

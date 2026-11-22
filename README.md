@@ -13,7 +13,8 @@ Backend for the Ukrainian **Audi TT owners' club**. It serves the club's mobile 
 - **Finance**: membership fees per season, costs, Monobank jar integration (webhook), season statistics.
 - **Club life**: events/calendar, partners and promotions, goods with purchase requests, prize draws, suggestions.
 - **Telegram bot**:
-  - login to the app by a one-time code sent in Telegram;
+  - login to the app by a one-time code sent in Telegram (not for deactivated members);
+  - a login alert after every login (password or code) with the method, device, IP and time and a "🚫 Це не я — завершити всі сесії" button; after a "Так" confirmation it ends all the member's app sessions (Sanctum tokens) and the pending login code. An admin setting a member's password also ends that member's sessions;
   - linking a Telegram account by sharing your own contact; `/setpassword` and other bot commands;
   - join/leave tracking in the main club chat (activates/deactivates accounts), welcome message;
   - daily AI digest of the main chat (Google Gemini), birthdays, monthly mention stats, pinned messages;
@@ -77,7 +78,15 @@ Besides the standard Laravel variables (`APP_*`, `DB_*`, `CACHE_STORE`, `QUEUE_C
 
 Club rules (minimum season fee, season start month) live in `config/club.php`.
 
-Telegram webhook URL: `https://<host>/api/telegram/webhook`. Register it with `setWebhook`, passing the same `secret_token` as `TELEGRAM_WEBHOOK_SECRET`.
+Telegram webhook URL: `https://<host>/api/telegram/webhook`. Register it with `setWebhook`, passing the same `secret_token` as `TELEGRAM_WEBHOOK_SECRET`. The webhook must receive `callback_query` (button presses). Before deploying a version with login-alert buttons, check `getWebhookInfo`; if `allowed_updates` is a list without `callback_query`, register again with the same URL and secret and the **current** list plus `callback_query` (doing this before the deploy is safe: older code sends no buttons). For example, if the list is `message`, `chat_member`, `my_chat_member`:
+
+```bash
+curl -F url=https://<host>/api/telegram/webhook -F secret_token=<TELEGRAM_WEBHOOK_SECRET> \
+  -F 'allowed_updates=["message","chat_member","my_chat_member","callback_query"]' \
+  "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook"
+```
+
+Do not use the SDK's `php artisan telegram:webhook --setup`: it does not send `secret_token`, and the app would then reject every update.
 
 ## Tests and code style
 

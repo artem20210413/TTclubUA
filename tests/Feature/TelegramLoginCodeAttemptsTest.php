@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Middleware\ParamsThrottleMiddleware;
 use App\Models\User;
+use App\Notifications\AuthCodeNotification;
 use App\Notifications\LoginCodeRevokedNotification;
 use App\Notifications\LoginSuccessNotification;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -35,16 +37,20 @@ test('correct code within the limit logs the user in', function () {
     Notification::assertNotSentTo($this->user, LoginCodeRevokedNotification::class);
 });
 
-test('successful login sends an "authorization successful" message to telegram', function () {
+test('successful login sends a login alert with the "Це не я" button to telegram', function () {
     $this->postJson('/api/login/tg/verify', ['phone' => '+380501112233', 'code' => $this->code], [
         'X-Client-Platform' => '<b>ios</b>',
     ])->assertOk();
 
     Notification::assertSentTo($this->user, LoginSuccessNotification::class, function ($notification) {
-        $text = $notification->toTelegram($this->user)->text;
+        $payload = $notification->toTelegram($this->user);
+        $text = $payload->text;
 
-        return str_contains($text, 'Авторизація успішна')
-            && str_contains($text, '&lt;b&gt;ios&lt;/b&gt;'); // платформа з заголовка екранована
+        return str_contains($text, 'Вхід в акаунт')
+            && str_contains($text, 'Спосіб: код Telegram')
+            && str_contains($text, 'IP: 127.0.0.1')
+            && str_contains($text, '&lt;b&gt;ios&lt;/b&gt;') // платформа з заголовка екранована
+            && $payload->replyMarkup['inline_keyboard'][0][0]['callback_data'] === 'sess:ask';
     });
     Notification::assertSentToTimes($this->user, LoginSuccessNotification::class, 1);
 });
@@ -90,4 +96,24 @@ test('requesting a new code resets the failed attempts counter', function () {
 
     verifyLoginCode($this, $newCode)->assertOk();
     Notification::assertNotSentTo($this->user, LoginCodeRevokedNotification::class);
+});
+
+test('a deactivated member is not sent a login code', function () {
+    $this->withoutMiddleware(ParamsThrottleMiddleware::class);
+    $this->user->forceFill(['active' => 0])->save();
+
+    $this->postJson('/api/login/tg/send-code', ['phone' => '+380501112233'])
+        ->assertStatus(404)
+        ->assertJsonPath('message', 'Користувача з таким номером не знайдено.');
+
+    Notification::assertNotSentTo($this->user, AuthCodeNotification::class);
+});
+
+test('a member deactivated after getting a code cannot log in with it', function () {
+    $this->user->forceFill(['active' => 0])->save();
+
+    verifyLoginCode($this, $this->code)->assertStatus(404);
+
+    expect($this->user->tokens()->count())->toBe(0);
+    Notification::assertNotSentTo($this->user, LoginSuccessNotification::class);
 });

@@ -17,6 +17,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\PersonalAccessToken;
+
+// Явно з namespace: глобальну defer() перекриває розширення Swoole (стоїть у контейнері Sail).
+use function Illuminate\Support\defer;
 
 class AuthController extends Controller
 {
@@ -64,12 +68,12 @@ class AuthController extends Controller
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         $credentials[$fieldType] = $login;
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return error(new ApiException('Invalid login details', 0, 401));
         }
 
         $user = Auth::user();
-        if (!$user->active) {
+        if (! $user->active) {
             Auth::logout();
 
             return error(new ApiException('Invalid login details', 0, 401));
@@ -78,6 +82,10 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $token = $user->createToken("auth_$env")->plainTextToken;
+
+        if ($user->telegram_id) {
+            $this->sendLoginAlert($user, LoginSuccessNotification::METHOD_PASSWORD, $env, $request->ip());
+        }
 
         return success('Login successful', [
             'token' => $token,
@@ -103,9 +111,18 @@ class AuthController extends Controller
         $user = User::findByPhone($phone);
         try {
 
-            if (!$user) {
+            if (! $user) {
                 Log::warning('Спроба входу: користувача не знайдено', [
                     'номер' => $phone,
+                    'ip_адреса' => $ip,
+                ]);
+                throw new ApiException('Користувача з таким номером не знайдено.', 0, 404);
+            }
+
+            // Деактивованому — та сама відповідь, що й невідомому номеру (як і при вході за паролем).
+            if (! $user->active) {
+                Log::notice('Спроба входу: акаунт деактивовано', [
+                    'user_id' => $user->id,
                     'ip_адреса' => $ip,
                 ]);
                 throw new ApiException('Користувача з таким номером не знайдено.', 0, 404);
@@ -126,10 +143,10 @@ class AuthController extends Controller
             // Universal Link (https) — тільки такі посилання Telegram відкриває напряму з inline-кнопки.
             // Кастомна ttclubua:// схема тут не використовується (Telegram її не підтримує в кнопках),
             // застосунок перехоплює цей https-лінк сам через Associated Domains / App Links.
-            $universalLink = rtrim(config('mobile.universal_link_host'), '/') . '/auth/tg-code?' . http_build_query([
-                    'phone' => $phone,
-                    'code' => $code,
-                ]);
+            $universalLink = rtrim(config('mobile.universal_link_host'), '/').'/auth/tg-code?'.http_build_query([
+                'phone' => $phone,
+                'code' => $code,
+            ]);
 
             $user->notify(new AuthCodeNotification($code, $universalLink, 10));
 
@@ -164,19 +181,20 @@ class AuthController extends Controller
             $user = User::findByPhone($phone);
             $code = trim($request->code);
 
-            if (!$user) {
+            // Деактивований не входить і з кодом, виданим до деактивації.
+            if (! $user || ! $user->active) {
                 throw new ApiException('Користувача не знайдено.', 0, 404);
             }
 
             $cachedCode = $user->getLoginCodeFromCache();
 
-            if (!$cachedCode) {
+            if (! $cachedCode) {
                 throw new ApiException('Код не знайдено або термін дії минув..', 0, 404);
             }
 
             // Ліміт невдалих спроб: після max_attempts помилок наступна спроба анулює код
             // (навіть якщо вона правильна), і користувач отримує про це повідомлення в Telegram.
-            $maxAttempts = (int)config('auth.login_code.max_attempts', 5);
+            $maxAttempts = (int) config('auth.login_code.max_attempts', 5);
 
             if ($user->getLoginCodeFailedAttempts() >= $maxAttempts) {
                 $user->clearCode();
@@ -199,7 +217,7 @@ class AuthController extends Controller
             $user->clearCode();
             $token = $user->createToken("tg_$env")->plainTextToken;
 
-            $user->notify(new LoginSuccessNotification($env, now()));
+            $this->sendLoginAlert($user, LoginSuccessNotification::METHOD_CODE, $env, $request->ip());
 
             return success('Авторизація успішна', [
                 'token' => $token,
@@ -215,7 +233,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return error(new ApiException('Поточний пароль неправильний', 0, 400));
         }
 
@@ -238,9 +256,35 @@ class AuthController extends Controller
             $user->setPassword($request->new_password);
             $user->save();
 
+            // Новий пароль від адміна завершує всі сесії користувача. Якщо адмін міняє пароль
+            // собі, поточна сесія лишається (як у changePassword).
+            $tokens = $user->tokens();
+            $currentToken = $request->user()->currentAccessToken();
+            if ($user->id === $request->user()->id && $currentToken instanceof PersonalAccessToken) {
+                $tokens->whereKeyNot($currentToken->getKey());
+            }
+            $tokens->delete();
+
             return success('Пароль успішно оновлено', new UserResource($user->refresh()));
         } catch (ApiException $e) {
             return error($e);
         }
+    }
+
+    /**
+     * Повідомлення про вхід із кнопкою «Це не я» надсилається вже після відповіді клієнту (defer):
+     * вхід не чекає на Telegram і не падає, якщо Telegram недоступний чи не налаштований.
+     */
+    private function sendLoginAlert(User $user, string $method, string $platform, ?string $ip): void
+    {
+        $notification = new LoginSuccessNotification($method, $platform, $ip, now());
+
+        defer(function () use ($user, $notification) {
+            try {
+                $user->notify($notification);
+            } catch (\Throwable $e) {
+                Log::error('Не вдалося надіслати повідомлення про вхід: '.$e->getMessage(), ['user_id' => $user->id]);
+            }
+        });
     }
 }

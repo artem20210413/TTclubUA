@@ -10,6 +10,7 @@ use App\Notifications\Support\TelegramMessagePayload;
 use App\Notifications\Support\TelegramRecipients;
 use App\Services\Telegram\Dto\TelegramWebhookDto;
 use App\Services\Telegram\TelegramActionPublicHandler;
+use App\Services\Telegram\TelegramCallbackHandler;
 use App\Services\Telegram\TelegramCommandHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -29,6 +30,13 @@ class TelegramController extends Controller
         $telegramWebhookDto = new TelegramWebhookDto($request->all() ?? []);
 
         try {
+            // Натискання кнопок обробляємо окремо й не логуємо як повідомлення чату.
+            if ($callbackQuery = $telegramWebhookDto->getCallbackQuery()) {
+                app(TelegramCallbackHandler::class)->handle($callbackQuery);
+
+                return success();
+            }
+
             if ($telegramMessageDto = $telegramWebhookDto->getMessage()) {
                 $user = UserEloquent::updateByTg($telegramMessageDto);
                 $telegramMessageDto->setUser($user);

@@ -2,30 +2,34 @@
 
 namespace App\Services\Telegram\Dto;
 
-use App\Eloquent\UserEloquent;
-use App\Models\TelegramMessage;
-use App\Models\User;
 use App\Services\Telegram\Dto\ChatMember\TelegramChatMemberDto;
 use App\Services\Telegram\Dto\ChatMember\TelegramMyChatMemberDto;
 
 class TelegramWebhookDto
 {
     private ?TelegramMessageDto $message = null;
+
     private ?TelegramChatMemberDto $chatMember = null;
+
     private ?TelegramMyChatMemberDto $myChatMember = null;
+
     private ?TelegramChatDto $smartChat = null;
 
+    private ?TelegramCallbackQueryDto $callbackQuery = null;
+
     public function __construct(
-        readonly array $json,
-    )
-    {
-        if (!empty($json['message'])) {
+        public readonly array $json,
+    ) {
+        if (! empty($json['callback_query'])) {
+            $this->callbackQuery = new TelegramCallbackQueryDto($json['callback_query']);
+        }
+        if (! empty($json['message'])) {
             $this->message = new TelegramMessageDto($json['message']);
         }
-        if (!empty($json['chat_member'])) {
+        if (! empty($json['chat_member'])) {
             $this->chatMember = new TelegramChatMemberDto($json['chat_member']);
         }
-        if (!empty($json['my_chat_member'])) {
+        if (! empty($json['my_chat_member'])) {
             $this->myChatMember = new TelegramMyChatMemberDto($json['my_chat_member']);
         }
 
@@ -58,4 +62,8 @@ class TelegramWebhookDto
         return $this->smartChat;
     }
 
+    public function getCallbackQuery(): ?TelegramCallbackQueryDto
+    {
+        return $this->callbackQuery;
+    }
 }

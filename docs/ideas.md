@@ -10,6 +10,7 @@ and a link to the spec.
 |---|---|---|---|---|
 | [IDEA-001](#idea-001--extended-statistics-for-admins) | Extended statistics for admins | 💡 new | 2026-11-22 | — |
 | [IDEA-002](#idea-002--telegram-alert-when-the-autoria-package-runs-out) | Telegram alert when the AUTO.RIA package runs out | 🚧 in progress | 2026-11-22 | `specs/009-autoria-package-alert/` (branch `009-autoria-package-alert`) |
+| [IDEA-003](#idea-003--session-security-follow-ups) | Session security follow-ups | 💡 new | 2026-11-22 | — |
 
 ---
 
@@ -96,6 +97,19 @@ renewed by hand in the cabinet.
 
 ### Notes
 - After renewal nothing needs to be restarted by hand: the next scheduled sync (06:00 / 15:00) picks up new and stale listings.
-- Out of scope: a "Restart sync" button right in Telegram. The bot does not handle button presses (`callback_query`) yet; that is separate work.
+- Out of scope: a "Restart sync" button right in Telegram. Since `specs/010-revoke-sessions-tg/` the bot handles button presses (`callback_query`, `TelegramCallbackHandler`), so this is now possible as separate work.
 - Related: the package runs out mostly because every active listing is re-fetched every 3 days (`stale(3)` in `SearchCarsJob`) and the sync runs twice a day. Roughly `N/3 + 2·⌈N/100⌉ + new` requests per day for N active listings, which is about 1 600 per month at N ≈ 150. Raising the stale threshold to 7–10 days and syncing once a day would make the free package last.
 - Related bug: listings can be deactivated by mistake. Each search page touches `updated_at` of the listings it finds; after the last page every listing with `updated_at` older than 60 minutes is deactivated (`SearchCarsJob.php:171`). If a 429 delays page 1 by 60 minutes, the listings from page 0 get deactivated although they are still live. With ~150 listings there are two pages, so this can happen.
+
+---
+
+## IDEA-003 — Session security follow-ups
+
+**Status:** 💡 new · **Added:** 2026-11-22 · **Origin:** left out of `specs/010-revoke-sessions-tg/` (login alert with the "Це не я — завершити всі сесії" button)
+
+- [ ] End other sessions when the password is changed through the bot's `/setpassword` (the API `change-password` already does; the bot does not). Decide whether the bot change should also end the current app session.
+- [ ] Session expiry: Sanctum tokens never expire (`config/sanctum.php` `expiration => null`); for example 90 days.
+- [ ] On "Так", also reset the password (random password, code-only login until `/setpassword`).
+- [ ] Show the city by IP (`stevebauman/location` is installed) instead of the raw IP in the login alert.
+- [ ] Remove the member's FCM tokens when all sessions are ended, so a stolen device stops getting pushes.
+- [ ] If production is behind a proxy or Cloudflare, configure `trustProxies` so `$request->ip()` is the client's IP (today no proxies are trusted).

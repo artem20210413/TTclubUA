@@ -143,6 +143,15 @@ artifact produced inside `specs/<feature>/` gets a sibling `*.uk.md` Ukrainian t
 remains canonical because Spec-Kit's own tooling (scripts, skills) only ever reads the
 un-suffixed filename.
 
+It also has one **local orchestrator skill**, `/tt-feature` (`.claude/skills/tt-feature/SKILL.md`),
+which runs the lifecycle above for one task in a single command: codebase and risk review →
+specify → clarify → plan → tasks → analyze → implement (tests, Pint, `code-reviewer`). It takes a
+task description or a path to a `.md` file. By default it asks questions through `AskUserQuestion`
+(in Ukrainian) and stops for confirmation before implementing; with «без підтверджень» in the
+arguments it runs end to end, decides open questions itself and lists those decisions in its final
+report. It never commits, pushes or deploys on its own. Called without a description, it resumes
+the active feature from `.specify/feature.json`.
+
 ## Real example in this repo
 
 `specs/008-purchase-request-api/` shows a feature that has been through

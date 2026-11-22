@@ -107,6 +107,7 @@ vendor/bin/sail pint                                   # code style (Laravel pre
 ## Development workflow
 
 - Features go through [Spec-Kit](docs/speckit-stack/README.md): `specs/NNN-feature/` holds the spec, plan and tasks.
+- The whole cycle in one command: `/tt-feature <task or path to a .md file>` runs specify → clarify → plan → tasks → analyze → implement, asks questions along the way and asks for confirmation before implementing. Add «без підтверджень» to run it end to end without stops.
 - Project principles: `.specify/memory/constitution.md` (simplicity/YAGNI, standard Laravel conventions, Pint-clean code).
 - House conventions for endpoints, models, queued jobs and Telegram messages: `.claude/skills/tt-*`. Guidance for Claude Code: `CLAUDE.md`.
 

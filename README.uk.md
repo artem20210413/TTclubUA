@@ -107,6 +107,7 @@ vendor/bin/sail pint                                   # стиль коду (п
 ## Процес розробки
 
 - Фічі проходять через [Spec-Kit](docs/speckit-stack/README.uk.md): у `specs/NNN-feature/` лежать специфікація, план і задачі.
+- Увесь цикл однією командою: `/tt-feature <задача або шлях до .md-файлу>` проходить specify → clarify → plan → tasks → analyze → implement, по дорозі ставить питання і перед реалізацією просить підтвердження. Додайте «без підтверджень», щоб пройти все підряд без зупинок.
 - Принципи проєкту: `.specify/memory/constitution.md` (простота/YAGNI, стандартні конвенції Laravel, код без зауважень Pint).
 - Домовленості для ендпоінтів, моделей, черг і повідомлень Telegram: `.claude/skills/tt-*`. Інструкції для Claude Code: `CLAUDE.md`.
 

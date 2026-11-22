@@ -7,7 +7,7 @@ Backend for the Ukrainian **Audi TT owners' club**. It serves the club's mobile 
 ## Features
 
 - **Members & cars**: profiles, roles, cities, members' cars, Excel import and export of members.
-- **TT market**: Audi TT listings synced from Autoria twice a day (`external-cars` API).
+- **TT market**: Audi TT listings synced from Autoria twice a day (`external-cars` API). When AUTO.RIA answers 403 (the developer package is exhausted or the API key is rejected), the sync stops without retries and the system-errors chat gets one alert a day with a "Renew package" button.
 - **Registration**: public form on the website → admin review → approval into a member account.
 - **"Fa-fa" mentions**: members photograph club cars on the road; the owner gets a push and a post in the club chat.
 - **Finance**: membership fees per season, costs, Monobank jar integration (webhook), season statistics.

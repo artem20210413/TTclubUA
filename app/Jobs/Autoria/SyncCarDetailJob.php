@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Log;
 
 class SyncCarDetailJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, HandlesAutoriaRejections, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
+
     public $backoff = 3600; // 60 минут при неудаче
 
     protected $externalId;
@@ -30,27 +31,37 @@ class SyncCarDetailJob implements ShouldQueue
     {
         $apiKey = config('services.autoria.api_key');
 
-        $response = Http::get("https://developers.ria.com/auto/info", [
+        $response = Http::get('https://developers.ria.com/auto/info', [
             'api_key' => $apiKey,
             'auto_id' => $this->externalId,
         ]);
 
         if ($response->status() === 429) {
             // Если получили "Too Many Requests", возвращаем в очередь через 10 минут
+            $this->logRejection($response, "оголошення {$this->externalId}");
+
             return $this->release(600);
+        }
+
+        // 403 — пакет вичерпано або ключ відхилено: без повторів, сповіщення раз на день
+        if ($response->status() === 403) {
+            $this->failAccessDenied($response, "оголошення {$this->externalId}");
+
+            return;
         }
 
         if ($response->status() === 404) {
             Log::info("Автомобіль {$this->externalId} не знайдено на RIA (видалено). Деактивація.");
             ExternalCar::where('external_id', $this->externalId)->update(['is_active' => false]);
+
             return; // Просто завершуємо роботу
         }
 
         if ($response->failed()) {
-            Log::error("AUTO.RIA API Error", [
+            Log::error('AUTO.RIA API Error', [
                 'id' => $this->externalId,
                 'status' => $response->status(),
-                'body' => $response->body() // Тут ми побачимо реальну причину від RIA
+                'body' => $response->body(), // Тут ми побачимо реальну причину від RIA
             ]);
 
             throw new \Exception("Detail API failed for ID {$this->externalId}");
@@ -67,8 +78,7 @@ class SyncCarDetailJob implements ShouldQueue
             $user_id = $car?->user_id ?? null;
         }
 
-
-        $title = ($data['title'] ?? '') . ' ' . ($data['autoData']['year'] ?? '');
+        $title = ($data['title'] ?? '').' '.($data['autoData']['year'] ?? '');
         ExternalCar::updateOrCreate(
             ['external_id' => $data['autoData']['autoId']],
             [
@@ -90,7 +100,7 @@ class SyncCarDetailJob implements ShouldQueue
             ]
         );
 
-        Log::info("Car synced: " . $this->externalId);
+        Log::info('Car synced: '.$this->externalId);
     }
 
     protected function clearData(array $data): array

@@ -9,6 +9,7 @@ and a link to the spec.
 | ID | Idea | Status | Added | Spec |
 |---|---|---|---|---|
 | [IDEA-001](#idea-001--extended-statistics-for-admins) | Extended statistics for admins | 💡 new | 2026-11-22 | — |
+| [IDEA-002](#idea-002--telegram-alert-when-the-autoria-package-runs-out) | Telegram alert when the AUTO.RIA package runs out | 🚧 in progress | 2026-11-22 | `specs/009-autoria-package-alert/` (branch `009-autoria-package-alert`) |
 
 ---
 
@@ -62,3 +63,39 @@ the database unless noted otherwise.
 ### Notes for implementation
 - `SystemController::systemUserStats` returns `response()->json(...)` directly instead of the `success()` envelope — align it if this endpoint is extended.
 - `MentionEloquent::getMostActiveDayWeek` selects `day` but reads `$result->date` (would always return today's weekday); currently unused.
+
+---
+
+## IDEA-002 — Telegram alert when the AUTO.RIA package runs out
+
+**Status:** 🚧 in progress · **Added:** 2026-11-22 · **Spec:** `specs/009-autoria-package-alert/` (branch `009-autoria-package-alert`)
+
+The Autoria car sync uses the free AUTO.RIA developer package (1 000 requests, 30 per hour). When it
+runs out, the sync silently stops working until someone renews the package by hand. AUTO.RIA has no
+API to renew, activate or buy a package; it can only be done in the cabinet on developers.ria.com.
+
+### What
+When `SearchCarsJob` or `SyncCarDetailJob` gets a "package limit exhausted" response from AUTO.RIA,
+send a message to the system-errors chat (`EnumTelegramEvents::SYSTEM_ERRORS`) with a
+**"Renew package"** button that opens https://developers.ria.com/payment/. The package is then
+renewed by hand in the cabinet.
+
+### Requirements
+- Detect package exhaustion in `SearchCarsJob` and `SyncCarDetailJob`.
+- An exhausted package comes back as **HTTP 403** (see the production log below). The hourly limit (30 requests/hour) is **429**: it does not alert, the job is just released as it is now. A 403 can also mean an invalid or disabled API key; both are fixed in the cabinet, so the alert covers both.
+- On 403 the job fails at once (`$this->fail()`) instead of retrying: retries cannot succeed until the package is renewed, they only waste calls and fill `failed_jobs`.
+- Log the response body on 403 and 429 (today `SearchCarsJob` logs only the status), so the exact AUTO.RIA error text is known next time.
+- No spam: at most one message per day (a lock in the cache), even when many jobs fail at once.
+- Message template in `resources/lang/uk/telegram.php`; sent through a Notification and `TelegramChannel`. The button goes through `buttons` in `TelegramMessagePayload` (URL buttons are already supported).
+- Tests: the alert is sent once when the package is exhausted, and not sent on the hourly limit.
+
+### Evidence: production log, 2026-11-21
+- `SearchCarsJob` got `Search API невдало: 403` at 06:00 and on both retries at 07:00 and 08:00 (`$tries = 3`, `$backoff = 3600`), then the same at 15:00, 16:00 and 17:00. Six failed calls that day and no alert.
+- The response body was not logged, so the exact AUTO.RIA message is unknown.
+- There are no `SyncCarDetailJob` entries that day: the search failed on page 0, so nothing was dispatched. That `/auto/info` also answers 403 for an exhausted package is an assumption, not confirmed yet.
+
+### Notes
+- After renewal nothing needs to be restarted by hand: the next scheduled sync (06:00 / 15:00) picks up new and stale listings.
+- Out of scope: a "Restart sync" button right in Telegram. The bot does not handle button presses (`callback_query`) yet; that is separate work.
+- Related: the package runs out mostly because every active listing is re-fetched every 3 days (`stale(3)` in `SearchCarsJob`) and the sync runs twice a day. Roughly `N/3 + 2·⌈N/100⌉ + new` requests per day for N active listings, which is about 1 600 per month at N ≈ 150. Raising the stale threshold to 7–10 days and syncing once a day would make the free package last.
+- Related bug: listings can be deactivated by mistake. Each search page touches `updated_at` of the listings it finds; after the last page every listing with `updated_at` older than 60 minutes is deactivated (`SearchCarsJob.php:171`). If a 429 delays page 1 by 60 minutes, the listings from page 0 get deactivated although they are still live. With ~150 listings there are two pages, so this can happen.

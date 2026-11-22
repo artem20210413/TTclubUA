@@ -1,18 +1,19 @@
 <?php
+
 //
-//namespace App\Jobs\Autoria;
+// namespace App\Jobs\Autoria;
 //
-//use App\Models\ExternalCar;
-//use Illuminate\Bus\Queueable;
-//use Illuminate\Contracts\Queue\ShouldQueue;
-//use Illuminate\Foundation\Bus\Dispatchable;
-//use Illuminate\Queue\InteractsWithQueue;
-//use Illuminate\Queue\SerializesModels;
-//use Illuminate\Support\Facades\Http;
-//use Illuminate\Support\Facades\Log;
+// use App\Models\ExternalCar;
+// use Illuminate\Bus\Queueable;
+// use Illuminate\Contracts\Queue\ShouldQueue;
+// use Illuminate\Foundation\Bus\Dispatchable;
+// use Illuminate\Queue\InteractsWithQueue;
+// use Illuminate\Queue\SerializesModels;
+// use Illuminate\Support\Facades\Http;
+// use Illuminate\Support\Facades\Log;
 //
-//class SearchCarsJob implements ShouldQueue
-//{
+// class SearchCarsJob implements ShouldQueue
+// {
 //    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 //
 //    public $tries = 5;
@@ -69,7 +70,8 @@
 //                ->delay(now()->addMinutes($delayMinutes));
 //        }
 //    }
-//}
+// }
+
 namespace App\Jobs\Autoria;
 
 use App\Models\ExternalCar;
@@ -83,14 +85,18 @@ use Illuminate\Support\Facades\Log;
 
 class SearchCarsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, HandlesAutoriaRejections, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
+
     public $backoff = 3600;
 
     protected $filters;
+
     protected $page;
+
     protected $offsetItem;
+
     protected $offsetTimeMinutes = 4;
 
     public function __construct(array $filters = [], int $page = 0, int $offsetItem = 0)
@@ -113,20 +119,27 @@ class SearchCarsJob implements ShouldQueue
     {
         $apiKey = config('services.autoria.api_key');
 
-        $response = Http::get("https://developers.ria.com/auto/search", array_merge([
+        $response = Http::get('https://developers.ria.com/auto/search', array_merge([
             'api_key' => $apiKey,
             'page' => $this->page, // Додаємо поточну сторінку
         ], $this->filters));
 
-        // Яскрава обробка 429
+        // 429 — годинний ліміт: повертаємо джобу в чергу на пізніше
         if ($response->status() === 429) {
-            Log::warning("SearchCarsJob: Отримано 429 (Limit exceeded). Засинаємо на 60 хвилин.");
-            // Повертаємо джобу в чергу на пізніше
+            $this->logRejection($response, "пошук, сторінка {$this->page}");
+
             return $this->release(now()->addMinutes(60));
         }
 
+        // 403 — пакет вичерпано або ключ відхилено: без повторів, сповіщення раз на день
+        if ($response->status() === 403) {
+            $this->failAccessDenied($response, "пошук, сторінка {$this->page}");
+
+            return;
+        }
+
         if ($response->failed()) {
-            throw new \Exception("Search API невдало: " . $response->status());
+            throw new \Exception('Search API невдало: '.$response->status());
         }
 
         $data = $response->json();
@@ -135,11 +148,12 @@ class SearchCarsJob implements ShouldQueue
 
         if (empty($externalIds)) {
             Log::info("SearchCarsJob: Сторінка {$this->page} порожня. Завершуємо.");
+
             return;
         }
 
         ExternalCar::whereIn('external_id', $externalIds)->update([
-            'is_active' => true
+            'is_active' => true,
         ]);
 
         $existingIds = ExternalCar::whereIn('external_id', $externalIds)
@@ -154,7 +168,7 @@ class SearchCarsJob implements ShouldQueue
             $this->offsetItem++;
         }
 
-        Log::info("SearchCarsPage {$this->page}: Оброблено " . count($externalIds) . " of $totalFound");
+        Log::info("SearchCarsPage {$this->page}: Оброблено ".count($externalIds)." of $totalFound");
 
         // 3. ПЕРЕВІРКА ПАГІНАЦІЇ
         // Розраховуємо, чи є наступна сторінка
